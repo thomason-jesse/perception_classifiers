@@ -1,0 +1,5 @@
+int32 classifier_ID
+int32[] object_IDs
+bool[] positive_example
+---
+bool success
