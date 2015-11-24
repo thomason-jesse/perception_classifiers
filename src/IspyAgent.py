@@ -1,8 +1,12 @@
-import rospy
-from perceptual_classifiers.srv import *
+#!/usr/bin/env python
+__author__ = 'jesse'
 
+import rospy
+from perception_classifiers.srv import *
+from std_srvs.srv import *
 import operator
 import math
+import random
 
 
 def join_lists(a, b):
@@ -27,12 +31,13 @@ def join_dicts_with_list_elements(a, b):
 
 class IspyAgent:
 
-    def __init__(self, u_in, u_out, object_IDs, stopwords_fn, alpha=0.9):
+    def __init__(self, u_in, u_out, object_IDs, stopwords_fn, alpha=0.9, simulation=False):
 
         self.u_in = u_in
         self.u_out = u_out
         self.object_IDs = object_IDs
         self.alpha = alpha
+        self.simulation = simulation
 
         # lists of predicates and words currently known
         self.predicates = []
@@ -72,7 +77,9 @@ class IspyAgent:
                 understood = True
 
                 # get matrix of results and confidences for each object against each predicate in cnfs
-                all_predicates = [p for p in d for d in cnf_clauses]
+                all_predicates = []
+                for d in cnf_clauses:
+                    all_predicates.extend(d)
                 classifier_results = self.get_classifier_results(all_predicates, self.object_IDs)
 
                 # TODO
@@ -88,8 +95,8 @@ class IspyAgent:
                     for d in cnf_clauses:  # take the maximum score of predicates in disjunction
                         cnf_scores = []
                         for pred in d:
-                            cidx = self.predicate_to_classifier_map[pred]
-                            cnf_scores.append(classifier_results[oidx][cidx][0]*classifier_results[oidx][cidx][1])
+                            cnf_scores.append(classifier_results[oidx][pred][0] *
+                                              classifier_results[oidx][pred][1])
                         object_score += max(cnf_scores)
                     match_scores.append(object_score)
 
@@ -97,9 +104,15 @@ class IspyAgent:
                 already_guessed = []
                 correct = False
                 while not correct:
-                    guess_idx = match_scores.index(
-                        max([match_scores[idx] for idx in match_scores if idx not in already_guessed]))
-                    # TODO: call pointing service with self.object_IDs.index(guess_idx)
+                    guess_idx = 0
+                    while (guess_idx in already_guessed or (guess_idx < len(match_scores)-1 and
+                                                            match_scores[guess_idx] < match_scores[guess_idx+1])):
+                        guess_idx += 1
+                    if self.simulation:
+                        self.u_out.point(guess_idx)
+                    else:
+                        # TODO: call pointing service with guess_idx
+                        pass
                     got_confirmation = False
                     while not got_confirmation:
                         got_confirmation = True
@@ -111,7 +124,7 @@ class IspyAgent:
                             got_confirmation = False
                             self.u_out.say("I didn't catch that.")
                     already_guessed.append(guess_idx)
-                    if len(already_guessed) == len(match_scores):
+                    if not correct and len(already_guessed) == len(match_scores):
                         self.u_out.say("I tried them all!")
                         break
 
@@ -123,46 +136,51 @@ class IspyAgent:
 
     # given object idx, form description of object from classifier results and describe to human, adhering
     # to Gricean maxim of quantity (eg. say as many predicates as needed to discriminate, but not more)
-    def robot_take_turn(self, ob_idx):
+    def robot_take_turn(self, ob_pos):
+        ob_idx = self.object_IDs[ob_pos]
 
         # get results for each attribute for every object
-        classifier_results = self.get_classifier_results(
-            [pred for pred in self.predicate_to_classifier_map], self.object_IDs)
+        r = self.get_classifier_results(self.predicate_to_classifier_map, self.object_IDs)
 
         # rank the classifiers favoring high confidence on ob_idx with low confidence or negative
         # decisions on other objects
-        classifier_scores = {}
+        pred_scores = {}
         for pred in self.predicate_to_classifier_map:
-            cidx = self.predicate_to_classifier_map[pred]
-            score = classifier_results[ob_idx][cidx][0]*classifier_results[ob_idx][cidx][1]
+            score = r[ob_idx][pred][0]*r[ob_idx][pred][1]
             for oidx in self.object_IDs:
                 if ob_idx == oidx:
                     continue
-                score -= classifier_results[oidx][cidx][0]*classifier_results[oidx][cidx][1]
-            classifier_scores[cidx] = score
+                score -= r[oidx][pred][0]*r[oidx][pred][1]
+            pred_scores[pred] = score
 
         # choose predicates to best describe object
         predicates_chosen = []
-        for cidx in sorted(classifier_scores.items(), key=operator.itemgetter(1), reverse=True):
-            if classifier_scores[cidx] > 0:
+        for pred, score in sorted(pred_scores.items(), key=operator.itemgetter(1), reverse=True):
+            if score > 0:
                 # choose just one predicate word arbitrarily if multiple are associated with classifier
-                predicates_chosen.append(self.classifier_to_predicate_map[cidx][0])
+                predicates_chosen.append(pred)
+        if len(predicates_chosen) == 0:  # we have no classifier information yet, so choose 3 arbitrarily
+            preds_shuffled = self.predicates[:]
+            random.shuffle(preds_shuffled)
+            predicates_chosen.extend(preds_shuffled[:3 if len(preds_shuffled) >= 3 else len(preds_shuffled)])
 
         # describe object to user
         desc = "I am thinking of an object I would describe as " + \
-            ','.join([self.predicates_to_words[pred] for pred in predicates_chosen[:-1]]) + \
-            " and "+self.predicates_to_words[predicates_chosen[-1]] + "."
+            ', '.join([self.predicates_to_words[pred][0] for pred in predicates_chosen[:-1]]) + \
+            ", and "+self.predicates_to_words[predicates_chosen[-1]][0] + "."
         self.u_out.say(desc)
 
         # wait for user to find and select correct object
-        correct = False
         num_guesses = 0
-        while not correct:
-            guess_idx = self.object_IDs[None]  # TODO: call looking for hand over object service
+        while True:
+            if self.simulation:
+                guess_idx = self.object_IDs[self.u_in.get_guess()]
+            else:
+                # TODO: call looking for hand over object service
+                guess_idx = None
             num_guesses += 1
             if guess_idx == ob_idx:
                 self.u_out.say("That's the one!")
-                correct = True
                 return desc, predicates_chosen, num_guesses
             else:
                 self.u_out.say("That's not the object I am thinking of.")
@@ -170,7 +188,11 @@ class IspyAgent:
     # point to object at pos_idx and ask whether it meets the attributes of aidx chosen to point it out
     def elicit_labels_for_predicates_of_object(self, pos_idx, preds):
         l = []
-        #  TODO: call pointing service with pos_idx
+        if self.simulation:
+            self.u_out.point(pos_idx)
+        else:
+            # TODO: call pointing service with pos_idx
+            pass
         for pred in preds:
             self.u_out.say("Would you use the word '" + self.predicates_to_words[pred][0] +
                            "' to describe this object?")
@@ -196,17 +218,26 @@ class IspyAgent:
         change_made = True
         while change_made:
             change_made = False
-            results_matrix = self.get_classifier_results(self.predicates, self.object_IDs)
+            r_with_confidence = self.get_classifier_results(self.predicates, self.object_IDs)
+            r = {}
+            for oidx in r_with_confidence:
+                r[oidx] = {}
+                for pred in r_with_confidence[oidx]:
+                    r[oidx][pred] = r_with_confidence[oidx][pred][0]*r_with_confidence[oidx][pred][1]
 
             # detect synonymy
             # observes the cosine distance between predicate vectors in |O|-dimensional space
             highest_cos_sim = [None, -1]
             norms = {}
-            for p in results_matrix:
-                norms[p] = math.sqrt(sum([math.pow(pi, 2) for pi in p]))
-            for p in results_matrix:
-                for q in results_matrix:
-                    cos_sim = sum([p[i]*q[i] for i in range(0, len(p))]) / (norms[p]*norms[q])
+            for p in self.predicates:
+                norms[p] = math.sqrt(sum([math.pow(r[oi][p], 2) for oi in self.object_IDs]))
+            for p in self.predicates:
+                if norms[p] == 0:
+                    continue
+                for q in self.predicates:
+                    if norms[q] == 0:
+                        continue
+                    cos_sim = sum([r[oi][p]*r[oi][q] for oi in self.object_IDs]) / (norms[p]*norms[q])
                     if cos_sim > self.alpha and cos_sim > highest_cos_sim[1]:
                         highest_cos_sim = [[p, q], cos_sim]
             if highest_cos_sim[0] is not None:
@@ -249,16 +280,16 @@ class IspyAgent:
             # TODO: get float decisions from all contexts; comparisons must be at context level within
             # TODO: a single predicate to determine whether a split is warranted
 
-    # given vectors of attribute idxs and object idxs, return a matrix of [result, confidence] pairs
+    # given vectors of attribute idxs and object idxs, return a map of results
     def get_classifier_results(self, preds, oidxs):
-        m = []
+        m = {}
         for oidx in oidxs:
-            om = []
+            om = {}
             for pred in preds:
                 cidx = self.predicate_to_classifier_map[pred]
                 result, confidence, _ = self.run_classifier_client(cidx, oidx)
-                om.append([result, confidence])
-            m.append(om)
+                om[pred] = [result, confidence]
+            m[oidx] = om
         return m
 
     # given a string input, strip stopwords and use word to predicate map to build cnf clauses
@@ -336,9 +367,9 @@ class IspyAgent:
     # access the perceptual classifiers package load classifier service
     def get_free_classifier_id_client(self):
         req = getFreeClassifierIDRequest()
-        rospy.wait_for_service('get_free_classifier_id')
+        rospy.wait_for_service('get_free_classifier_ID')
         try:
-            get_free_classifier_id = rospy.ServiceProxy('get_free_classifier_id', getFreeClassifierID)
+            get_free_classifier_id = rospy.ServiceProxy('get_free_classifier_ID', getFreeClassifierID)
             res = get_free_classifier_id(req)
             return res.ID
         except rospy.ServiceException, e:
@@ -346,10 +377,10 @@ class IspyAgent:
 
     # access the perceptual classifiers package load classifier service
     def load_classifiers_client(self):
-        req = loadClassifierRequest()
+        req = loadClassifiersRequest()
         rospy.wait_for_service('load_classifiers')
         try:
-            load_classifiers = rospy.ServiceProxy('load_classifier', loadClassifier)
+            load_classifiers = rospy.ServiceProxy('load_classifiers', loadClassifiers)
             res = load_classifiers(req)
             return res.success
         except rospy.ServiceException, e:
@@ -360,7 +391,7 @@ class IspyAgent:
         req = EmptyRequest()
         rospy.wait_for_service('save_classifiers')
         try:
-            save_classifiers = rospy.ServiceProxy('save_classifier', saveClassifier)
+            save_classifiers = rospy.ServiceProxy('save_classifiers', Empty)
             res = save_classifiers(req)  # TODO: give saveClassifiers a srv so it can respond with success flag
             return True
         except rospy.ServiceException, e:

@@ -48,7 +48,7 @@ def main():
 
     print "pickling ispyAgent"
     f = open(os.path.join(fp, "local.agent"), 'wb')
-    f.dump(A)
+    pickle.dump(A, f)
     f.close()
 
 

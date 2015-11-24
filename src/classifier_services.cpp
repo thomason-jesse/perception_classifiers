@@ -49,7 +49,7 @@ vector< vector<int> > num_features;
 
 // variables related to classifiers
 map<int, vector< vector<CvSVM*> > > classifiers;
-map<int, vector< vector<float> > > confidences;
+map<int, vector< vector<double> > > confidences;
 
 // initialize node and offer services
 int main(int argc, char **argv)
@@ -135,10 +135,10 @@ bool loadClassifiers(perception_classifiers::loadClassifiers::Request &req,
 		if (classifier_ID > max_classifier_ID)
 			max_classifier_ID = classifier_ID;
 		classifier_IDs.push_back(classifier_ID);
-		vector< vector<float> > confidences_for_behaviors;
+		vector< vector<double> > confidences_for_behaviors;
 		for (int b_idx=0; b_idx < num_behaviors; b_idx++)
 		{
-			vector<float> confidences_for_modalities;
+			vector<double> confidences_for_modalities;
 			for (int m_idx=0; m_idx < num_modalities; m_idx++)
 			{
 				string conf_str;
@@ -251,9 +251,9 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 				     perception_classifiers::runClassifier::Response &res)
 {
 	//run classifier in each relevant behavior, modality combination 
-	float decision = 0;
+	double decision = 0;
 	int sub_classifiers_used = 0;
-	vector<float> _dec;
+	vector<double> _dec;
 	for (int b_idx=0; b_idx < num_behaviors; b_idx++)
 	{
 		for (int m_idx=0; m_idx < num_modalities; m_idx++)
@@ -265,19 +265,23 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 
 			// access feature-getting service and use it to populate rows of test matrix
 			Mat test_data;
-			vector< vector<float> > observations;  //= some feature getting service (req.object_ID, b_idx, o_idx)
+			vector< vector<double> > observations;
+			vector<double> temp_null_ob;
+			temp_null_ob.push_back(0.0);
+			observations.push_back(temp_null_ob);
+			//TODO: initialize observations by some feature getting service (req.object_ID, b_idx, o_idx)
 			for (int obs_idx=0; obs_idx < observations.size(); obs_idx++)
 			{
 				Mat observation(observations.size(), num_features[b_idx][m_idx],
-								DataType<float>::type, &observations[obs_idx]);
+								DataType<double>::type, &observations[obs_idx]);
 				test_data.push_back(observation);
 			}
 
 			// run classifier on each observation
-			float num_positive = 0;
+			double num_positive = 0;
 			for (int obs_idx=0; obs_idx < observations.size(); obs_idx++)
 			{
-				float response = classifiers[req.classifier_ID][b_idx][m_idx]
+				double response = classifiers[req.classifier_ID][b_idx][m_idx]
 								 ->predict(test_data.row(obs_idx));
 				if (response == 1)
 					num_positive += 1.0;
@@ -285,7 +289,7 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 
 			// average observation decisions to decide this sub classifier's decision
 			// could instead do majority voting
-			float _decision = 2*(num_positive / observations.size()) - 1;
+			double _decision = 2*(num_positive / observations.size()) - 1;
 			_dec.push_back(_decision);
 
 			// add to overall decision with confidence weight
@@ -298,7 +302,10 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 		res.result = 1;
 	else
 		res.result = -1;
-	res.confidence = abs(decision / sub_classifiers_used);
+	if (sub_classifiers_used > 0)
+		res.confidence = abs(decision / sub_classifiers_used);
+	else
+		res.confidence = 0;
 	res.sub_classifier_decisions = _dec;
 
 	return true;
@@ -325,11 +332,11 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 
 	// for each behavior and modality, retrieve relevant features for each object and train sub-classifiers
 	vector< vector<CvSVM*> > sub_classifiers;
-	vector< vector<float> > sub_confidence;
+	vector< vector<double> > sub_confidence;
 	for (int b_idx=0; b_idx < num_behaviors; b_idx++)
 	{
 		vector<CvSVM*> modality_classifiers;
-		vector<float> modality_confidence;
+		vector<double> modality_confidence;
 		for (int m_idx=0; m_idx < num_modalities; m_idx++)
 		{
 			//if there are no features for this combination, don't create classifier
@@ -347,12 +354,16 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 			for (int o_idx=0; o_idx < num_objects; o_idx++)
 			{
 				// access feature-getting service and use it to populate a row of train_data matrix
-				vector< vector<float> > observations;  //= some feature getting service (o_idx, b_idx, m_idx)
+				vector< vector<double> > observations;
+				vector<double> temp_null_ob;
+				temp_null_ob.push_back(0.0);
+				observations.push_back(temp_null_ob);
+				// TODO: initialize observations through some feature getting service (o_idx, b_idx, m_idx)
 				num_observations.push_back(observations.size());
 				for (int obs_idx=0; obs_idx < observations.size(); obs_idx++)
 				{
 					Mat observation(observations.size(), num_features[b_idx][m_idx],
-									DataType<float>::type, &observations[obs_idx]);
+									DataType<double>::type, &observations[obs_idx]);
 					train_data.push_back(observation);
 					if (req.positive_example[o_idx] == true)
 						responses.push_back(1);
@@ -363,7 +374,7 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 
 			// do leave-one-out cross validation to determine confidence in this classifier
 			CvSVM c;
-			float x_fold_correct = 0;
+			double x_fold_correct = 0;
 			for (int fo_idx=0; fo_idx < num_objects; fo_idx++)
 			{
 				Mat train_fold;
@@ -386,16 +397,16 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 				}
 
 				c.train(train_fold, responses_fold, Mat(), Mat(), params);
-				float observations_correct = 0;
+				double observations_correct = 0;
 				for (int obs_idx=0; obs_idx < num_observations[fo_idx]; obs_idx++)
 				{
-					float response = c.predict(train_data.row(fold_rows_begin+obs_idx));
+					double response = c.predict(train_data.row(fold_rows_begin+obs_idx));
 					if (response == responses.at<float>(fo_idx, 0))
 						observations_correct += 1.0;
 				}
 				x_fold_correct += observations_correct / num_observations[fo_idx];
 			}
-			float confidence = x_fold_correct / static_cast<float>(num_objects);
+			double confidence = x_fold_correct / static_cast<float>(num_objects);
 			modality_confidence.push_back(confidence);
 
 			// train classifier with all gathered data and store in structure

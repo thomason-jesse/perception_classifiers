@@ -14,7 +14,10 @@ class InputFromKeyboard:
         pass
 
     def get(self):
-        return raw_input()
+        return raw_input().lower()
+
+    def get_guess(self):
+        return int(raw_input())
 
 
 class OutputToStdout:
@@ -23,6 +26,9 @@ class OutputToStdout:
 
     def say(self, s):
         print "SYSTEM: "+s
+
+    def point(self, idx):
+        print "SYSTEM POINTS TO SLOT "+str(idx)
 
 
 class InputFromFile:
@@ -49,26 +55,25 @@ class OutputToFile:
         f.close()
 
 
-# rosrun nlu_pipeline ispy.py [object_IDs] [num_rounds] [stopwords_fn] [user_id=None]
+# rosrun nlu_pipeline ispy.py [object_IDs] [num_rounds] [stopwords_fn] [user_id] [simulation=True/False]
 # start a game of ispy with user_id or with the keyboard/screen
 # if user_id provided, agents are pickled so that an aggregator can later extract
 # all examples across users for retraining classifiers and performing splits/merges
 # is user_id not provided, classifiers are retrained and saved after each game with just single-user data
 def main():
 
-    fp = "pickles"
+    fp = "src/perception_classifiers/src/pickles"
     if not os.path.isdir(fp):
         os.system("mkdir "+fp)
-    cp = "communications"
+    cp = "src/perception_classifiers/src/communications"
     if not os.path.isdir(cp):
         os.system("mkdir "+cp)
 
-    object_IDs = [int(oid) for oid in ','.split(sys.argv[1])]
+    object_IDs = [int(oid) for oid in sys.argv[1].split(',')]
     num_rounds = int(sys.argv[2])
-    if len(object_IDs) < num_rounds*2:
-        sys.exit("ERROR: too few objects for number of rounds given")
     stopwords_fn = sys.argv[3]
-    user_id = sys.argv[4] if len(sys.argv) == 5 else None
+    user_id = sys.argv[4] if sys.argv[4] != "None" else None
+    simulation = True if sys.argv[5] == "True" else False
 
     print "calling ROSpy init"
     node_name = 'ispy' if user_id is None else 'ispy' + str(user_id)
@@ -93,6 +98,7 @@ def main():
         u_out = OutputToFile(os.path.join(cp, user_id+".out"))
     A.u_in = u_in
     A.u_out = u_out
+    A.simulation = simulation
 
     print "beginning game"
     for rnd in range(0, num_rounds):
@@ -102,14 +108,14 @@ def main():
         if correct_idx is not None:
             for d in h_cnfs:
                 for pred in d:
-                    A.update_predicate_data(pred, [object_IDs[correct_idx], True])
+                    A.update_predicate_data(pred, [[object_IDs[correct_idx], True]])
 
         # robot turn
         idx_selection = random.randint(0, len(object_IDs)-1)
         r_utterance, r_predicates, num_guesses = A.robot_take_turn(idx_selection)
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):
-            A.update_predicate_data(r_predicates[idx], [object_IDs[correct_idx], labels[idx]])
+            A.update_predicate_data(r_predicates[idx], [[object_IDs[correct_idx], labels[idx]]])
 
     if user_id is None:
         print "retraining classifiers from gathered data"
@@ -123,12 +129,12 @@ def main():
 
         print "pickling ispyAgent"
         f = open(os.path.join(fp, "local.agent"), 'wb')
-        f.dump(A)
+        pickle.dump(A, f)
         f.close()
 
     else:
         f = open(os.path.join(fp, user_id+".agent"), 'wb')
-        f.dump(A)
+        pickle.dump(A, f)
         f.close()
 
 
