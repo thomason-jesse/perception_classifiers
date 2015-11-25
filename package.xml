@@ -20,5 +20,7 @@
   <depend>cv_bridge</depend>
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
+  <depend>message_runtime</depend>
+  <depend>message_generation</depend>
 
 </package>

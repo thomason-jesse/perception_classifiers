@@ -9,6 +9,7 @@ find_package(catkin REQUIRED
         std_msgs
         bwi_kr_execution
         cv_bridge
+        message_generation
 )
 
 
@@ -19,8 +20,15 @@ add_service_files(
     getFreeClassifierID.srv
 		loadClassifiers.srv
 		runClassifier.srv
-		trainClassifier.srv)
+		trainClassifier.srv
+		FetchFeatures.srv
+)
 
+add_message_files(
+   FILES
+   Observations.msg
+)
+ 
 generate_messages(
   DEPENDENCIES
   std_msgs
@@ -41,10 +49,15 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS})
 
 add_executable(classifier_services src/classifier_services.cpp)
+add_executable(fetch_features src/fetch_features_service.cpp)
+
 target_link_libraries(classifier_services
 		${catkin_LIBRARIES}
 		${OpenCV_LIBRARIES})
+target_link_libraries(fetch_features ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
+
 add_dependencies(classifier_services perception_classifiers)
+add_dependencies(fetch_features services_generate_messages_cpp)
 
 #############
 ## Install ##
