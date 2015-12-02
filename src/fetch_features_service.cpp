@@ -54,26 +54,30 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 	int object = req.object;
 	int behavior = req.behavior;
 	int modal = req.modality;
-	std::string filepath = fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
-			+ behaviorList[behavior] + "/" + modalList[modal] + "/" + filename;
+	//std::string filepath = fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
+	//		+ behaviorList[behavior] + "/" + modalList[modal] + "/" + filename;
+	std::string filepath = fp_data+"extracted_feature_color.csv";
 	std::ifstream file(filepath.c_str());
 	
 	if(file.fail()){
 		ROS_ERROR("File doesn't exist due to invalid arguments. Attempted to open %s", filepath.c_str());
 	} else{
 		ROS_DEBUG("Opened features file.");
-		bool firstTime = true;
+		/* We make the hard assumption (for now) that if there is a next line, there are 5 additional lines
+		 */
+		int lineNum = 0;
 		while(!file.eof()){
-			if(!firstTime){											//skips the first row, which is headers
+			if(lineNum == object){
 				perception_classifiers::Observations o;
-				o.features = getNextLineAndSplit(file);
-				if(o.features.size() > 0)							//catches the last vector of the file, which is empty.
-					observations.push_back(o);
-			} else{
-				std::string dummy;
-				std::getline(file,dummy);
-				firstTime = false;
+				for(int i = 0; i < 6; i++){
+					o.features = getNextLineAndSplit(file);
+					if(o.features.size() > 0)							//catches the last vector of the file, which is empty.
+						observations.push_back(o);
+				}
+				break;
 			}
+			ROS_INFO("Next");
+			lineNum++;
 		}
 		res.rows = observations;
 		return true;
