@@ -67,7 +67,7 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 		 */
 		int lineNum = 0;
 		while(!file.eof()){
-			if(lineNum == object){
+			if(lineNum == 6*object){
 				perception_classifiers::Observations o;
 				for(int i = 0; i < 6; i++){
 					o.features = getNextLineAndSplit(file);
@@ -76,7 +76,7 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 				}
 				break;
 			}
-			ROS_INFO("Next");
+			getNextLineAndSplit(file);
 			lineNum++;
 		}
 		res.rows = observations;
