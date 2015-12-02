@@ -32,27 +32,45 @@ class OutputToStdout:
 
 
 class InputFromFile:
-    def __init__(self, fn):
-        self.fn = fn
+    def __init__(self, get_fn, guess_fn):
+        self.get_fn = get_fn
+        self.guess_fn = guess_fn
 
     def get(self):
-        while not os.path.isfile(self.fn):
+        while not os.path.isfile(self.get_fn):
             time.sleep(1)
-        f = open(self.fn, 'r')
+        f = open(self.get_fn, 'r')
         c = f.read()
         f.close()
-        os.system("rm "+self.fn)
+        os.system("rm -f "+self.get_fn)
         return c
+
+    def get_guess(self):
+        while not os.path.isfile(self.guess_fn):
+            time.sleep(1)
+        f = open(self.guess_fn, 'r')
+        idx = f.read()
+        f.close()
+        os.system("rm -f "+self.guess_fn)
+        return int(idx)
 
 
 class OutputToFile:
-    def __init__(self, fn):
-        self.fn = fn
+    def __init__(self, say_fn, point_fn):
+        self.say_fn = say_fn
+        self.point_fn = point_fn
 
     def say(self, s):
-        f = open(self.fn, 'w')
+        f = open(self.say_fn, 'w')
         f.write(s)
         f.close()
+        os.system("chmod 777 "+self.say_fn)
+
+    def point(self, idx):
+        f = open(self.point_fn, 'w')
+        f.write(str(idx))
+        f.close()
+        os.system("chmod 777 "+self.point_fn)
 
 
 # rosrun nlu_pipeline ispy.py [object_IDs] [num_rounds] [stopwords_fn] [user_id] [simulation=True/False]
@@ -62,12 +80,15 @@ class OutputToFile:
 # is user_id not provided, classifiers are retrained and saved after each game with just single-user data
 def main():
 
-    fp = "src/perception_classifiers/src/pickles"
-    if not os.path.isdir(fp):
-        os.system("mkdir "+fp)
-    cp = "src/perception_classifiers/src/communications"
+    path_to_ispy = '/u/jesse/public_html/ispy'
+    pp = os.path.join(path_to_ispy, "pickles")
+    if not os.path.isdir(pp):
+        os.system("mkdir "+pp)
+        os.system("chmod 777 "+pp)
+    cp = os.path.join(path_to_ispy, "communications")
     if not os.path.isdir(cp):
         os.system("mkdir "+cp)
+        os.system("chmod 777 "+cp)
 
     object_IDs = [int(oid) for oid in sys.argv[1].split(',')]
     num_rounds = int(sys.argv[2])
@@ -80,9 +101,9 @@ def main():
     rospy.init_node(node_name)
 
     print "instantiating ispyAgent"
-    if os.path.isfile(os.path.join(fp, "local.agent")):
+    if os.path.isfile(os.path.join(pp, "local.agent")):
         print "... from file"
-        f = open(os.path.join(fp, "local.agent"), 'rb')
+        f = open(os.path.join(pp, "local.agent"), 'rb')
         A = pickle.load(f)
         A.object_IDs = object_IDs
         f.close()
@@ -94,8 +115,8 @@ def main():
         u_in = InputFromKeyboard()
         u_out = OutputToStdout()
     else:
-        u_in = InputFromFile(os.path.join(cp, user_id+".in"))
-        u_out = OutputToFile(os.path.join(cp, user_id+".out"))
+        u_in = InputFromFile(os.path.join(cp, user_id+".get.in"), os.path.join(cp, user_id+".guess.in"))
+        u_out = OutputToFile(os.path.join(cp, user_id+".say.out"), os.path.join(cp, user_id+".point.out"))
     A.u_in = u_in
     A.u_out = u_out
     A.simulation = simulation
@@ -116,6 +137,7 @@ def main():
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):
             A.update_predicate_data(r_predicates[idx], [[object_IDs[correct_idx], labels[idx]]])
+    A.u_out.say("Thanks for playing!")
 
     if user_id is None:
         print "retraining classifiers from gathered data"
@@ -128,12 +150,12 @@ def main():
         A.save_classifiers()
 
         print "pickling ispyAgent"
-        f = open(os.path.join(fp, "local.agent"), 'wb')
+        f = open(os.path.join(pp, "local.agent"), 'wb')
         pickle.dump(A, f)
         f.close()
 
     else:
-        f = open(os.path.join(fp, user_id+".agent"), 'wb')
+        f = open(os.path.join(pp, user_id+".agent"), 'wb')
         pickle.dump(A, f)
         f.close()
 

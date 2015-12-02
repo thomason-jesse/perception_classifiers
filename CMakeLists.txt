@@ -19,7 +19,8 @@ add_service_files(
     getFreeClassifierID.srv
 		loadClassifiers.srv
 		runClassifier.srv
-		trainClassifier.srv)
+		trainClassifier.srv
+    startDialog.srv)
 
 generate_messages(
   DEPENDENCIES
@@ -44,6 +45,7 @@ add_executable(classifier_services src/classifier_services.cpp)
 target_link_libraries(classifier_services
 		${catkin_LIBRARIES}
 		${OpenCV_LIBRARIES})
+
 add_dependencies(classifier_services perception_classifiers)
 
 #############

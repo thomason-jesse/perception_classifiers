@@ -165,15 +165,22 @@ class IspyAgent:
             predicates_chosen.extend(preds_shuffled[:3 if len(preds_shuffled) >= 3 else len(preds_shuffled)])
 
         # describe object to user
-        desc = "I am thinking of an object I would describe as " + \
-            ', '.join([self.predicates_to_words[pred][0] for pred in predicates_chosen[:-1]]) + \
-            ", and "+self.predicates_to_words[predicates_chosen[-1]][0] + "."
+        if len(predicates_chosen) > 2:
+            desc = "I am thinking of an object I would describe as " + \
+                ', '.join([self.predicates_to_words[pred][0] for pred in predicates_chosen[:-1]]) + \
+                ", and "+self.predicates_to_words[predicates_chosen[-1]][0] + "."
+        elif len(predicates_chosen) == 2:
+            desc = "I am thinking of an object I would describe as " + self.predicates_to_words[predicates_chosen[0]][0] + \
+                " and " + self.predicates_to_words[predicates_chosen[1]][0] + "."
+        else:
+            desc = "I am thinking of an object I would describe as " + self.predicates_to_words[predicates_chosen[0]][0] + "."
         self.u_out.say(desc)
 
         # wait for user to find and select correct object
         num_guesses = 0
         while True:
             if self.simulation:
+                self.u_out.point(-1)  # let's PHP interface know that user guess is expected
                 guess_idx = self.object_IDs[self.u_in.get_guess()]
             else:
                 # TODO: call looking for hand over object service
