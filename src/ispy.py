@@ -8,6 +8,7 @@ import random
 import time
 import pickle
 import IspyAgent
+from perception_classifiers.srv import *
 
 class InputFromKeyboard:
     def __init__(self):
@@ -37,32 +38,37 @@ class InputFromFile:
         self.guess_fn = guess_fn
 
     def get(self):
+        print "waiting for "+self.get_fn
         while not os.path.isfile(self.get_fn):
             time.sleep(1)
         f = open(self.get_fn, 'r')
         c = f.read()
         f.close()
         os.system("rm -f "+self.get_fn)
+        print "...returning contents of "+self.get_fn+" : '"+str(c)+"'"
         return c
 
     def get_guess(self):
+        print "waiting for "+self.guess_fn
         while not os.path.isfile(self.guess_fn):
             time.sleep(1)
         f = open(self.guess_fn, 'r')
         idx = f.read()
         f.close()
         os.system("rm -f "+self.guess_fn)
+        print "...returning contents of "+self.guess_fn+" : '"+str(idx)+"'"
         return int(idx)
 
 
 class OutputToFile:
-    def __init__(self, say_fn, point_fn):
+    def __init__(self, say_fn, point_fn, uid):
         self.say_fn = say_fn
         self.point_fn = point_fn
+        self.uid = uid
 
     def say(self, s):
-        f = open(self.say_fn, 'w')
-        f.write(s)
+        f = open(self.say_fn, 'a')
+        f.write(s+"\n")
         f.close()
         os.system("chmod 777 "+self.say_fn)
 
@@ -116,7 +122,7 @@ def main():
         u_out = OutputToStdout()
     else:
         u_in = InputFromFile(os.path.join(cp, user_id+".get.in"), os.path.join(cp, user_id+".guess.in"))
-        u_out = OutputToFile(os.path.join(cp, user_id+".say.out"), os.path.join(cp, user_id+".point.out"))
+        u_out = OutputToFile(os.path.join(cp, user_id+".say.out"), os.path.join(cp, user_id+".point.out"), user_id)
     A.u_in = u_in
     A.u_out = u_out
     A.simulation = simulation
@@ -132,7 +138,9 @@ def main():
                     A.update_predicate_data(pred, [[object_IDs[correct_idx], True]])
 
         # robot turn
-        idx_selection = random.randint(0, len(object_IDs)-1)
+        idx_selection = correct_idx
+        while idx_selection == correct_idx:
+            idx_selection = random.randint(0, len(object_IDs)-1)
         r_utterance, r_predicates, num_guesses = A.robot_take_turn(idx_selection)
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):

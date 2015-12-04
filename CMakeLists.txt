@@ -20,7 +20,9 @@ add_service_files(
 		loadClassifiers.srv
 		runClassifier.srv
 		trainClassifier.srv
-    startDialog.srv)
+    startDialog.srv
+    getSay.srv
+    getPoint.srv)
 
 generate_messages(
   DEPENDENCIES

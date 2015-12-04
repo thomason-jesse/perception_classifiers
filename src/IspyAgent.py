@@ -126,7 +126,12 @@ class IspyAgent:
                     already_guessed.append(guess_idx)
                     if not correct and len(already_guessed) == len(match_scores):
                         self.u_out.say("I tried them all!")
-                        break
+                        already_guessed = []
+                if self.simulation:
+                    self.u_out.point(-1)  # stop pointing
+                else:
+                    # TODO: call pointing service to retract arm
+                    pass
 
             # utterance failed to parse, so get a new one
             else:
@@ -180,7 +185,6 @@ class IspyAgent:
         num_guesses = 0
         while True:
             if self.simulation:
-                self.u_out.point(-1)  # let's PHP interface know that user guess is expected
                 guess_idx = self.object_IDs[self.u_in.get_guess()]
             else:
                 # TODO: call looking for hand over object service
@@ -214,6 +218,11 @@ class IspyAgent:
                 else:
                     got_r = False
                     self.u_out.say("I didn't catch that.")
+        if self.simulation:
+            self.u_out.point(-1)  # stop pointing
+        else:
+            # TODO: call pointing service to retract arm
+            pass
         return l
 
     # get results for each perceptual classifier over all objects so that for any given perceptual classifier,
