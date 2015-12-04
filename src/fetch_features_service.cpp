@@ -40,13 +40,13 @@ std::vector<double> getNextLineAndSplit(std::istream& str){
 	std::string					cell;
 	bool						firstTime = true;
 	
-    while(std::getline(lineStream,cell,',')){
+	while(std::getline(lineStream,cell,',')){
 		if(!firstTime)												//skips the first cell, which is headers
 			result.push_back(boost::lexical_cast<double>(cell));
 		else
 			firstTime = false;
-    }
-    return result;
+	}
+	return result;
 }
 
 bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_classifiers::FetchFeatures::Response &res){
@@ -54,9 +54,9 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 	int object = req.object;
 	int behavior = req.behavior;
 	int modal = req.modality;
-	//std::string filepath = fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
-	//		+ behaviorList[behavior] + "/" + modalList[modal] + "/" + filename;
-	std::string filepath = fp_data+"extracted_feature_color.csv";
+	std::string filepath = fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
+			+ behaviorList[behavior] + "/" + modalList[modal] + "/" + filename;
+	//std::string filepath = fp_data+"extracted_feature_color.csv";
 	std::ifstream file(filepath.c_str());
 	
 	if(file.fail()){
@@ -67,17 +67,10 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 		 */
 		int lineNum = 0;
 		while(!file.eof()){
-			if(lineNum == 6*object){
-				perception_classifiers::Observations o;
-				for(int i = 0; i < 6; i++){
-					o.features = getNextLineAndSplit(file);
-					if(o.features.size() > 0)							//catches the last vector of the file, which is empty.
-						observations.push_back(o);
-				}
-				break;
-			}
-			getNextLineAndSplit(file);
-			lineNum++;
+			perception_classifiers::Observations o;
+			o.features = getNextLineAndSplit(file);
+			if(o.features.size() > 0)							//catches the last vector of the file, which is empty.
+				observations.push_back(o);
 		}
 		res.rows = observations;
 		return true;
@@ -91,7 +84,7 @@ int main(int argc, char **argv){
 	ros::NodeHandle n;
 	ros::ServiceServer srv = n.advertiseService("fetch_feature_service", service_cb);
 
-	behaviorList +=  "lift", "look";
+	behaviorList +=  "look";
 	modalList += "shape", "color";
 
 	ros::Rate r(5);
@@ -99,5 +92,5 @@ int main(int argc, char **argv){
 		ros::spinOnce();
 		r.sleep();
 	}
-    return 0;
+	return 0;
 }
