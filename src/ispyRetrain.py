@@ -8,11 +8,7 @@ import pickle
 import IspyAgent
 
 
-# rosrun nlu_pipeline ispy.py [object_IDs] [num_rounds] [stopwords_fn] [user_id=None]
-# start a game of ispy with user_id or with the keyboard/screen
-# if user_id provided, agents are pickled so that an aggregator can later extract
-# all examples across users for retraining classifiers and performing splits/merges
-# is user_id not provided, classifiers are retrained and saved after each game with just single-user data
+# python ispyRetrain.py [experimental_cond=True/False] [out_fn_prefix]
 def main():
 
     fp = "pickles"
@@ -40,14 +36,17 @@ def main():
     print "retraining classifiers from gathered data"
     A.retrain_predicate_classifiers()
 
-    print "detecting synonymy and polysemy across and within attributes"
-    A.refactor_predicates()
+    if sys.argv[1] == "True":
+        print "detecting synonymy and polysemy across and within attributes"
+        A.refactor_predicates()
+    else:
+        print "skipping synonymy and polysemy detection"
 
     print "saving perceptual classifiers to file"
     A.save_classifiers()
 
     print "pickling ispyAgent"
-    f = open(os.path.join(fp, "local.agent"), 'wb')
+    f = open(os.path.join(fp, sys.argv[2]+".local.agent"), 'wb')
     pickle.dump(A, f)
     f.close()
 

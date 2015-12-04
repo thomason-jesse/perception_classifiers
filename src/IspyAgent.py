@@ -126,7 +126,12 @@ class IspyAgent:
                     already_guessed.append(guess_idx)
                     if not correct and len(already_guessed) == len(match_scores):
                         self.u_out.say("I tried them all!")
-                        break
+                        already_guessed = []
+                if self.simulation:
+                    self.u_out.point(-1)  # stop pointing
+                else:
+                    # TODO: call pointing service to retract arm
+                    pass
 
             # utterance failed to parse, so get a new one
             else:
@@ -165,9 +170,15 @@ class IspyAgent:
             predicates_chosen.extend(preds_shuffled[:3 if len(preds_shuffled) >= 3 else len(preds_shuffled)])
 
         # describe object to user
-        desc = "I am thinking of an object I would describe as " + \
-            ', '.join([self.predicates_to_words[pred][0] for pred in predicates_chosen[:-1]]) + \
-            ", and "+self.predicates_to_words[predicates_chosen[-1]][0] + "."
+        if len(predicates_chosen) > 2:
+            desc = "I am thinking of an object I would describe as " + \
+                ', '.join([self.predicates_to_words[pred][0] for pred in predicates_chosen[:-1]]) + \
+                ", and "+self.predicates_to_words[predicates_chosen[-1]][0] + "."
+        elif len(predicates_chosen) == 2:
+            desc = "I am thinking of an object I would describe as " + self.predicates_to_words[predicates_chosen[0]][0] + \
+                " and " + self.predicates_to_words[predicates_chosen[1]][0] + "."
+        else:
+            desc = "I am thinking of an object I would describe as " + self.predicates_to_words[predicates_chosen[0]][0] + "."
         self.u_out.say(desc)
 
         # wait for user to find and select correct object
@@ -207,6 +218,11 @@ class IspyAgent:
                 else:
                     got_r = False
                     self.u_out.say("I didn't catch that.")
+        if self.simulation:
+            self.u_out.point(-1)  # stop pointing
+        else:
+            # TODO: call pointing service to retract arm
+            pass
         return l
 
     # get results for each perceptual classifier over all objects so that for any given perceptual classifier,

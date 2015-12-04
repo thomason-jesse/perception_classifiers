@@ -22,6 +22,9 @@ add_service_files(
 		runClassifier.srv
 		trainClassifier.srv
 		FetchFeatures.srv
+    startDialog.srv
+    getSay.srv
+    getPoint.srv
 )
 
 add_message_files(
@@ -54,7 +57,9 @@ add_executable(fetch_features src/fetch_features_service.cpp)
 target_link_libraries(classifier_services
 		${catkin_LIBRARIES}
 		${OpenCV_LIBRARIES})
+
 target_link_libraries(fetch_features ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
+
 
 add_dependencies(classifier_services perception_classifiers)
 add_dependencies(fetch_features services_generate_messages_cpp)
