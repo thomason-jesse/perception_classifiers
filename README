@@ -10,3 +10,7 @@ marked with # TODO flags
 
 in classifier_services.cpp there are also // TODO flags for loading features properly in both 
 trainClassifier and runClassifier
+
+Quick test of fetch_features:
+$ rosrun perception_classifiers fetch_features
+$ rosservice call /fetch_feature_service <double tab to complete message header>
