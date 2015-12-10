@@ -1,9 +1,8 @@
-launch with
+run with
 
 $ rosrun perception_classifiers classifier_services
 
-the ispy game is sort of shaky right now since i'm 'loading' in a single observation that's a 
-vector of length 1 with entry 0.0
+for mechanical turk interface, also run rosbridge_websocket and ispyServer
 
 there are fairly clear places in IspyAgent.py where pointing / looking for a guess should be added, 
 marked with # TODO flags
