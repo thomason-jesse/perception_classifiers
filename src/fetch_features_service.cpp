@@ -31,8 +31,8 @@ void sig_handler(int sig){
 	exit(1);
 };
 
-std::vector<double> getNextLineAndSplit(std::istream& str){
-	std::vector<double>			result;
+std::vector<float> getNextLineAndSplit(std::istream& str){
+	std::vector<float>			result;
 	std::string					line;
 	std::getline(str,line);
 
@@ -42,7 +42,7 @@ std::vector<double> getNextLineAndSplit(std::istream& str){
 	
 	while(std::getline(lineStream,cell,',')){
 		if(!firstTime)												//skips the first cell, which is headers
-			result.push_back(boost::lexical_cast<double>(cell));
+			result.push_back(boost::lexical_cast<float>(cell));
 		else
 			firstTime = false;
 	}
@@ -56,7 +56,6 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 	int modal = req.modality;
 	std::string filepath = fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
 			+ behaviorList[behavior] + "/" + modalList[modal] + "/" + filename;
-	//std::string filepath = fp_data+"extracted_feature_color.csv";
 	std::ifstream file(filepath.c_str());
 	
 	if(file.fail()){
@@ -84,8 +83,9 @@ int main(int argc, char **argv){
 	ros::NodeHandle n;
 	ros::ServiceServer srv = n.advertiseService("fetch_feature_service", service_cb);
 
+	// TODO: should be read from config.txt using method shared with classifier_services
 	behaviorList +=  "look";
-	modalList += "shape", "color";
+	modalList += "shape", "color", "fc7";
 
 	ros::Rate r(5);
 	while(ros::ok()){

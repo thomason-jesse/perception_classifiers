@@ -9,23 +9,38 @@ import math
 import random
 
 
-def join_lists(a, b):
+def join_lists(a, b, allow_duplicates=True):
     c = a[:]
     for item in b:
-        if item not in c:
+        if item not in c or allow_duplicates:
             c.append(item)
     return c
 
 
-def join_dicts_with_list_elements(a, b):
+def join_dicts(a, b, allow_duplicates=True, warn_duplicates=False):
     c = {}
     for key in a:
-        c[key] = a[key][:]
+        if type(a[key]) is list:
+            c[key] = a[key][:]
+        else:
+            c[key] = a[key]
     for key in b:
         if key in c:
-            c[key].extend(b[key])
+            if type(c[key]) is list:
+                for item in b[key]:
+                    if item not in c[key] or allow_duplicates:
+                        c[key].append(item)
+                    elif item in c[key] and warn_duplicates:
+                        sys.exit("ERROR: join_dicts warn_duplicates collision '" + item + "' already in '" +
+                                 str(c[key]) + "' and being added from '" + str(b[key]) + "'")
+            elif c[key] != b[key]:
+                sys.exit("ERROR: join_dicts collision '"+str(key) +
+                         "' trying to take values '" + str(c[key]) + "', '" + str(b[key]) + "'")
         else:
-            c[key] = b[key][:]
+            if type(b[key]) is list:
+                c[key] = b[key][:]
+            else:
+                c[key] = b[key]
     return c
 
 
@@ -89,8 +104,9 @@ class IspyAgent:
                 # final guessing begins (talk with Jivko about this option)
 
                 # calculate simple best-fit ranking from interpolation of result and confidence
-                match_scores = []
-                for oidx in self.object_IDs:
+                match_scores = {}
+                for p_oidx in range(0, len(self.object_IDs)):
+                    oidx = self.object_IDs[p_oidx]
                     object_score = 0
                     for d in cnf_clauses:  # take the maximum score of predicates in disjunction
                         cnf_scores = []
@@ -98,16 +114,14 @@ class IspyAgent:
                             cnf_scores.append(classifier_results[oidx][pred][0] *
                                               classifier_results[oidx][pred][1])
                         object_score += max(cnf_scores)
-                    match_scores.append(object_score)
+                    match_scores[p_oidx] = object_score
+                sorted_match_scores = sorted(match_scores.items(), key=operator.itemgetter(1), reverse=True)
 
                 # iteratively take best guess
-                already_guessed = []
                 correct = False
+                guesses = [gidx for (gidx, score) in sorted_match_scores]
                 while not correct:
-                    guess_idx = 0
-                    while (guess_idx in already_guessed or (guess_idx < len(match_scores)-1 and
-                                                            match_scores[guess_idx] < match_scores[guess_idx+1])):
-                        guess_idx += 1
+                    guess_idx = guesses.pop(0)
                     if self.simulation:
                         self.u_out.point(guess_idx)
                     else:
@@ -123,10 +137,9 @@ class IspyAgent:
                         elif confirmation != 'no':
                             got_confirmation = False
                             self.u_out.say("I didn't catch that.")
-                    already_guessed.append(guess_idx)
-                    if not correct and len(already_guessed) == len(match_scores):
+                    if not correct and len(guesses) == 0:
                         self.u_out.say("I tried them all!")
-                        already_guessed = []
+                        guesses = [gidx for (gidx, score) in sorted_match_scores]
                 if self.simulation:
                     self.u_out.point(-1)  # stop pointing
                 else:
@@ -145,7 +158,7 @@ class IspyAgent:
         ob_idx = self.object_IDs[ob_pos]
 
         # get results for each attribute for every object
-        r = self.get_classifier_results(self.predicate_to_classifier_map, self.object_IDs)
+        r = self.get_classifier_results(self.predicates, self.object_IDs)
 
         # rank the classifiers favoring high confidence on ob_idx with low confidence or negative
         # decisions on other objects
@@ -206,7 +219,7 @@ class IspyAgent:
             pass
         for pred in preds:
             self.u_out.say("Would you use the word '" + self.predicates_to_words[pred][0] +
-                           "' to describe this object?")
+                           "' when describing this object?")
             got_r = False
             while not got_r:
                 got_r = True
@@ -229,12 +242,14 @@ class IspyAgent:
     # objects have locations in concept-dimensional space for that classifier
     # detect classifiers that should be split into two because this space has two distinct clusters of objects,
     # as well as classifiers whose object spaces look so similar we should collapse the classifiers
-    def refactor_predicates(self):
+    def refactor_predicates(self, num_objects):
+
+        obj_range = range(0, num_objects)
 
         change_made = True
         while change_made:
             change_made = False
-            r_with_confidence = self.get_classifier_results(self.predicates, self.object_IDs)
+            r_with_confidence = self.get_classifier_results(self.predicates, obj_range)
             r = {}
             for oidx in r_with_confidence:
                 r[oidx] = {}
@@ -246,48 +261,21 @@ class IspyAgent:
             highest_cos_sim = [None, -1]
             norms = {}
             for p in self.predicates:
-                norms[p] = math.sqrt(sum([math.pow(r[oi][p], 2) for oi in self.object_IDs]))
+                norms[p] = math.sqrt(sum([math.pow(r[oi][p], 2) for oi in obj_range]))
             for p in self.predicates:
                 if norms[p] == 0:
                     continue
                 for q in self.predicates:
-                    if norms[q] == 0:
+                    if norms[q] == 0 or p == q:
                         continue
-                    cos_sim = sum([r[oi][p]*r[oi][q] for oi in self.object_IDs]) / (norms[p]*norms[q])
+                    cos_sim = sum([r[oi][p]*r[oi][q] for oi in obj_range]) / (norms[p]*norms[q])
                     if cos_sim > self.alpha and cos_sim > highest_cos_sim[1]:
                         highest_cos_sim = [[p, q], cos_sim]
             if highest_cos_sim[0] is not None:
 
                 # collapse the two closest predicates into one new predicate
                 p, q = highest_cos_sim[0]
-                pq = p+"+"+q
-                print "collapsing "+p+" and "+q+" to form "+pq  # DEBUG
-                del self.predicates[self.predicates.index(p)]
-                del self.predicates[self.predicates.index(q)]
-                self.predicates_to_words[pq] = []
-                self.predicates.append(pq)
-                for w in self.words:
-                    if p in self.words_to_predicates[w]:
-                        del self.words_to_predicates[w][self.words_to_predicates[w].index(p)]
-                        self.words_to_predicates[w].append(pq)
-                        self.predicates_to_words[pq].append(w)
-                    if q in self.words_to_predicates[w]:
-                        del self.words_to_predicates[w][self.words_to_predicates[w].index(q)]
-                        self.words_to_predicates[w].append(pq)
-                        self.predicates_to_words[pq].append(w)
-                self.predicate_examples[pq] = self.predicate_examples[p][:]
-                self.predicate_examples[pq].extend(self.predicate_examples[q])
-                del self.predicate_examples[p]
-                del self.predicate_examples[q]
-                del self.predicate_to_classifier_map[p]
-                del self.predicate_to_classifier_map[q]
-                cid = self.get_free_classifier_id_client()
-                self.predicate_to_classifier_map[pq] = cid
-                del self.classifier_to_predicate_map[p]
-                del self.classifier_to_predicate_map[q]
-                self.classifier_to_predicate_map[cid] = pq
-                self.classifier_data_modified[pq] = True
-
+                self.collapse_predicates(p, q)
                 change_made = True
                 self.retrain_predicate_classifiers()  # should fire only for pq
                 continue
@@ -296,8 +284,48 @@ class IspyAgent:
             # TODO: get float decisions from all contexts; comparisons must be at context level within
             # TODO: a single predicate to determine whether a split is warranted
 
+    # collapse two predicates into one
+    def collapse_predicates(self, p, q):
+
+        pq = p+"+"+q
+        print "collapsing '"+p+"' and '"+q+"' to form '"+pq+"'"  # DEBUG
+        del self.predicates[self.predicates.index(p)]
+        del self.predicates[self.predicates.index(q)]
+        self.predicates_to_words[pq] = []
+        self.predicates.append(pq)
+        for w in self.words:
+            if p in self.words_to_predicates[w]:
+                del self.words_to_predicates[w][self.words_to_predicates[w].index(p)]
+                self.words_to_predicates[w].append(pq)
+                self.predicates_to_words[pq].append(w)
+            if q in self.words_to_predicates[w]:
+                del self.words_to_predicates[w][self.words_to_predicates[w].index(q)]
+                self.words_to_predicates[w].append(pq)
+                self.predicates_to_words[pq].append(w)
+        self.predicate_examples[pq] = self.predicate_examples[p][:]
+        self.predicate_examples[pq].extend(self.predicate_examples[q])
+        del self.predicate_examples[p]
+        del self.predicate_examples[q]
+        p_cid = self.predicate_to_classifier_map[p]
+        del self.predicate_to_classifier_map[p]
+        q_cid = self.predicate_to_classifier_map[q]
+        del self.predicate_to_classifier_map[q]
+        cid = self.get_free_classifier_id_client()
+        self.predicate_to_classifier_map[pq] = cid
+        del self.classifier_to_predicate_map[p_cid]
+        del self.classifier_to_predicate_map[q_cid]
+        if p_cid in self.classifier_data_modified:
+            del self.classifier_data_modified[p_cid]
+        if q_cid in self.classifier_data_modified:
+            del self.classifier_data_modified[q_cid]
+        self.classifier_to_predicate_map[cid] = pq
+        self.classifier_data_modified[cid] = True
+
     # given vectors of attribute idxs and object idxs, return a map of results
     def get_classifier_results(self, preds, oidxs):
+        print self.words_to_predicates  # DEBUG
+        print preds  # DEBUG
+        print self.predicate_to_classifier_map  # DEBUG
         m = {}
         for oidx in oidxs:
             om = {}
@@ -306,6 +334,7 @@ class IspyAgent:
                 result, confidence, _ = self.run_classifier_client(cidx, oidx)
                 om[pred] = [result, confidence]
             m[oidx] = om
+        print m
         return m
 
     # given a string input, strip stopwords and use word to predicate map to build cnf clauses
@@ -327,7 +356,7 @@ class IspyAgent:
                 self.predicate_to_classifier_map[w] = cid
                 self.classifier_to_predicate_map[cid] = w
                 self.predicate_examples[w] = []
-            cnfs.append(self.words_to_predicates)
+            cnfs.append(self.words_to_predicates[w])
 
         return cnfs
 
@@ -349,24 +378,39 @@ class IspyAgent:
 
     # fold in data structures from another dialog agent
     def unify_with_agent(self, other):
-        self.predicates = join_lists(self.predicates, other.predicates)
-        self.words = join_lists(self.words, other.words)
-        self.words_to_predicates = join_dicts_with_list_elements(
-            self.words_to_predicates, other.words_to_predicates)
-        self.predicates_to_words = join_dicts_with_list_elements(
-            self.predicates_to_words, other.predicates_to_words)
-        self.predicate_examples = join_dicts_with_list_elements(
-            self.predicate_examples, other.predicate_examples)
-        self.predicate_to_classifier_map = join_dicts_with_list_elements(
-            self.predicate_to_classifier_map, other.predicate_to_classifier_map)
-        self.classifier_to_predicate_map = join_dicts_with_list_elements(
-            self.classifier_to_predicate_map, other.classifier_to_predicate_map)
-        for cidx in self.classifier_data_modified:
+
+        # join lists and dicts of word, predicate, and predite examples
+        self.predicates = join_lists(self.predicates, other.predicates, allow_duplicates=False)
+        self.words = join_lists(self.words, other.words, allow_duplicates=False)
+        self.words_to_predicates = join_dicts(
+            self.words_to_predicates, other.words_to_predicates, allow_duplicates=False)
+        self.predicates_to_words = join_dicts(
+            self.predicates_to_words, other.predicates_to_words, allow_duplicates=False)
+        self.predicate_examples = join_dicts(
+            self.predicate_examples, other.predicate_examples, allow_duplicates=True)
+
+        # join predicate<->classifier maps into one-to-many maps
+        sptcm_list = {p:[self.predicate_to_classifier_map[p]] for p in self.predicate_to_classifier_map}
+        optcm_list = {p:[other.predicate_to_classifier_map[p]] for p in other.predicate_to_classifier_map}
+        self.predicate_to_classifier_map = join_dicts(sptcm_list, optcm_list, warn_duplicates=True)
+
+        # reduce one-to-many maps back to one-to-one maps by dropping colliding classifier IDs
+        # this happens when two users introduce the same new predicate in parallel, which is assigned
+        # two unique IDs
+        self.classifier_to_predicate_map = {}
+        for p in self.predicate_to_classifier_map:
+            c = max(self.predicate_to_classifier_map[p])
+            self.predicate_to_classifier_map[p] = c
+            self.classifier_to_predicate_map[c] = p
+
+        # build a new map of what needs to be retrained
+        cdm = {}
+        for cidx in self.classifier_to_predicate_map:
             if cidx in other.classifier_data_modified and other.classifier_data_modified[cidx]:
-                self.classifier_data_modified[cidx] = True
-        for cidx in other.classifier_data_modified:
-            if other.classifier_data_modified[cidx]:
-                self.classifier_data_modified[cidx] = True
+                cdm[cidx] = True
+            if cidx in self.classifier_data_modified and self.classifier_data_modified[cidx]:
+                cdm[cidx] = True
+        self.classifier_data_modified = cdm
 
     # load classifiers
     def load_classifiers(self):
@@ -435,6 +479,8 @@ class IspyAgent:
         req.object_IDs = object_IDs
         req.positive_example = positive_example
         rospy.wait_for_service('train_classifier')
+        print "sending training req: "  # DEBUG
+        print req  # DEBUG
         try:
             train_classifier = rospy.ServiceProxy('train_classifier', trainClassifier)
             res = train_classifier(req)

@@ -2,5 +2,5 @@ int32 classifier_ID
 int32 object_ID
 ---
 int32 result
-float64 confidence
-float64[] sub_classifier_decisions
+float32 confidence
+float32[] sub_classifier_decisions
