@@ -7,9 +7,6 @@ for mechanical turk interface, also run rosbridge_websocket and ispyServer
 there are fairly clear places in IspyAgent.py where pointing / looking for a guess should be added, 
 marked with # TODO flags
 
-in classifier_services.cpp there are also // TODO flags for loading features properly in both 
-trainClassifier and runClassifier
-
 Quick test of fetch_features:
 $ rosrun perception_classifiers fetch_features
 $ rosservice call /fetch_feature_service <double tab to complete message header>
