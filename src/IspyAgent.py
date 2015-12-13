@@ -7,6 +7,8 @@ from std_srvs.srv import *
 import operator
 import math
 import random
+import cv2
+import numpy
 
 
 def join_lists(a, b, allow_duplicates=True):
@@ -44,6 +46,26 @@ def join_dicts(a, b, allow_duplicates=True, warn_duplicates=False):
     return c
 
 
+class SVM:
+
+    def __init__(self, C=1, gamma=0.5):
+        self.params = dict(kernel_type=cv2.SVM_LINEAR,
+                      svm_type=cv2.SVM_C_SVC,
+                      c=C, gamma=gamma)
+        self.model = cv2.SVM()
+
+    def train(self, samples, responses):
+        self.model.train(samples, responses, params=self.params)
+
+    def predict(self, samples):
+        r = []
+        for s in samples:
+            d = self.model.predict(s, returnDFVal=False)
+            dist = self.model.predict(s, returnDFVal=True)
+            r.append([d, dist])
+        return r
+
+
 class IspyAgent:
 
     def __init__(self, u_in, u_out, object_IDs, stopwords_fn, alpha=0.9, simulation=False):
@@ -59,6 +81,7 @@ class IspyAgent:
         self.words = []
 
         # maps because predicates can be dropped during merge and split operations
+        self.predicate_active = {}
         self.words_to_predicates = {}
         self.predicates_to_words = {}
         self.predicate_examples = {}
@@ -158,12 +181,13 @@ class IspyAgent:
         ob_idx = self.object_IDs[ob_pos]
 
         # get results for each attribute for every object
-        r = self.get_classifier_results(self.predicates, self.object_IDs)
+        active_predicates = [p for p in self.predicates if self.predicate_active[p]]
+        r = self.get_classifier_results(active_predicates, self.object_IDs)
 
         # rank the classifiers favoring high confidence on ob_idx with low confidence or negative
         # decisions on other objects
         pred_scores = {}
-        for pred in self.predicate_to_classifier_map:
+        for pred in active_predicates:
             score = r[ob_idx][pred][0]*r[ob_idx][pred][1]
             for oidx in self.object_IDs:
                 if ob_idx == oidx:
@@ -178,7 +202,7 @@ class IspyAgent:
                 # choose just one predicate word arbitrarily if multiple are associated with classifier
                 predicates_chosen.append(pred)
         if len(predicates_chosen) == 0:  # we have no classifier information yet, so choose 3 arbitrarily
-            preds_shuffled = self.predicates[:]
+            preds_shuffled = active_predicates[:]
             random.shuffle(preds_shuffled)
             predicates_chosen.extend(preds_shuffled[:3 if len(preds_shuffled) >= 3 else len(preds_shuffled)])
 
@@ -249,7 +273,8 @@ class IspyAgent:
         change_made = True
         while change_made:
             change_made = False
-            r_with_confidence = self.get_classifier_results(self.predicates, obj_range)
+            active_predicates = [p for p in self.predicates if self.predicate_active[p]]
+            r_with_confidence = self.get_classifier_results(active_predicates, obj_range)
             r = {}
             for oidx in r_with_confidence:
                 r[oidx] = {}
@@ -260,12 +285,12 @@ class IspyAgent:
             # observes the cosine distance between predicate vectors in |O|-dimensional space
             highest_cos_sim = [None, -1]
             norms = {}
-            for p in self.predicates:
+            for p in active_predicates:
                 norms[p] = math.sqrt(sum([math.pow(r[oi][p], 2) for oi in obj_range]))
-            for p in self.predicates:
+            for p in active_predicates:
                 if norms[p] == 0:
                     continue
-                for q in self.predicates:
+                for q in active_predicates:
                     if norms[q] == 0 or p == q:
                         continue
                     cos_sim = sum([r[oi][p]*r[oi][q] for oi in obj_range]) / (norms[p]*norms[q])
@@ -281,51 +306,169 @@ class IspyAgent:
                 continue
 
             # detect polysemy
-            # TODO: get float decisions from all contexts; comparisons must be at context level within
-            # TODO: a single predicate to determine whether a split is warranted
+            for p in active_predicates:
+                if self.attempt_predicate_split(p, num_objects):
+                    changes_made = True
+                    self.retrain_predicate_classifiers()
+                    break
 
     # collapse two predicates into one
     def collapse_predicates(self, p, q):
 
         pq = p+"+"+q
         print "collapsing '"+p+"' and '"+q+"' to form '"+pq+"'"  # DEBUG
-        del self.predicates[self.predicates.index(p)]
-        del self.predicates[self.predicates.index(q)]
-        self.predicates_to_words[pq] = []
+        print "...examples for '"+p+"': "+str(self.predicate_examples[p])  # DEBUG
+        print "...examples for '"+q+"': "+str(self.predicate_examples[q])  # DEBUG
         self.predicates.append(pq)
+        self.predicate_active[p] = False
+        self.predicate_active[q] = False
+        self.predicate_active[pq] = True
+        self.predicates_to_words[pq] = []
         for w in self.words:
             if p in self.words_to_predicates[w]:
-                del self.words_to_predicates[w][self.words_to_predicates[w].index(p)]
                 self.words_to_predicates[w].append(pq)
                 self.predicates_to_words[pq].append(w)
             if q in self.words_to_predicates[w]:
-                del self.words_to_predicates[w][self.words_to_predicates[w].index(q)]
                 self.words_to_predicates[w].append(pq)
                 self.predicates_to_words[pq].append(w)
         self.predicate_examples[pq] = self.predicate_examples[p][:]
         self.predicate_examples[pq].extend(self.predicate_examples[q])
-        del self.predicate_examples[p]
-        del self.predicate_examples[q]
-        p_cid = self.predicate_to_classifier_map[p]
-        del self.predicate_to_classifier_map[p]
-        q_cid = self.predicate_to_classifier_map[q]
-        del self.predicate_to_classifier_map[q]
+        print "...examples for '"+pq+"': "+str(self.predicate_examples[pq])  # DEBUG
         cid = self.get_free_classifier_id_client()
         self.predicate_to_classifier_map[pq] = cid
-        del self.classifier_to_predicate_map[p_cid]
-        del self.classifier_to_predicate_map[q_cid]
-        if p_cid in self.classifier_data_modified:
-            del self.classifier_data_modified[p_cid]
-        if q_cid in self.classifier_data_modified:
-            del self.classifier_data_modified[q_cid]
         self.classifier_to_predicate_map[cid] = pq
         self.classifier_data_modified[cid] = True
 
-    # given vectors of attribute idxs and object idxs, return a map of results
+    # attempt to split a predicate
+    def attempt_predicate_split(self, p, num_objects):
+
+        # naive algorithm: assign random class to objects and iteratively adjust classes based on SVM margins
+
+        object_v = numpy.asarray(
+            self.get_predicate_classifier_decision_conf_matrices(p, range(0, num_objects)),
+            dtype=numpy.float32)
+        object_l = numpy.asarray(
+            [1 if random.random() > 0.5 else -1 for _ in range(0, num_objects)],
+            dtype=numpy.float32)
+
+        # iterate to converge on object_l labels that divide the space
+        converged = False
+        i = math.pow(num_objects, 2)
+        while not converged and i > 0:
+            i -= 1
+            m = SVM()
+            m.train(object_v, object_l)
+
+            # find max distance mislabeled object
+            mdmo = None
+            md = None
+            r = m.predict(object_v)
+            for oidx in range(0, num_objects):
+                d, dist = r[oidx]
+                if d != object_l[oidx]:
+                    if md is None or md < dist:
+                        md = dist
+                        mdmo = oidx
+
+            # converge if least confidence mislabel is unfound or below a margin
+            if md is None or md < 1-self.alpha:
+                converged = True
+
+            # flip the label of the least confidence mislabeled object and iterate again
+            if object_l[mdmo] == 1:
+                object_l[mdmo] = -1.0
+            else:
+                object_l[mdmo] = 1.0
+
+        # if convergence happened, split predicate according to found division
+        if converged:
+            self.split_predicate(p, object_l)
+            return True
+
+        return False
+
+    # split a predicate into two such
+    def split_predicate(self, p, l):
+
+        # if predicate is previously collapsed, attempt to divide along established lines
+        if not self.split_collapsed_predicate(p, l):
+
+            # then split into two senses
+            qs = [p+"_1", p+"_2"]
+            print "splitting '"+p+"' to form '"+qs[0]+"' and '"+qs[1]+"'"  # DEBUG
+            print "...examples for '"+p+"': "+str(self.predicate_examples[p])  # DEBUG
+            self.predicates.extend(qs)
+            self.predicate_active[p] = False
+            for idx in range(0, len(qs)):
+                q = qs[idx]
+                self.predicate_active[q] = True
+                self.predicates_to_words[q] = []
+                for w in self.words:
+                    if p in self.words_to_predicates[w]:
+                        self.words_to_predicates[w].append(q)
+                        self.predicates_to_words[q].append(w)
+                self.predicate_examples[q] = [[oidx, False if (idx == 0 and l[oidx] == -1)
+                                              or (idx == 1 and l[oidx] == 1) else True]
+                                              for oidx in range(0, len(l))
+                                              if oidx in [pe[0] for pe in self.predicate_examples[p]]]
+                print "...examples for '"+q+"': "+str(self.predicate_examples[q])  # DEBUG
+                cid = self.get_free_classifier_id_client()
+                self.predicate_to_classifier_map[q] = cid
+                self.classifier_to_predicate_map[cid] = q
+                self.classifier_data_modified[cid] = True
+
+    # attempt to split a previously collapsed predicate
+    def split_collapsed_predicate(self, p, l):
+
+        if '+' not in p:
+            return False
+        ps = p.split('+')
+
+        # greedily choose pair of preds whose split gives closest match in old label space
+        cmpr = None
+        cmc = None
+        for i in range(0, len(ps)):
+            for j in range(i+1, len(ps)):
+                for d in range(0, 2):
+                    m = 0.0
+                    for oidx in range(0, len(l)):
+                        if ((d == 0 and l[oidx] == -1 and [oidx, False] in self.predicate_examples[ps[i]])
+                           or (d == 1 and l[oidx] == 1 and [oidx, True] in self.predicate_examples[ps[i]])):
+                            m += 1
+                        if ((d == 0 and l[oidx] == 1 and [oidx, True] in self.predicate_examples[ps[j]])
+                           or d == 1 and l[oidx] == -1 and [oidx, False] in self.predicate_examples[ps[j]]):
+                            m += 1
+                    if cmc is None or m > cmc:
+                        cmc = m
+                        cmpr = [i, j] if d == 0 else [j, i]
+
+        # if match is close enough, split the collapsed predicate pair found
+        if cmc / (len(self.predicate_examples[cmpr[0]]) + len(self.predicate_examples[cmpr[1]])) > self.alpha:
+
+            print "splitting '"+p+"' to form '"+ps[cmpr[0]]+"' and '"+ps[cmpr[1]]+"'"  # DEBUG
+            print "...examples for '"+p+"': "+str(self.predicate_examples[p])  # DEBUG
+            self.predicate_active[p] = False
+            for idx in range(0, len(cmpr)):
+                q = ps[cmpr[idx]]
+                self.predicate_active[q] = True
+                for oidx, label in l:
+                    lb = None
+                    if idx == 0:
+                        lb = True if label == 1 else False
+                    elif idx == 1:
+                        lb = False if label == 1 else True
+                    if [oidx, lb] not in self.predicate_examples[q]:
+                        self.predicate_examples[q].append([oidx, lb])
+                print "...examples for '"+q+"': "+str(self.predicate_examples[q])  # DEBUG
+                cid = self.predicate_to_classifier_map[q]
+                self.classifier_data_modified[cid] = True
+
+            return True
+
+        return False
+
+    # given vectors of predicates and object idxs, return a map of results
     def get_classifier_results(self, preds, oidxs):
-        print self.words_to_predicates  # DEBUG
-        print preds  # DEBUG
-        print self.predicate_to_classifier_map  # DEBUG
         m = {}
         for oidx in oidxs:
             om = {}
@@ -334,8 +477,16 @@ class IspyAgent:
                 result, confidence, _ = self.run_classifier_client(cidx, oidx)
                 om[pred] = [result, confidence]
             m[oidx] = om
-        print m
         return m
+
+    # given predicate and object idxs, return a vector of behavior/modality decision*conf vectors
+    def get_predicate_classifier_decision_conf_matrices(self, pred, oidxs):
+        ov = []
+        for oidx in oidxs:
+            cidx = self.predicate_to_classifier_map[pred]
+            _, _, sub_decisions = self.run_classifier_client(cidx, oidx)
+            ov.append(sub_decisions)
+        return ov
 
     # given a string input, strip stopwords and use word to predicate map to build cnf clauses
     # such that each clause represents the predicates associated with each word
@@ -350,13 +501,14 @@ class IspyAgent:
                 self.words.append(w)
             if w not in self.words_to_predicates:
                 self.predicates.append(w)
+                self.predicate_active[w] = True
                 self.words_to_predicates[w] = [w]
                 self.predicates_to_words[w] = [w]
                 cid = self.get_free_classifier_id_client()
                 self.predicate_to_classifier_map[w] = cid
                 self.classifier_to_predicate_map[cid] = w
                 self.predicate_examples[w] = []
-            cnfs.append(self.words_to_predicates[w])
+            cnfs.append([p for p in self.words_to_predicates[w] if self.predicate_active[p]])
 
         return cnfs
 
@@ -402,6 +554,8 @@ class IspyAgent:
             c = max(self.predicate_to_classifier_map[p])
             self.predicate_to_classifier_map[p] = c
             self.classifier_to_predicate_map[c] = p
+            if p not in self.predicate_active:
+                self.predicate_active[p] = other.predicate_active[p]
 
         # build a new map of what needs to be retrained
         cdm = {}
@@ -479,11 +633,10 @@ class IspyAgent:
         req.object_IDs = object_IDs
         req.positive_example = positive_example
         rospy.wait_for_service('train_classifier')
-        print "sending training req: "  # DEBUG
-        print req  # DEBUG
         try:
             train_classifier = rospy.ServiceProxy('train_classifier', trainClassifier)
             res = train_classifier(req)
             return res.success
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
+
