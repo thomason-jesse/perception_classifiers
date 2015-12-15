@@ -19,8 +19,16 @@
 	// global vars
 	var experimental_condition = true;
 	var user_id = null;  // supplied from MTurk
-	var object_ids = [4,3,7,11,0];  // hard-coded for different runs
-	object_ids = shuffle(object_ids);
+	var straight_object_ids = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29];
+	var shuffled_object_ids = shuffle(straight_object_ids);
+	var all_object_ids = [];
+	for (var i=0; i<6; i++)
+	{
+		var round_object_ids = shuffled_object_ids.slice(i*5, (i*5)+5);
+		all_object_ids.push(round_object_ids);
+	}
+	var object_ids;
+	var num_games_played = 0;
 
 	// global instructions
 	var user_turn_instructions = "Pick an item and describe it in one phrase to the robot.";
@@ -63,6 +71,18 @@
 
 	function runNewDialogAgent()
 	{
+		// initialize new dialog agent node by calling startDialog service
+		var request = new ROSLIB.ServiceRequest({
+			'id': user_id,
+			'object_ids': object_ids.join(','),
+			'exp_cond': experimental_condition
+		});
+		start_dialog_service.callService(request, function(result) {});
+	}
+
+	// submit ID
+	function submitID()
+	{
 		var start_result = document.getElementById('start_result');
 		var id_field = document.getElementById('mturk_id');
 
@@ -70,13 +90,6 @@
 			start_result.innerHTML = "Please enter your ID!";
 		else
 		{
-			// initialize new dialog agent node by calling startDialog service
-			var request = new ROSLIB.ServiceRequest({
-				'id': id_field.value,
-				'object_ids': object_ids.join(','),
-				'exp_cond': experimental_condition
-			});
-			start_dialog_service.callService(request, function(result) {});
 			user_id = id_field.value;
 			document.getElementById('start_game').style.display = 'block';
 			document.getElementById('enter_id').style.display = 'none';
@@ -89,17 +102,40 @@
 		// hide ask for ID
 		document.getElementById('start_game').style.display = 'none';
 
+		// hide continue and history, if they're actually what's up
+		document.getElementById('continue_game_block').style.display = 'none';
+		document.getElementById('dialog_history_block').style.display = 'none';
+
 		// update task description
 		document.getElementById('task_description_text').innerHTML = user_turn_instructions;
 		document.getElementById('introduce_task').style.display = 'block';
 
+		// get new objects
+		object_ids = all_object_ids[num_games_played];
+		object_ids = shuffle(object_ids);
+
+		// clear old dialog on screen, if any
+		var table = document.getElementsByName('history')[0];
+		while (table.rows.length > 2)
+		{
+			table.deleteRow(1);
+		}
+
+		// launch new agent
+		runNewDialogAgent()
+
 		// display objects
-		document.getElementById('object_display').style.display = 'block';
+		var object_table_row = document.getElementById('object_table_row');
+		while (object_table_row.cells.length > 0)
+		{
+			object_table_row.deleteCell(0);
+		}
 		for (var idx=0; idx<object_ids.length; idx++)
 		{
-			var c = document.getElementById('object_table_row').insertCell(-1);
+			var c = object_table_row.insertCell(-1);
 			c.innerHTML = "<img src=\"images/"+object_ids[idx]+".JPG\">";
 		}
+		document.getElementById('object_display').style.display = 'block';
 
 		// show option to begin
 		document.getElementById('dialog_start_block').style.display = 'block';
@@ -111,6 +147,7 @@
 		// hide start div and open dialog div
 		document.getElementById('dialog_start_block').style.display = 'none';
 		document.getElementById('dialog_history_block').style.display = 'block';
+		document.getElementById('user_input_box_div').style.display = 'block';
 		
 		// add robot initial [thinking...] cell
 		var table = document.getElementsByName('history')[0];
@@ -152,6 +189,9 @@
 		temp_div.innerHTML = user_input_raw;
 		var user_input = temp_div.textContent || temp_div.innerText || "";
 		if (user_input.length == 0) return;
+		user_input = user_input.toLowerCase();
+		user_input = user_input.replace("+", "");
+		user_input = user_input.replace("_", "");
 		
 		// disable user input until system has responded
 		document.getElementById('user_input_box_div').style.display = 'none';
@@ -159,7 +199,6 @@
 		
 		// add user text
 		var table = document.getElementsByName('history')[0];
-		table.deleteRow(0);
 		var user_row = table.insertRow(table.rows.length-1);
 		var user_response_cell = user_row.insertCell(0);
 		user_response_cell.innerHTML = user_input;
@@ -180,6 +219,24 @@
 		);
 	}
 
+	// end the current game and load new objects, if any, or move to survey
+	function endGame()
+	{
+		// load new objects
+		num_games_played ++;
+		if (num_games_played < all_object_ids.length)
+		{
+			document.getElementById('continue_game_block').style.display = 'block';
+			document.getElementById('user_input_box_div').style.display = 'none';
+		}
+		else
+		{
+			// end session and give user code for MTurk
+			document.getElementById('end_session_block').style.display = 'block';
+			document.getElementsByName('history')[0].deleteRow(-1); // the YOU input row
+		}
+	}
+
 	function handleSay(s)
 	{
 		if (s.indexOf("ERROR") > -1)
@@ -195,6 +252,14 @@
 
 		var user_should_point = false;
 		var objects_row = document.getElementById('object_table_row');
+		if (s.indexOf("I am thinking of an object") > -1)
+		{
+			var table = document.getElementsByName('history')[0];
+			while (table.rows.length > 3)
+			{
+				table.deleteRow(1);
+			}
+		}
 		if (s.indexOf("I am thinking of an object") > -1 ||
 			s.indexOf("That's not the object") > -1)
 		{
@@ -209,9 +274,7 @@
 		// if the dialog has concluded
 		if (s == "Thanks for playing!")
 		{
-			// end session and give user code for MTurk
-			document.getElementById('end_session_block').style.display = 'block';
-			document.getElementsByName('history')[0].deleteRow(1); // the YOU input row
+			endGame();
 		}
 		else if (user_should_point == false)
 		{
@@ -279,7 +342,6 @@
 	function addRobotThinkingCell()
 	{
 		var table = document.getElementsByName('history')[0];
-		table.deleteRow(0);
 		var system_row = table.insertRow(table.rows.length-1);
 		var system_response_cell = system_row.insertCell(0);
 		system_response_cell.innerHTML = "<i>thinking...</i>";
@@ -326,69 +388,26 @@
 	function endSession()
 	{
 		document.getElementById('wrap').style.display = 'none';
-		document.getElementById('inst').innerHTML = 'Please fill out this brief survey about your experience with the system.';
-		document.getElementById('survey_block').style.display = 'block';
-	}
-	
-	// invoke php to record likert and produce code for MTurk
-	function submitSurvey(form)
-	{
-		var comment_raw = document.getElementById('user_survey_comment_box').value;
-		var temp_div = document.createElement("div");
-		temp_div.innerHTML = comment_raw;
-		var comment_text = temp_div.textContent || temp_div.innerText || "";
-	
-		var easy_selection = -1;
-		for (var i = 0; i < form.easy.length; i++) {
-			if (form.easy[i].checked)
-			{
-				easy_selection = i;
-				break;
-			}
-		}
-		var understand_selection = -1;
-		for (var i = 0; i < form.understand.length; i++) {
-			if (form.understand[i].checked)
-			{
-				understand_selection = i;
-				break;
-			}
-		}
-		var frustrate_selection = -1;
-		for (var i = 0; i < form.frustrate.length; i++) {
-			if (form.frustrate[i].checked)
-			{
-				frustrate_selection = i;
-				break;
-			}
-		}
-		if (easy_selection == -1 || understand_selection == -1 || frustrate_selection == -1)
-		{
-			document.getElementById('err').innerHTML = 'Please answer all three survey questions.';
-			return false;
-		}
-		
-		// hide instructions
-		document.getElementById('inst').style.display = 'none';
+		document.getElementById('get_code_block').style.display = 'block';
 		
 		//submit php request
 		getRequest(
-		  'submit_survey.php', // URL for the PHP file
-		  'user_id='.concat(user_id).concat('&easy=').concat(easy_selection).concat('&understand=').concat(understand_selection).concat('&frustrate=').concat(frustrate_selection).concat('&comment=').concat(comment_text), // parameters for PHP
-		   submitSurveyOutput,  // handle successful request
-		   submitSurveyError    // handle error
+		  'get_mturk_code.php', // URL for the PHP file
+		  'user_id='.concat(user_id), // parameters for PHP
+		   submitCodeOutput,  // handle successful request
+		   submitCodeError    // handle error
 		);
 	}
 	
 	// handles the response, adds the html
-	function submitSurveyOutput(response_text)
+	function submitCodeOutput(response_text)
 	{
-		document.getElementById('survey_block').innerHTML = response_text;
+		document.getElementById('get_code_block').innerHTML = response_text;
 	}
 	
 	// handles drawing an error message
-	function submitSurveyError () {
-		document.getElementById('err').innerHTML = "there was an error calling submit_survey.php";
+	function submitCodeError () {
+		document.getElementById('err').innerHTML = "there was an error calling get_mturk_code.php";
 	}
 	
 	// helper function for cross-browser request object
@@ -452,6 +471,16 @@
 	float:bottom;
 	width:100%;
 }
+
+.history_table {
+	width:100%;
+}
+.history_table_speaker {
+	width:15%;
+}
+.history_table_words {
+	width:85%;
+}
 </STYLE>
 
 </HEAD>
@@ -467,8 +496,8 @@
 <DIV ID="enter_id" style="display:block">
 	<FORM>
 		Enter Amazon Mechanical Turk ID:
-		<INPUT ID="mturk_id" TYPE="text" NAME="mturk_id" VALUE="" style="width:100%" onkeydown="if (event.keyCode == 13) {document.getElementById('new_dialog_button').click();event.returnValue=false;event.cancel=true;}">
-		<INPUT TYPE="button" ID="new_dialog_button" Value="submit" onClick="runNewDialogAgent()" style="display:none">
+		<INPUT ID="mturk_id" TYPE="text" NAME="mturk_id" VALUE="<?=rand(10000,99999)?>" style="width:100%" onkeydown="if (event.keyCode == 13) {document.getElementById('new_dialog_button').click();event.returnValue=false;event.cancel=true;}">
+		<INPUT TYPE="button" ID="new_dialog_button" Value="submit" onClick="submitID()" style="display:none">
 		<SPAN id="start_result" style="color:red"></SPAN>
 	</FORM>
 </DIV>
@@ -494,7 +523,7 @@
 		<p>You will play the game I, Spy with a robot. You will take turns using a single sentence to describe an object, then guessing which object is being specified. Then, you will complete a small survey about your experiences and receive your code for Mechanical Turk.</p>
 		<p><FORM NAME="start_game_form" ACTION="" METHOD="GET">
 			Click the button below to begin.<br/>
-			<INPUT TYPE="button" NAME="start_button" Value="Begin" onClick="startGame()">
+			<INPUT TYPE="button" NAME="start_button" Value="See Objects" onClick="startGame()">
 		</FORM></p>
 	</DIV>
 
@@ -508,16 +537,21 @@
 	
 	<DIV ID="dialog_start_block" style="display:none">
 		<FORM NAME="user_start_dialog_form" ACTION="" METHOD="GET">
-			<INPUT TYPE="button" NAME="user_start_dialog_button" Value="Start Task" onClick="startDialog()">
+			<INPUT TYPE="button" NAME="user_start_dialog_button" Value="Start" onClick="startDialog()">
 		</FORM>
 	</DIV>
 
 	<DIV ID="dialog_history_block" style="display:none">
-		<TABLE NAME="history" style="width:100%">
+		<TABLE NAME="history" style="width:100%" class="history_table">
+		<THEAD>
+			<TR><TH class="history_table_speaker">&nbsp;</TH>
+				<TH class="history_table_words">&nbsp;</TH></TR>
+		</THEAD>
+		<TBODY>
 		<FORM ID="user_input_form" NAME="user_input_form" ACTION="" METHOD="GET">
 		<TR ID="user_input_table_row">
-			<TD td style="width:15%">YOU</TD>
-			<TD td style="width:85%">
+			<TD class="history_table_speaker" style="background-color:AliceBlue">YOU</TD>
+			<TD class="history_table_words" style="background-color:AliceBlue">
 				<DIV ID="user_input_box_div" style="display:block">
 					<INPUT TYPE="text" ID="user_input_box" NAME="user_input_box" VALUE="" style="width:100%" onkeydown="if (event.keyCode == 13) {document.getElementsByName('user_input_button')[0].click();event.returnValue=false;event.cancel=true;}">
 					<INPUT TYPE="button" NAME="user_input_button" Value="submit" onClick="getDialogResponse(this.form)" style="display:none">
@@ -529,39 +563,26 @@
 			</TD>
 		</TR>
 		</FORM>
+		</TBODY>
 		</TABLE>
 	</DIV>
 	
+	<DIV ID="continue_game_block" style="display:none">
+		<p><FORM NAME="continue_game_form" ACTION="" METHOD="GET">
+			<INPUT TYPE="button" NAME="continue_button" Value="Continue Game" onClick="startGame()">
+		</FORM></p>
+	</DIV>
+
 	<DIV ID="end_session_block" style="display:none">
 		<FORM NAME="user_end_session_form" ACTION="" METHOD="GET">
-			<INPUT TYPE="button" NAME="user_end_session_button" Value="Exit Survey" onClick="endSession()">
+			<INPUT TYPE="button" NAME="user_end_session_button" Value="Exit and Get Code" onClick="endSession()">
 		</FORM>
 	</DIV>
 
 </DIV>
 </DIV>
 
-<DIV ID="survey_block" style="display:none">
-	<FORM NAME="survey_form" ACTION="" METHOD="GET">
-		<p><b>1)</b> The tasks were easy to understand.
-		<TABLE style="width:50%">
-			<tr align="center" bgcolor='GhostWhite'><td style="width:20%">Strongly Disagree</td><td style="width:20%">Somewhat Disagree</td><td style="width:20%">Neutral</td><td style="width:20%">Somewhat Agree</td><td style="width:20%">Strongly Agree</td></tr>
-			<tr align="center" bgcolor='AliceBlue'><td style="width:20%"><INPUT TYPE="radio" name="easy" value="0"></td><td style="width:20%"><INPUT TYPE="radio" name="easy" value="1"></td><td style="width:20%"><INPUT TYPE="radio" name="easy" value="2"></td><td style="width:20%"><INPUT TYPE="radio" name="easy" value="3"></td><td style="width:20%"><INPUT TYPE="radio" name="easy" value="4"></td></tr>
-		</TABLE></p>
-		<p><b>2)</b> The robot understood me.
-		<TABLE style="width:50%">
-			<tr align="center" bgcolor='GhostWhite'><td style="width:20%">Strongly Disagree</td><td style="width:20%">Somewhat Disagree</td><td style="width:20%">Neutral</td><td style="width:20%">Somewhat Agree</td><td style="width:20%">Strongly Agree</td></tr>
-			<tr align="center" bgcolor='AliceBlue'><td style="width:20%"><INPUT TYPE="radio" name="understand" value="0"></td><td style="width:20%"><INPUT TYPE="radio" name="understand" value="1"></td><td style="width:20%"><INPUT TYPE="radio" name="understand" value="2"></td><td style="width:20%"><INPUT TYPE="radio" name="understand" value="3"></td><td style="width:20%"><INPUT TYPE="radio" name="understand" value="4"></td></tr>
-		</TABLE></p>
-		<p><b>3)</b> The robot frustrated me.
-		<TABLE style="width:50%">
-			<tr align="center" bgcolor='GhostWhite'><td style="width:20%">Strongly Disagree</td><td style="width:20%">Somewhat Disagree</td><td style="width:20%">Neutral</td><td style="width:20%">Somewhat Agree</td><td style="width:20%">Strongly Agree</td></tr>
-			<tr align="center" bgcolor='AliceBlue'><td style="width:20%"><INPUT TYPE="radio" name="frustrate" value="0"></td><td style="width:20%"><INPUT TYPE="radio" name="frustrate" value="1"></td><td style="width:20%"><INPUT TYPE="radio" name="frustrate" value="2"></td><td style="width:20%"><INPUT TYPE="radio" name="frustrate" value="3"></td><td style="width:20%"><INPUT TYPE="radio" name="frustrate" value="4"></td></tr>
-		</TABLE></p>
-		<p><b>4)</b>Feel free to leave comments on your experience (optional):<br/>
-			<textarea id="user_survey_comment_box" name="comment" form="survey_form" style="width:50%" rows="4"></textarea></p>
-		<INPUT TYPE="button" NAME="user_submit_survey_button" Value="Finish and get code" onClick="submitSurvey(this.form)">
-	</FORM>
+<DIV ID="get_code_block" style="display:none">
 </DIV>
 
 </p>

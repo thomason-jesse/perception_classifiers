@@ -46,10 +46,12 @@ class IspyServer:
         rospy.loginfo("Server thread shutting down...")
 
     def get_say(self, req):
+
+        # spin on say file until it exists, then read
         res = getSayResponse()
         fn = os.path.join(self.path_to_ispy, 'communications', req.id+".say.out")
         print "waiting for "+fn
-        t = 30
+        t = 120
         while not os.path.isfile(fn):
             time.sleep(1)
             t -= 1
@@ -61,13 +63,16 @@ class IspyServer:
         f.close()
         os.system("rm "+fn)
         print "...returning contents of "+fn+" : '"+str(res.s)+"'"
+
         return res
 
     def get_point(self, req):
+
+        # check for and read point file, allowing up to 5 seconds for the write
         res = getPointResponse()
         fn = os.path.join(self.path_to_ispy, 'communications', req.id+".point.out")
         print "checking for "+fn
-        t = 5
+        t = 6
         while not os.path.isfile(fn) and t > 0:
             time.sleep(1)
             t -= 1
@@ -79,11 +84,12 @@ class IspyServer:
             print "...returning contents of "+fn+" : '"+str(res.oidx)+"'"
         else:
             res.oidx = -2  # code for not changing behavior
+
         return res
 
     def start_dialog(self, req):
-        std_log = open(self.logs_folder + '/' + req.id + '.std.log', 'w')
-        err_log = open(self.logs_folder + '/' + req.id + '.err.log', 'w')
+        std_log = open(os.path.join(self.logs_folder, req.id + '.std.log'), 'w')
+        err_log = open(os.path.join(self.logs_folder, req.id + '.err.log'), 'w')
         log = [std_log, err_log]
         rospy.loginfo("  Logs at: " + self.logs_folder + '/' + req.id + "*.log")
         args = [req.object_ids, "1",

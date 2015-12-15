@@ -63,6 +63,29 @@ map<int, vector< vector<float> > > confidences;
 // services we will call
 ros::ServiceClient fetch_features;
 
+// caches
+struct cache_response
+{
+	int result;
+	float confidence;
+	vector<float>* sub_classifier_decisions;
+};
+map<int, map<int, cache_response*> > run_classifier_cache;
+
+void freeClassifierCache(int cid)
+{
+	for (map<int, cache_response*>::iterator oiter = run_classifier_cache[cid].begin();
+	 oiter != run_classifier_cache[cid].end(); ++oiter)
+	{
+		if (run_classifier_cache[cid][oiter->first] != NULL)
+		{
+			delete run_classifier_cache[cid][oiter->first]->sub_classifier_decisions;
+			delete run_classifier_cache[cid][oiter->first];
+			run_classifier_cache[cid][oiter->first] = NULL;
+		}
+	}
+}
+
 void freeClassifierMemory()
 {
 	// delete classifiers from memory
@@ -80,13 +103,19 @@ void freeClassifierMemory()
 			}
 		}
 	}
+
+	// delete run classifier cache
+	for (map<int, map<int, cache_response*> >::iterator citer = run_classifier_cache.begin();
+		 citer != run_classifier_cache.end(); ++citer)
+	{
+		freeClassifierCache(citer->first);
+	}
 }
 
 void customShutdown(int sig)
 {
+	ROS_INFO("caught sigint, freeing memory and starting shutdown sequence...");
 	freeClassifierMemory();
-
-	// shutdown
 	ros::shutdown();
 }
 
@@ -171,10 +200,12 @@ bool loadClassifiers(perception_classifiers::loadClassifiers::Request &req,
 	// debug
 	cout << "loadClassifiers called\n";
 
-	// free space taken by any existing classifiers
-	freeClassifierMemory();
-	classifier_IDs.clear();
-	max_classifier_ID = 0;
+	if (max_classifier_ID > 0)
+	{
+		cout << "... ignoring directive since some classifiers are already in use\n";
+		res.success = true;
+		return true;
+	}
 
 	// read classifier confidences in from file
 	ifstream infile(conf_fn.c_str());
@@ -355,10 +386,21 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 	// debug
 	// cout << "classifier " << req.classifier_ID << " for object " << req.object_ID << " called\n";
 
-	//run classifier in each relevant behavior, modality combination 
+	// if in cache, just set response params and return
+	if (run_classifier_cache.count(req.classifier_ID) == 1 &&
+		run_classifier_cache[req.classifier_ID].count(req.object_ID) == 1 &&
+		run_classifier_cache[req.classifier_ID][req.object_ID] != NULL)
+	{
+		res.result = run_classifier_cache[req.classifier_ID][req.object_ID]->result;
+		res.confidence = run_classifier_cache[req.classifier_ID][req.object_ID]->confidence;
+		res.sub_classifier_decisions = *(run_classifier_cache[req.classifier_ID][req.object_ID]->sub_classifier_decisions);
+		return true;
+	}
+
+	// run classifier in each relevant behavior, modality combination 
 	float decision = 0;
 	int sub_classifiers_used = 0;
-	vector<float> _dec;
+	vector<float>* _dec = new vector<float>();
 	for (int b_idx=0; b_idx < num_behaviors; b_idx++)
 	{
 		for (int m_idx=0; m_idx < num_modalities; m_idx++)
@@ -367,7 +409,7 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 				|| confidences[req.classifier_ID][b_idx][m_idx] == 0
 				|| classifiers[req.classifier_ID][b_idx][m_idx] == NULL)
 			{
-				_dec.push_back(0);
+				_dec->push_back(0);
 				continue;
 			}
 
@@ -404,7 +446,7 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 			// average observation decisions to decide this sub classifier's decision
 			// could instead do majority voting
 			_decision = 2*(num_positive / observation_count) - 1;
-			_dec.push_back(_decision);
+			_dec->push_back(_decision);
 
 			// add to overall decision with confidence weight
 			decision += _decision * confidences[req.classifier_ID][b_idx][m_idx];
@@ -420,7 +462,14 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 		res.confidence = abs(decision / sub_classifiers_used);
 	else
 		res.confidence = 0;
-	res.sub_classifier_decisions = _dec;
+	res.sub_classifier_decisions = *_dec;
+
+	// add to cache
+	cache_response* res_cache = new cache_response();
+	res_cache->result = res.result;
+	res_cache->confidence = res.confidence;
+	res_cache->sub_classifier_decisions = _dec;
+	run_classifier_cache[req.classifier_ID][req.object_ID] = res_cache;
 
 	// debug
 	// cout << "classifier " << req.classifier_ID << " for object " << req.object_ID << ": " << res.result << ", " << res.confidence << "\n";
@@ -442,6 +491,12 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 		classifier_IDs.push_back(classifier_ID);
 		if (classifier_ID > max_classifier_ID)
 			max_classifier_ID = classifier_ID;
+	}
+
+	// clear old cache, if any
+	if (run_classifier_cache.count(classifier_ID) == 1)
+	{
+		freeClassifierCache(classifier_ID);
 	}
 
 	CvSVMParams params;

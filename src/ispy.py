@@ -17,6 +17,7 @@ from perception_classifiers.srv import *
 def main():
 
     path_to_ispy = '/u/jesse/public_html/ispy'
+    path_to_logs = '/u/jesse/catkin_ws/src/perception_classifiers/logs/'
     pp = os.path.join(path_to_ispy, "pickles")
     if not os.path.isdir(pp):
         os.system("mkdir "+pp)
@@ -29,9 +30,16 @@ def main():
     object_IDs = [int(oid) for oid in sys.argv[1].split(',')]
     num_rounds = int(sys.argv[2])
     stopwords_fn = sys.argv[3]
-    user_id = sys.argv[4] if sys.argv[4] != "None" else None
+    user_id = sys.argv[4]
     simulation = True if sys.argv[5] == "True" else False
     agent_fn = sys.argv[6] if len(sys.argv) == 7 else None
+
+    log_fn = os.path.join(path_to_logs, user_id+".trans.log")
+    f = open(log_fn, 'a')
+    f.write("object_IDs:"+str(object_IDs)+"\n")
+    f.write("num_rounds:"+str(num_rounds)+"\n")
+    f.write("agent_fn:"+str(agent_fn)+"\n")
+    f.close()
 
     print "calling ROSpy init"
     node_name = 'ispy' if user_id is None else 'ispy' + str(user_id)
@@ -43,17 +51,22 @@ def main():
         f = open(os.path.join(pp, agent_fn), 'rb')
         A = pickle.load(f)
         A.object_IDs = object_IDs
+        A.log_fn = log_fn
         f.close()
         print "... loading perceptual classifiers"
         A.load_classifiers()
     else:
-        A = IspyAgent.IspyAgent(None, None, object_IDs, stopwords_fn)
+        A = IspyAgent.IspyAgent(None, None, object_IDs, stopwords_fn, log_fn=log_fn)
     if user_id is None:
         u_in = InputFromKeyboard()
         u_out = OutputToStdout()
     else:
-        u_in = InputFromFile(os.path.join(cp, user_id+".get.in"), os.path.join(cp, user_id+".guess.in"))
-        u_out = OutputToFile(os.path.join(cp, user_id+".say.out"), os.path.join(cp, user_id+".point.out"), user_id)
+        u_in = InputFromFile(os.path.join(cp, user_id+".get.in"),
+                             os.path.join(cp, user_id+".guess.in"),
+                             log_fn)
+        u_out = OutputToFile(os.path.join(cp, user_id+".say.out"),
+                             os.path.join(cp, user_id+".point.out"),
+                             log_fn)
     A.u_in = u_in
     A.u_out = u_out
     A.simulation = simulation
@@ -78,25 +91,9 @@ def main():
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
     A.u_out.say("Thanks for playing!")
 
-    if user_id is None:
-        print "retraining classifiers from gathered data"
-        A.retrain_predicate_classifiers()
-
-        print "detecting synonymy and polysemy across and within attributes"
-        A.refactor_predicates()
-
-        print "saving perceptual classifiers to file"
-        A.save_classifiers()
-
-        print "pickling ispyAgent"
-        f = open(os.path.join(pp, "local.agent"), 'wb')
-        pickle.dump(A, f)
-        f.close()
-
-    else:
-        f = open(os.path.join(pp, user_id+".agent"), 'wb')
-        pickle.dump(A, f)
-        f.close()
+    f = open(os.path.join(pp, "-".join([str(oid) for oid in object_IDs])+"_"+user_id+".agent"), 'wb')
+    pickle.dump(A, f)
+    f.close()
 
 
 if __name__ == "__main__":
