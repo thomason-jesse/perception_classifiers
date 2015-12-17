@@ -10,6 +10,8 @@
 #include <signal.h> 
 #include <boost/assign/std/vector.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
+
 using namespace boost::assign;
 
 /*
@@ -70,46 +72,92 @@ std::vector<float> getNextLineAndSplit(std::istream& str){
 	return result;
 }
 
-bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_classifiers::FetchFeatures::Response &res){
-	std::vector<perception_classifiers::Observations*>* observations =
-						new std::vector<perception_classifiers::Observations*>();
+bool appendAndWrite(perception_classifiers::FetchFeatures::Request req){
 	int object = req.object;
 	int behavior = req.behavior;
 	int modal = req.modality;
+	boost::filesystem::path obj_folder(fp_data + object_base + boost::lexical_cast<std::string>(object));
+	boost::filesystem::path behavior_folder(fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
+			+ behaviorList[behavior]);
+	boost::filesystem::path modal_folder(fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
+		+ behaviorList[behavior] + "/" + modalList[modal]);
+
+	/*
+	 * If the folders do not exist, create them
+	 */
+	if( !(boost::filesystem::exists(obj_folder))){
+		//ROS_INFO("Creating directory. Path: %s")
+		boost::filesystem::create_directory(obj_folder);
+	}
+	if( !(boost::filesystem::exists(behavior_folder))){
+		//ROS_INFO("Creating directory. Path: %s")
+		boost::filesystem::create_directory(behavior_folder);
+	}
+	if( !(boost::filesystem::exists(modal_folder))){
+		//ROS_INFO("Creating directory. Path: %s")
+		boost::filesystem::create_directory(modal_folder);
+	}
+
 	std::string filepath = fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
 			+ behaviorList[behavior] + "/" + modalList[modal] + "/" + filename;
 	std::ifstream file(filepath.c_str());
+	int instance = 0;
+	std::string cell;
+	while(std::getline(file,cell)){instance++;}
 
-	// if in cache, just return that instead of doing file read every time
-	if (featuresCache.count(object) == 1 && featuresCache[object].count(behavior) == 1 &&
-		featuresCache[object][behavior].count(modal) == 1)
-	{
-		for (int obs_idx=0; obs_idx < featuresCache[object][behavior][modal]->size(); obs_idx++)
+	std::ofstream fileout(filepath.c_str(),std::ios_base::app);
+	std::string header = "Obj"+boost::lexical_cast<std::string>(instance) + ",";
+	fileout << header;
+	for(int i = 0; i < req.feature.size(); i++){
+		std::string line = boost::lexical_cast<std::string>(req.feature.at(i).data);
+		ROS_INFO("%f", req.feature.at(i).data);
+		fileout << line;
+	}
+
+}
+
+bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_classifiers::FetchFeatures::Response &res){
+	if(req.append.data)
+		return appendAndWrite(req);
+	else{
+		std::vector<perception_classifiers::Observations*>* observations =
+							new std::vector<perception_classifiers::Observations*>();
+		int object = req.object;
+		int behavior = req.behavior;
+		int modal = req.modality;
+		std::string filepath = fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
+				+ behaviorList[behavior] + "/" + modalList[modal] + "/" + filename;
+		std::ifstream file(filepath.c_str());
+
+		// if in cache, just return that instead of doing file read every time
+		if (featuresCache.count(object) == 1 && featuresCache[object].count(behavior) == 1 &&
+			featuresCache[object][behavior].count(modal) == 1)
 		{
-			res.rows.push_back((*(*featuresCache[object][behavior][modal])[obs_idx]));
-		}
-		return true;
-	}
-	
-	if(file.fail()){
-		ROS_ERROR("File doesn't exist due to invalid arguments. Attempted to open %s", filepath.c_str());
-	} else{
-		ROS_DEBUG("Opened features file.");
-		/* We make the hard assumption (for now) that if there is a next line, there are 5 additional lines
-		 */
-		int lineNum = 0;
-		while(!file.eof()){
-			perception_classifiers::Observations* o = new perception_classifiers::Observations();
-			o->features = getNextLineAndSplit(file);
-			if(o->features.size() > 0)							//catches the last vector of the file, which is empty.
+			for (int obs_idx=0; obs_idx < featuresCache[object][behavior][modal]->size(); obs_idx++)
 			{
-				observations->push_back(o);
-				res.rows.push_back(*o);
+				res.rows.push_back((*(*featuresCache[object][behavior][modal])[obs_idx]));
 			}
+			return true;
 		}
-		featuresCache[object][behavior][modal] = observations;
-		return true;
-	}
+		
+		if(file.fail()){
+			ROS_ERROR("File doesn't exist due to invalid arguments. Attempted to open %s", filepath.c_str());
+		} else{
+			ROS_DEBUG("Opened features file.");
+			int lineNum = 0;
+			while(!file.eof()){
+				perception_classifiers::Observations* o = new perception_classifiers::Observations();
+				o->features = getNextLineAndSplit(file);
+				if(o->features.size() > 0)							//catches the last vector of the file, which is empty.
+				{
+					observations->push_back(o);
+					res.rows.push_back(*o);
+				}
+			}
+			featuresCache[object][behavior][modal] = observations;
+			return true;
+		}
+}
 	return false;
 }
 

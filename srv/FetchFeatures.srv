@@ -1,5 +1,7 @@
 int32 object
 int32 behavior
 int32 modality
+std_msgs/Bool append
+std_msgs/Float64[] feature
 ---
 Observations[] rows
