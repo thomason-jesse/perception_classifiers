@@ -76,6 +76,15 @@ bool appendAndWrite(perception_classifiers::FetchFeatures::Request req){
 	int object = req.object;
 	int behavior = req.behavior;
 	int modal = req.modality;
+
+	/*
+	 * Bounds checking; does the modality and behavior exist in the mapping?
+	 */
+	if(behavior >= behaviorList.size() || modal >= modalList.size()){
+		ROS_ERROR("The given behavior modality does not exist. \nGiven: behavior: %d modal: %d", behavior, modal);
+		ROS_ERROR("Data not written.");
+		return false;
+	}
 	boost::filesystem::path obj_folder(fp_data + object_base + boost::lexical_cast<std::string>(object));
 	boost::filesystem::path behavior_folder(fp_data + object_base + boost::lexical_cast<std::string>(object) + "/" 
 			+ behaviorList[behavior]);
@@ -110,10 +119,10 @@ bool appendAndWrite(perception_classifiers::FetchFeatures::Request req){
 	fileout << header;
 	for(int i = 0; i < req.feature.size(); i++){
 		std::string line = boost::lexical_cast<std::string>(req.feature.at(i).data);
-		ROS_INFO("%f", req.feature.at(i).data);
 		fileout << line;
 	}
-
+	ROS_DEBUG("Data written.");
+	return true;
 }
 
 bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_classifiers::FetchFeatures::Response &res){
