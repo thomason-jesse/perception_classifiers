@@ -192,6 +192,12 @@
 		user_input = user_input.toLowerCase();
 		user_input = user_input.replace("+", "");
 		user_input = user_input.replace("_", "");
+		user_input = user_input.replace("(", "");
+		user_input = user_input.replace(")", "");
+		user_input = user_input.replace(".", "");
+		user_input = user_input.replace(",", "");
+		user_input = user_input.replace("\"", "");
+		user_input = user_input.replace("'", "");
 		
 		// disable user input until system has responded
 		document.getElementById('user_input_box_div').style.display = 'none';

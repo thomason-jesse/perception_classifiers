@@ -91,7 +91,7 @@ def main():
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
     A.u_out.say("Thanks for playing!")
 
-    f = open(os.path.join(pp, "-".join([str(oid) for oid in object_IDs])+"_"+user_id+".agent"), 'wb')
+    f = open(os.path.join(pp, user_id+"_"+"-".join([str(oid) for oid in object_IDs])+".agent"), 'wb')
     pickle.dump(A, f)
     f.close()
 

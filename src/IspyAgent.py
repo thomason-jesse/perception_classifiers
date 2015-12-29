@@ -85,6 +85,7 @@ class IspyAgent:
         self.words = []
 
         # maps because predicates can be dropped during merge and split operations
+        self.word_counts = {}
         self.predicate_active = {}
         self.words_to_predicates = {}
         self.predicates_to_words = {}
@@ -111,7 +112,7 @@ class IspyAgent:
         cnf_clauses = None
         while not understood:
 
-            utterance = self.u_in.get()
+            utterance = self.u_in.get().strip()
             cnf_clauses = self.get_predicate_cnf_clauses_for_utterance(utterance)
 
             if self.log_fn is not None:
@@ -202,13 +203,15 @@ class IspyAgent:
         # rank the classifiers favoring high confidence on ob_idx with low confidence or negative
         # decisions on other objects
         pred_scores = {}
+        pred_confidence = {}
         for pred in active_predicates:
-            score = r[ob_idx][pred][0]*r[ob_idx][pred][1]
+            score = (r[ob_idx][pred][0]*r[ob_idx][pred][1])*len(self.object_IDs)
             for oidx in self.object_IDs:
                 if ob_idx == oidx:
                     continue
                 score -= r[oidx][pred][0]*r[oidx][pred][1]
             pred_scores[pred] = score
+            pred_confidence[pred] = r[ob_idx][pred][1]
 
         if self.log_fn is not None:
             f = open(self.log_fn, 'a')
@@ -221,32 +224,52 @@ class IspyAgent:
             if score > 0:
                 # choose just one predicate word arbitrarily if multiple are associated with classifier
                 predicates_chosen.append(pred)
-                if len(predicates_chosen) == 5:
+                if len(predicates_chosen) == 3:
                     break  # don't want to overload user with questions afterwards
         if len(predicates_chosen) == 0:  # we have no classifier information yet, so choose 3 arbitrarily
             preds_shuffled = active_predicates[:]
             random.shuffle(preds_shuffled)
             predicates_chosen.extend(preds_shuffled[:3 if len(preds_shuffled) >= 3 else len(preds_shuffled)])
 
+        # choose predicates we are most unsure about to grab labels for during clarification dialog
+        lcps_candidates = []
+        cc = None
+        for pred, conf in sorted(pred_confidence.items(), key=operator.itemgetter(1)):
+            if pred in predicates_chosen:
+                continue
+            if cc is None or conf != cc:
+                cc = conf
+                if len(lcps_candidates) > 2:
+                    break  # don't want to overload the user with questions afterwards
+            lcps_candidates.append(pred)
+        random.shuffle(lcps_candidates)
+        lcps = lcps_candidates[:2]
+
         if self.log_fn is not None:
             f = open(self.log_fn, 'a')
             f.write("predicates_chosen:"+str(predicates_chosen)+"\n")
+            f.write("lcps:"+str(lcps)+"\n")
             f.close()
 
         # describe object to user
         if len(predicates_chosen) > 2:
             desc = "I am thinking of an object I would describe as " + \
-                ', '.join([self.predicates_to_words[pred][0] for pred in predicates_chosen[:-1]]) + \
-                ", and "+self.predicates_to_words[predicates_chosen[-1]][0] + "."
+                ', '.join([self.choose_word_for_pred(pred) for pred in predicates_chosen[:-1]]) + \
+                ", and "+self.choose_word_for_pred(predicates_chosen[-1]) + "."
         elif len(predicates_chosen) == 2:
-            desc = "I am thinking of an object I would describe as " + self.predicates_to_words[predicates_chosen[0]][0] + \
-                " and " + self.predicates_to_words[predicates_chosen[1]][0] + "."
+            desc = "I am thinking of an object I would describe as " + \
+                   self.choose_word_for_pred(predicates_chosen[0]) + \
+                " and " + self.choose_word_for_pred(predicates_chosen[1]) + "."
         else:
-            desc = "I am thinking of an object I would describe as " + self.predicates_to_words[predicates_chosen[0]][0] + "."
+            desc = "I am thinking of an object I would describe as " + \
+                   self.choose_word_for_pred(predicates_chosen[0]) + "."
         self.u_out.say(desc)
 
         # wait for user to find and select correct object
         num_guesses = 0
+        predicates_to_ask = predicates_chosen[:]
+        predicates_to_ask.extend(lcps)
+        random.shuffle(predicates_to_ask)
         while True:
             if self.simulation:
                 guess_idx = self.object_IDs[self.u_in.get_guess()]
@@ -256,11 +279,16 @@ class IspyAgent:
             num_guesses += 1
             if guess_idx == ob_idx:
                 self.u_out.say("That's the one!")
-                return desc, predicates_chosen, num_guesses
+                return desc, predicates_to_ask, num_guesses
             else:
                 self.u_out.say("That's not the object I am thinking of.")
                 # TODO: think about adding passive positive examples when user thinks a different
                 # TODO: object is being described
+
+    # pick the word users use most often to describe the predicate
+    def choose_word_for_pred(self, p):
+        wc = [self.word_counts[w] for w in self.predicates_to_words[p]]
+        return self.predicates_to_words[p][wc.index(max(wc))]
 
     # point to object at pos_idx and ask whether it meets the attributes of aidx chosen to point it out
     def elicit_labels_for_predicates_of_object(self, pos_idx, preds):
@@ -316,11 +344,13 @@ class IspyAgent:
             norms = {}
             for p in active_predicates:
                 norms[p] = math.sqrt(sum([math.pow(r[oi][p], 2) for oi in obj_range]))
-            for p in active_predicates:
+            for pidx in range(0, len(active_predicates)):
+                p = active_predicates[pidx]
                 if norms[p] == 0:
                     continue
-                for q in active_predicates:
-                    if norms[q] == 0 or p == q:
+                for qidx in range(pidx+1, len(active_predicates)):
+                    q = active_predicates[qidx]
+                    if norms[q] == 0:
                         continue
                     cos_sim = sum([r[oi][p]*r[oi][q] for oi in obj_range]) / (norms[p]*norms[q])
                     if cos_sim > self.alpha and cos_sim > highest_cos_sim[1]:
@@ -337,14 +367,14 @@ class IspyAgent:
             # detect polysemy
             for p in active_predicates:
                 if self.attempt_predicate_split(p, num_objects):
-                    changes_made = True
+                    change_made = True
                     self.retrain_predicate_classifiers()
                     break
 
     # collapse two predicates into one
     def collapse_predicates(self, p, q):
 
-        pq = p+"+"+q
+        pq = "("+p+"+"+q+")"
         print "collapsing '"+p+"' and '"+q+"' to form '"+pq+"'"  # DEBUG
         print "...examples for '"+p+"': "+str(self.predicate_examples[p])  # DEBUG
         print "...examples for '"+q+"': "+str(self.predicate_examples[q])  # DEBUG
@@ -374,9 +404,9 @@ class IspyAgent:
 
         # get positive examples from predicate
         objects_to_split = [oidx for oidx in range(0, num_objects)
-                            if oidx in self.predicate_examples and
+                            if oidx in self.predicate_examples[p] and
                             True in self.predicate_examples[p][oidx]]
-        if len(objects_to_split) == 0:
+        if len(objects_to_split) < 4:  # heuristic to prevent unnecessary splitting
             return False
 
         # naive algorithm: assign random class to positive objects and iteratively
@@ -397,7 +427,7 @@ class IspyAgent:
 
         # iterate to converge on object_l labels that divide the space
         converged = False
-        i = math.pow(num_objects, 2)
+        i = math.pow(len(objects_to_split), 2)
         while not converged and i > 0:
             i -= 1
             m = SVM()
@@ -407,16 +437,17 @@ class IspyAgent:
             mdmo = None
             md = None
             r = m.predict(object_v)
-            for oidx in range(0, num_objects):
-                d, dist = r[oidx]
-                if d != object_l[oidx]:
+            for idx in range(0, len(objects_to_split)):
+                d, dist = r[idx]
+                if d != object_l[idx]:
                     if md is None or md < dist:
                         md = dist
-                        mdmo = oidx
+                        mdmo = idx
 
-            # converge if least confidence mislabel is unfound or below a margin
-            if md is None or md < 1-self.alpha:
+            # converge if least confidence mislabel is unfound (e.g. all labeled correctly)
+            if md is None:
                 converged = True
+                break
 
             # flip the label of the least confidence mislabeled object and iterate again
             if object_l[mdmo] == 1:
@@ -430,16 +461,16 @@ class IspyAgent:
 
         # if convergence happened, split predicate according to found division
         if converged:
-            self.split_predicate(p, object_l)
+            self.split_predicate(p, objects_to_split, object_l)
             return True
 
         return False
 
     # split a predicate into two such
-    def split_predicate(self, p, l):
+    def split_predicate(self, p, obs, l):
 
         # if predicate is previously collapsed, attempt to divide along established lines
-        if not self.split_collapsed_predicate(p, l):
+        if not self.split_collapsed_predicate(p, obs, l):
 
             # then split into two senses
             qs = [p+"_1", p+"_2"]
@@ -460,9 +491,10 @@ class IspyAgent:
                     self.predicate_examples[q][oidx] = []
                     for b in self.predicate_examples[p][oidx]:
                         if b:  # keep positive example if it's on our side of the found split
+                            loidx = obs.index(oidx)
                             self.predicate_examples[q][oidx].append(
-                                False if (idx == 0 and l[oidx] == -1)
-                                or (idx == 1 and l[oidx] == 1) else True)
+                                False if (idx == 0 and l[loidx] == -1)
+                                or (idx == 1 and l[loidx] == 1) else True)
                         else:  # keep all negative examples
                             self.predicate_examples[q][oidx].append(False)
 
@@ -473,50 +505,70 @@ class IspyAgent:
                 self.classifier_data_modified[cid] = True
 
     # attempt to split a previously collapsed predicate
-    def split_collapsed_predicate(self, p, l):
+    def split_collapsed_predicate(self, p, obs, l):
 
-        if '+' not in p:
+        if '+' not in p or p[0] != '(' or p[-1] != ')':
             return False
-        ps = p.split('+')
+        prn = 0
+        c = 0
+        pstr = p[1:-1]
+        for c in range(0, len(pstr)):
+            if pstr[c] == '(':
+                prn += 1
+            elif pstr[c] == ')':
+                prn -= 1
+            elif pstr[c] == '+' and prn == 0:
+                break
+        qs = [pstr[:c], pstr[c+1:]]
 
         # greedily choose pair of preds whose split gives closest match in old label space
         cmpr = None
         cmc = None
-        for i in range(0, len(ps)):
-            for j in range(i+1, len(ps)):
-                for d in range(0, 2):
-                    m = 0.0
-                    for oidx in range(0, len(l)):
-                        if ((d == 0 and l[oidx] == -1 and False in self.predicate_examples[ps[i]][oidx])
-                           or (d == 1 and l[oidx] == 1 and True in self.predicate_examples[ps[i]][oidx])):
-                            m += 1
-                        if ((d == 0 and l[oidx] == 1 and True in self.predicate_examples[ps[j]][oidx])
-                           or d == 1 and l[oidx] == -1 and False in self.predicate_examples[ps[j]][oidx]):
-                            m += 1
-                    if cmc is None or m > cmc:
-                        cmc = m
-                        cmpr = [i, j] if d == 0 else [j, i]
+        for d in range(0, 2):
+            m = 0.0
+            for oidx in range(0, len(l)):
+                poidx = obs[oidx]
+                if ((d == 0 and l[oidx] == -1 and
+                        poidx in self.predicate_examples[qs[0]] and
+                        False in self.predicate_examples[qs[0]][poidx])
+                   or (d == 1 and l[oidx] == 1 and
+                        poidx in self.predicate_examples[qs[1]] and
+                        True in self.predicate_examples[qs[1]][poidx])):
+                    m += 1
+                if ((d == 0 and l[oidx] == 1 and
+                        poidx in self.predicate_examples[qs[1]] and
+                        True in self.predicate_examples[qs[1]][poidx])
+                   or (d == 1 and l[oidx] == -1 and
+                        poidx in self.predicate_examples[qs[1]] and
+                        False in self.predicate_examples[qs[1]][poidx])):
+                    m += 1
+            if cmc is None or m > cmc:
+                cmc = m
+                cmpr = [qs[0], qs[1]] if d == 0 else [qs[1], qs[0]]
 
         # if match is close enough, split the collapsed predicate pair found
         if (cmc /
             (sum([len(self.predicate_examples[cmpr[0]][idx]) for idx in self.predicate_examples[cmpr[0]]])
-            + sum([len(self.predicate_examples[cmpr[0]][idx]) for idx in self.predicate_examples[cmpr[1]]]))
+             + sum([len(self.predicate_examples[cmpr[1]][idx]) for idx in self.predicate_examples[cmpr[1]]]))
                 > self.alpha):
 
-            print "splitting '"+p+"' to form '"+ps[cmpr[0]]+"' and '"+ps[cmpr[1]]+"'"  # DEBUG
+            print "splitting '"+p+"' to form '"+cmpr[0]+"' and '"+cmpr[1]+"'"  # DEBUG
             print "...examples for '"+p+"': "+str(self.predicate_examples[p])  # DEBUG
             self.predicate_active[p] = False
             for idx in range(0, len(cmpr)):
-                q = ps[cmpr[idx]]
+                q = cmpr[idx]
                 self.predicate_active[q] = True
-                for oidx, label in l:
+                for oidx in range(0, len(l)):
+                    poidx = obs[oidx]
+                    if poidx not in self.predicate_examples[q]:
+                        self.predicate_examples[poidx] = []
                     lb = None
                     if idx == 0:
-                        lb = True if label == 1 else False
+                        lb = True if l[oidx] == 1 else False
                     elif idx == 1:
-                        lb = False if label == 1 else True
-                    if lb not in self.predicate_examples[q][oidx]:
-                        self.predicate_examples[q][oidx].append(lb)
+                        lb = False if l[oidx] == 1 else True
+                    if lb not in self.predicate_examples[q][poidx]:
+                        self.predicate_examples[q][poidx].append(lb)
                 print "...examples for '"+q+"': "+str(self.predicate_examples[q])  # DEBUG
                 cid = self.predicate_to_classifier_map[q]
                 self.classifier_data_modified[cid] = True
@@ -557,6 +609,7 @@ class IspyAgent:
         for w in words:
             if w not in self.words:
                 self.words.append(w)
+                self.word_counts[w] = 0
             if w not in self.words_to_predicates:
                 self.predicates.append(w)
                 self.predicate_active[w] = True
@@ -566,6 +619,7 @@ class IspyAgent:
                 self.predicate_to_classifier_map[w] = cid
                 self.classifier_to_predicate_map[cid] = w
                 self.predicate_examples[w] = {}
+            self.word_counts[w] += 1
             cnfs.append([p for p in self.words_to_predicates[w] if self.predicate_active[p]])
 
         return cnfs
@@ -587,10 +641,15 @@ class IspyAgent:
                 r_oidxs = []
                 r_labels = []
                 for oidx in self.predicate_examples[pred]:
-                    r_oidxs.append(oidx)
-                    t = sum([1 if l else -1 for l in self.predicate_examples[pred][oidx]])
-                    if t != 0:
-                        r_labels.append(True if t > 0 else False)
+                    # include all system - slower, more accurate confidence values
+                    for l in self.predicate_examples[pred][oidx]:
+                        r_oidxs.append(oidx)
+                        r_labels.append(l)
+                    # voting system - faster, potentially noiser confidence values
+                    # r_oidxs.append(oidx)
+                    # t = sum([1 if l else -1 for l in self.predicate_examples[pred][oidx]])
+                    # if t != 0:
+                    #     r_labels.append(True if t > 0 else False)
                 self.train_classifier_client(cidx, r_oidxs, r_labels)
                 self.classifier_data_modified[cidx] = False
 
@@ -600,15 +659,17 @@ class IspyAgent:
         # join lists and dicts of word, predicate, and predite examples
         self.predicates = join_lists(self.predicates, other.predicates, allow_duplicates=False)
         self.words = join_lists(self.words, other.words, allow_duplicates=False)
+        for w in self.words:
+            if w in self.word_counts and w in other.word_counts:
+                self.word_counts[w] += other.word_counts[w]
+            elif w in other.word_counts:
+                self.word_counts[w] = other.word_counts[w]
         self.words_to_predicates = join_dicts(
             self.words_to_predicates, other.words_to_predicates, allow_duplicates=False)
         self.predicates_to_words = join_dicts(
             self.predicates_to_words, other.predicates_to_words, allow_duplicates=False)
-        print "SELF: "+str(self.predicate_examples)  # DEBUG
-        print "OTHER: "+str(other.predicate_examples)  # DEBUG
         self.predicate_examples = join_dicts(
             self.predicate_examples, other.predicate_examples, allow_duplicates=True)
-        print "MERGE: "+str(self.predicate_examples)  # DEBUG
 
         # join predicate<->classifier maps into one-to-many maps
         sptcm_list = {p: [self.predicate_to_classifier_map[p]] for p in self.predicate_to_classifier_map}
@@ -634,6 +695,17 @@ class IspyAgent:
             if cidx in self.classifier_data_modified and self.classifier_data_modified[cidx]:
                 cdm[cidx] = True
         self.classifier_data_modified = cdm
+
+    # remove predicate examples in structure from self
+    def subtract_predicate_examples(self, pe):
+        for pred in pe:
+            if pred in self.predicate_examples:
+                for oidx in pe[pred]:
+                    if oidx in self.predicate_examples[pred]:
+                        for b in pe[pred][oidx]:
+                            if b in self.predicate_examples[pred][oidx]:
+                                del self.predicate_examples[pred][oidx][
+                                    self.predicate_examples[pred][oidx].index(b)]
 
     # load classifiers
     def load_classifiers(self):
