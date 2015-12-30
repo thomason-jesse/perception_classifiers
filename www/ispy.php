@@ -17,14 +17,15 @@
 	var get_point_service;
 
 	// global vars
+	var object_count = 5;
 	var experimental_condition = true;
 	var user_id = null;  // supplied from MTurk
 	var straight_object_ids = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29];
 	var shuffled_object_ids = shuffle(straight_object_ids);
 	var all_object_ids = [];
-	for (var i=0; i<6; i++)
+	for (var i=0; i<object_count+1; i++)
 	{
-		var round_object_ids = shuffled_object_ids.slice(i*5, (i*5)+5);
+		var round_object_ids = shuffled_object_ids.slice(i*object_count, (i*object_count)+object_count);
 		all_object_ids.push(round_object_ids);
 	}
 	var object_ids;
@@ -487,6 +488,12 @@
 .history_table_words {
 	width:85%;
 }
+.divider{
+    width:10px;
+    min-height:1px;
+    height:auto;
+    display:inline-block;
+}
 </STYLE>
 
 </HEAD>
@@ -564,6 +571,7 @@
 				</DIV>
 				<DIV ID="user_input_binary" style="display:none">
 					<INPUT TYPE="button" NAME="user_input_binary_yes" Value="Yes" onClick="userBinary('yes')">
+					<DIV class="divider"/>&nbsp;</DIV>
 					<INPUT TYPE="button" NAME="user_input_binary_no" Value="No" onClick="userBinary('no')">
 				</DIV>
 			</TD>

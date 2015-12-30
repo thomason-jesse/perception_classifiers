@@ -104,7 +104,7 @@ class IspyAgent:
     # invite the human to describe an object, parse the description, and start formulating response strategy
     def human_take_turn(self):
 
-        self.u_out.say("Please pick an object that you see and describe it to me in one sentence.")
+        self.u_out.say("Please pick an object that you see and describe it to me in one phrase.")
 
         understood = False
         guess_idx = None
@@ -232,18 +232,23 @@ class IspyAgent:
             predicates_chosen.extend(preds_shuffled[:3 if len(preds_shuffled) >= 3 else len(preds_shuffled)])
 
         # choose predicates we are most unsure about to grab labels for during clarification dialog
-        lcps_candidates = []
-        cc = None
-        for pred, conf in sorted(pred_confidence.items(), key=operator.itemgetter(1)):
-            if pred in predicates_chosen:
-                continue
-            if cc is None or conf != cc:
-                cc = conf
-                if len(lcps_candidates) > 2:
-                    break  # don't want to overload the user with questions afterwards
-            lcps_candidates.append(pred)
-        random.shuffle(lcps_candidates)
-        lcps = lcps_candidates[:2]
+        # uses roulette wheel selection which gives greater representation to lower confidence classifiers
+        predicates_available = [pred for pred in self.predicates
+                                if self.predicate_active[pred] and pred not in predicates_chosen]
+        pred_confidence_sum = sum([1-pred_confidence[predicates_available[idx]]
+                                   for idx in range(0, len(predicates_available))])
+        lc_pred_conf_weight = [(1-pred_confidence[predicates_available[idx]]) / pred_confidence_sum
+                               for idx in range(0, len(predicates_available))]
+        lc_pred_cutoff = [sum([lc_pred_conf_weight[idx] for idx in range(0, jdx+1)])
+                          for jdx in range(0, len(predicates_available)-1)]
+        lc_pred_cutoff.append(1)
+        lcps = []
+        while len(lcps) < min([5-len(predicates_chosen), len(predicates_available)]):
+            choice_r = random.random()
+            for idx in range(0, len(predicates_available)):
+                if choice_r < lc_pred_cutoff[idx] and predicates_available[idx] not in lcps:
+                    lcps.append(predicates_available[idx])
+                    break
 
         if self.log_fn is not None:
             f = open(self.log_fn, 'a')
@@ -285,11 +290,6 @@ class IspyAgent:
                 # TODO: think about adding passive positive examples when user thinks a different
                 # TODO: object is being described
 
-    # pick the word users use most often to describe the predicate
-    def choose_word_for_pred(self, p):
-        wc = [self.word_counts[w] for w in self.predicates_to_words[p]]
-        return self.predicates_to_words[p][wc.index(max(wc))]
-
     # point to object at pos_idx and ask whether it meets the attributes of aidx chosen to point it out
     def elicit_labels_for_predicates_of_object(self, pos_idx, preds):
         l = []
@@ -299,7 +299,7 @@ class IspyAgent:
             # TODO: call pointing service with pos_idx
             pass
         for pred in preds:
-            self.u_out.say("Would you use the word '" + self.predicates_to_words[pred][0] +
+            self.u_out.say("Would you use the word '" + self.choose_word_for_pred(pred) +
                            "' when describing this object?")
             got_r = False
             while not got_r:
@@ -319,57 +319,160 @@ class IspyAgent:
             pass
         return l
 
+    # pick the word users use most often to describe the predicate
+    def choose_word_for_pred(self, p):
+        wc = [self.word_counts[w] for w in self.predicates_to_words[p]]
+        return self.predicates_to_words[p][wc.index(max(wc))]
+
     # get results for each perceptual classifier over all objects so that for any given perceptual classifier,
     # objects have locations in concept-dimensional space for that classifier
     # detect classifiers that should be split into two because this space has two distinct clusters of objects,
     # as well as classifiers whose object spaces look so similar we should collapse the classifiers
-    def refactor_predicates(self, num_objects):
+    def refactor_predicates(self, num_objects, method):
 
         obj_range = range(0, num_objects)
+
+        # get feature vectors for all objects
+        if method == "clusters":
+            object_fvs = []
+            print "gathering all features from objects..."  # DEBUG
+            for oidx in range(0, num_objects):
+                print "... for object "+str(oidx)  # DEBUG
+                fv = self.fetch_all_features(oidx)
+                fv = numpy.float32(fv)
+                object_fvs.append(fv)
 
         change_made = True
         while change_made:
             change_made = False
             active_predicates = [p for p in self.predicates if self.predicate_active[p]]
-            r_with_confidence = self.get_classifier_results(active_predicates, obj_range)
-            r = {}
-            for oidx in r_with_confidence:
-                r[oidx] = {}
-                for pred in r_with_confidence[oidx]:
-                    r[oidx][pred] = r_with_confidence[oidx][pred][0]*r_with_confidence[oidx][pred][1]
 
-            # detect synonymy
-            # observes the cosine distance between predicate vectors in |O|-dimensional space
-            highest_cos_sim = [None, -1]
-            norms = {}
-            for p in active_predicates:
-                norms[p] = math.sqrt(sum([math.pow(r[oi][p], 2) for oi in obj_range]))
-            for pidx in range(0, len(active_predicates)):
-                p = active_predicates[pidx]
-                if norms[p] == 0:
-                    continue
-                for qidx in range(pidx+1, len(active_predicates)):
-                    q = active_predicates[qidx]
-                    if norms[q] == 0:
+            # use SVM decisions to build spaces for synonymy and polysemy detection
+            if method == "classifiers":
+
+                # calculate classifier results across objects
+                r_with_confidence = self.get_classifier_results(active_predicates, obj_range)
+                r = {}
+                for oidx in r_with_confidence:
+                    r[oidx] = {}
+                    for pred in r_with_confidence[oidx]:
+                        r[oidx][pred] = r_with_confidence[oidx][pred][0]*r_with_confidence[oidx][pred][1]
+
+                # detect synonymy
+                # observes the cosine distance between predicate vectors in |O|-dimensional space
+                highest_cos_sim = [None, -1]
+                norms = {}
+                for p in active_predicates:
+                    norms[p] = math.sqrt(sum([math.pow(r[oi][p], 2) for oi in obj_range]))
+                for pidx in range(0, len(active_predicates)):
+                    p = active_predicates[pidx]
+                    if norms[p] == 0:
                         continue
-                    cos_sim = sum([r[oi][p]*r[oi][q] for oi in obj_range]) / (norms[p]*norms[q])
-                    if cos_sim > self.alpha and cos_sim > highest_cos_sim[1]:
-                        highest_cos_sim = [[p, q], cos_sim]
-            if highest_cos_sim[0] is not None:
+                    for qidx in range(pidx+1, len(active_predicates)):
+                        q = active_predicates[qidx]
+                        if norms[q] == 0:
+                            continue
+                        cos_sim = sum([r[oi][p]*r[oi][q] for oi in obj_range]) / (norms[p]*norms[q])
+                        if cos_sim > self.alpha and cos_sim > highest_cos_sim[1]:
+                            highest_cos_sim = [[p, q], cos_sim]
+                if highest_cos_sim[0] is not None:
 
-                # collapse the two closest predicates into one new predicate
-                p, q = highest_cos_sim[0]
-                self.collapse_predicates(p, q)
-                change_made = True
-                self.retrain_predicate_classifiers()  # should fire only for pq
-                continue
-
-            # detect polysemy
-            for p in active_predicates:
-                if self.attempt_predicate_split(p, num_objects):
+                    # collapse the two closest predicates into one new predicate
+                    p, q = highest_cos_sim[0]
+                    self.collapse_predicates(p, q)
                     change_made = True
-                    self.retrain_predicate_classifiers()
-                    break
+                    self.retrain_predicate_classifiers()  # should fire only for pq
+                    continue
+
+                # detect polysemy
+                for p in active_predicates:
+                    if self.attempt_predicate_split(p, num_objects):
+                        change_made = True
+                        self.retrain_predicate_classifiers()
+                        break
+
+            # use simple clustering to make synonymy and polysemy decisions
+            elif method == "clusters":
+                # set some clustering parameters for general use
+                criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+                flags = cv2.KMEANS_RANDOM_CENTERS
+
+                # detect synonymy
+                # between each two predicates, perform a clustering of their positive examples
+                print "detecting synonymy..."  # DEBUG
+                for pidx in range(0, len(active_predicates)):
+
+                    # add positive examples as datapoints for p
+                    pd = []
+                    for oidx in self.predicate_examples[active_predicates[pidx]]:
+                        for b in self.predicate_examples[active_predicates[pidx]][oidx]:
+                            if b:
+                                pd.append(object_fvs[oidx])
+
+                    for qidx in range(pidx+1, len(active_predicates)):
+
+                        # add positive examples as datapoints for q
+                        d = pd[:]
+                        for oidx in self.predicate_examples[active_predicates[qidx]]:
+                            for b in self.predicate_examples[active_predicates[qidx]][oidx]:
+                                if b:
+                                    d.append(object_fvs[oidx])
+
+                        # perform a clustering with k=2 on positive data from p, q
+                        d = numpy.float32(d)
+                        compactness, labels, centers = cv2.kmeans(d, 2, criteria, attempts=3, flags=flags)
+                        norms = [math.sqrt(sum([math.pow(centers[cidx][dim], 2)
+                                                for dim in range(0, len(centers[0]))]))
+                                 for cidx in range(0, len(centers))]
+                        cos_sim = sum([centers[0][dim]*centers[1][dim]
+                                       for dim in range(0, len(centers[0]))]) / (norms[0]*norms[1])
+                        if cos_sim > self.alpha:
+                            self.collapse_predicates(active_predicates[pidx], active_predicates[qidx])
+                            change_made = True
+                            break
+
+                    if change_made:
+                        break
+                if change_made:
+                    continue
+
+                # detect polysemy
+                print "detecting polysemy..."  # DEBUG
+                for pidx in range(0, len(active_predicates)):
+
+                    # add positive examples as datapoints for p
+                    d = []
+                    objects_to_split = []
+                    object_label_keys = []
+                    for oidx in self.predicate_examples[active_predicates[pidx]]:
+                        for b in self.predicate_examples[active_predicates[pidx]][oidx]:
+                            if b:
+                                d.append(object_fvs[oidx])
+                                if oidx not in objects_to_split:
+                                    objects_to_split.append(oidx)
+                                    object_label_keys.append(len(d)-1)
+
+                    # abandon if n < 4, a heuristic to prevent unnecessary splitting
+                    if len(d) < 4:
+                        continue
+
+                    # perform a clustering with k=2 on positive data from p
+                    d = numpy.float32(d)
+                    compactness, labels, centers = cv2.kmeans(d, 2, criteria, attempts=3, flags=flags)
+                    norms = [math.sqrt(sum([math.pow(centers[cidx][dim], 2)
+                                            for dim in range(0, len(centers[0]))]))
+                             for cidx in range(0, len(centers))]
+                    cos_sim = sum([centers[0][dim]*centers[1][dim]
+                                   for dim in range(0, len(centers[0]))]) / (norms[0]*norms[1])
+                    print "cos_sim('"+active_predicates[pidx]+",.)="+str(cos_sim)  # DEBUG
+                    if cos_sim <= 1-self.alpha:
+                        l = [labels[object_label_keys[oidx]] for oidx in objects_to_split]
+                        self.split_predicate(active_predicates[pidx], objects_to_split, l)
+                        change_made = True
+                        break
+
+            else:
+                sys.exit("ERROR: 'method' argument unrecognized: '"+str(method)+"'")
 
     # collapse two predicates into one
     def collapse_predicates(self, p, q):
@@ -398,6 +501,8 @@ class IspyAgent:
         self.predicate_to_classifier_map[pq] = cid
         self.classifier_to_predicate_map[cid] = pq
         self.classifier_data_modified[cid] = True
+
+        _ = raw_input()  # DEBUG
 
     # attempt to split a predicate
     def attempt_predicate_split(self, p, num_objects):
@@ -504,6 +609,8 @@ class IspyAgent:
                 self.classifier_to_predicate_map[cid] = q
                 self.classifier_data_modified[cid] = True
 
+            _ = raw_input()  # DEBUG
+
     # attempt to split a previously collapsed predicate
     def split_collapsed_predicate(self, p, obs, l):
 
@@ -572,6 +679,8 @@ class IspyAgent:
                 print "...examples for '"+q+"': "+str(self.predicate_examples[q])  # DEBUG
                 cid = self.predicate_to_classifier_map[q]
                 self.classifier_data_modified[cid] = True
+
+            _ = raw_input()  # DEBUG
 
             return True
 
@@ -719,6 +828,10 @@ class IspyAgent:
         if not r:
             print "ERROR when saving perceptual classifiers"
 
+    # fetch all features from an object id
+    def fetch_all_features(self, oidx):
+        return self.fetch_all_features_client(oidx)
+
     # access the perceptual classifiers package load classifier service
     def get_free_classifier_id_client(self):
         req = getFreeClassifierIDRequest()
@@ -781,3 +894,14 @@ class IspyAgent:
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
 
+    # fetch all features for a given object client
+    def fetch_all_features_client(self, object_ID):
+        req = FetchAllFeaturesRequest()
+        req.object = object_ID
+        rospy.wait_for_service('fetch_all_features_service')
+        try:
+            fetch_all_features = rospy.ServiceProxy('fetch_all_features_service', FetchAllFeatures)
+            res = fetch_all_features(req)
+            return res.features
+        except rospy.ServiceException, e:
+            print "Service call failed: %s" % e

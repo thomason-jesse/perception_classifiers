@@ -22,6 +22,7 @@ add_service_files(
 		runClassifier.srv
 		trainClassifier.srv
 		FetchFeatures.srv
+    FetchAllFeatures.srv
     startDialog.srv
     getSay.srv
     getPoint.srv

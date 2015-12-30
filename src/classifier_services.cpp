@@ -424,6 +424,7 @@ bool runClassifier(perception_classifiers::runClassifier::Request &req,
 			ff.request.object = req.object_ID;
 			ff.request.behavior = b_idx;
 			ff.request.modality = m_idx;
+			ff.request.allow_missing = false;
 			fetch_features.call(ff);
 			observation_count = ff.response.rows.size();
 			for (int obs_idx=0; obs_idx < ff.response.rows.size(); obs_idx++)
@@ -537,6 +538,7 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 				ff.request.object = req.object_IDs[o_idx];
 				ff.request.behavior = b_idx;
 				ff.request.modality = m_idx;
+				ff.request.allow_missing = false;
 				fetch_features.call(ff);
 				num_observations.push_back(ff.response.rows.size());
 				for (int obs_idx=0; obs_idx < ff.response.rows.size(); obs_idx++)

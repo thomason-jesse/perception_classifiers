@@ -1,5 +1,6 @@
 int32 object
 int32 behavior
 int32 modality
+bool allow_missing
 ---
 Observations[] rows

@@ -2,6 +2,7 @@
 #include <ros/package.h>
 #include <perception_classifiers/Observations.h>
 #include <perception_classifiers/FetchFeatures.h>
+#include <perception_classifiers/FetchAllFeatures.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -36,6 +37,7 @@ void sig_handler(int sig){
 		for (std::map<int, std::map<int, std::vector<perception_classifiers::Observations*>* > >::iterator biter = featuresCache[oiter->first].begin();
 		 biter != featuresCache[oiter->first].end(); ++biter)
 		{
+			std::vector<int> miter_ids;
 			for (std::map<int, std::vector<perception_classifiers::Observations*>* >::iterator miter = featuresCache[oiter->first][biter->first].begin();
 		 	 miter != featuresCache[oiter->first][biter->first].end(); ++miter)
 			{
@@ -43,7 +45,11 @@ void sig_handler(int sig){
 				{
 					delete (*featuresCache[oiter->first][biter->first][miter->first])[obs_idx];
 				}
-				delete featuresCache[oiter->first][biter->first][miter->first];
+				miter_ids.push_back(miter->first);
+			}
+			for (int midx=0; midx < miter_ids.size(); midx++)
+			{
+				delete featuresCache[oiter->first][biter->first][midx];
 			}
 		}
 	}
@@ -91,9 +97,25 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 		return true;
 	}
 	
-	if(file.fail()){
-		ROS_ERROR("File doesn't exist due to invalid arguments. Attempted to open %s", filepath.c_str());
-	} else{
+	if(file.fail())
+	{
+		if (!req.allow_missing)
+		{
+			ROS_ERROR("File doesn't exist due to invalid arguments. Attempted to open %s", filepath.c_str());
+		}
+		else
+		{
+			perception_classifiers::Observations* o = new perception_classifiers::Observations();
+			std::vector<float> blank_f;
+			o->features = blank_f;
+			observations->push_back(o);
+			res.rows.push_back(*o);
+			featuresCache[object][behavior][modal] = observations;
+			return true;
+		}
+	} 
+	else
+	{
 		ROS_DEBUG("Opened features file.");
 		/* We make the hard assumption (for now) that if there is a next line, there are 5 additional lines
 		 */
@@ -113,12 +135,47 @@ bool service_cb(perception_classifiers::FetchFeatures::Request &req, perception_
 	return false;
 }
 
+bool get_all_features_service(perception_classifiers::FetchAllFeatures::Request &req, perception_classifiers::FetchAllFeatures::Response &res)
+{
+	int object = req.object;
+	std::vector<float> features;
+
+	for (int b_idx=0; b_idx < behaviorList.size(); b_idx++)
+	{
+		for (int m_idx=0; m_idx < modalList.size(); m_idx++)
+		{
+			perception_classifiers::FetchFeatures ff;
+			ff.request.object = object;
+			ff.request.behavior = b_idx;
+			ff.request.modality = m_idx;
+			ff.request.allow_missing = true;
+			bool r = service_cb(ff.request, ff.response);
+			if (r == false)
+				return false;
+			// average over the observations in this context to keep vector fixed-length
+			for (int f=0; f < ff.response.rows[0].features.size(); f++)
+			{
+				float f_sum = 0;
+				for (int obs_idx=0; obs_idx < ff.response.rows.size(); obs_idx++)
+				{
+					f_sum += ff.response.rows[obs_idx].features[f];
+				}
+				features.push_back( f_sum / ff.response.rows.size() );
+			}
+		}
+	}
+
+	res.features = features;
+	return true;
+}
+
 int main(int argc, char **argv){
 	ros::init(argc, argv, "fetch_feature_node");
 	ros::NodeHandle n;
-	ros::ServiceServer srv = n.advertiseService("fetch_feature_service", service_cb);
+	ros::ServiceServer fetch_feature_service = n.advertiseService("fetch_feature_service", service_cb);
+	ros::ServiceServer fetch_all_features_service = n.advertiseService("fetch_all_features_service", get_all_features_service);
 
-	// TODO: should be read from config.txt using method shared with classifier_services
+	// TODO: should be read from config.txt header and first column
 	behaviorList +=  "look";
 	modalList += "shape", "color", "fc7";
 

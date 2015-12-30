@@ -12,10 +12,13 @@ from perception_classifiers.srv import *
 def main():
 
     stopwords_fn = sys.argv[1]
-    experimental_cond = True if sys.argv[2] == "True" else False
+    experimental_cond = sys.argv[2]
     out_fn_prefix = sys.argv[3]
     num_objects = int(sys.argv[4])
     base_agent = None if sys.argv[5] == "None" else sys.argv[5]
+
+    if experimental_cond != "None" and experimental_cond != "classifiers" and experimental_cond != "clusters":
+        sys.exit("Unrecognized experimental condition")
 
     path_to_ispy = '/u/jesse/public_html/ispy'
     pp = os.path.join(path_to_ispy, "pickles")
@@ -31,6 +34,8 @@ def main():
 
     found_agents = False
     prev_dir = str(time.time())+"_previous"
+    if not os.path.isdir(os.path.join(pp, prev_dir)):
+        os.system("mkdir "+os.path.join(pp, prev_dir))
 
     if base_agent is not None:
         print "loading and unifying base agent"
@@ -44,8 +49,6 @@ def main():
         B = IspyAgent.IspyAgent(None, None, None, stopwords_fn)
 
     print "tracing pickles folder to gather data from user agents"
-    if not os.path.isdir(os.path.join(pp, prev_dir)):
-        os.system("mkdir "+os.path.join(pp, prev_dir))
     for root, dirs, files in os.walk(pp):
         if 'previous' not in root:
             for fn in files:
@@ -66,9 +69,9 @@ def main():
     print "retraining classifiers from gathered data"
     A.retrain_predicate_classifiers()
 
-    if experimental_cond:
-        print "detecting synonymy and polysemy across and within attributes"
-        A.refactor_predicates(num_objects)
+    if experimental_cond != "False":
+        print "detecting synonymy and polysemy across and within attributes using "+str(experimental_cond)
+        A.refactor_predicates(num_objects, experimental_cond)
     else:
         print "skipping synonymy and polysemy detection"
 
