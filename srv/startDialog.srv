@@ -1,4 +1,4 @@
 string id
 string object_ids
-bool exp_cond
+string exp_cond
 ---

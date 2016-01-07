@@ -18,7 +18,7 @@
 
 	// global vars
 	var object_count = 5;
-	var experimental_condition = true;
+	var experimental_condition = "clusters";
 	var user_id = null;  // supplied from MTurk
 	var straight_object_ids = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29];
 	var shuffled_object_ids = shuffle(straight_object_ids);
@@ -32,7 +32,7 @@
 	var num_games_played = 0;
 
 	// global instructions
-	var user_turn_instructions = "Pick an item and describe it in one phrase to the robot.";
+	var user_turn_instructions = "Describe one item to the robot using one phrase.";
 	var robot_turn_instructions = "Click the object you think the robot is describing.";
 	
 	// what little style exists
@@ -94,6 +94,7 @@
 			user_id = id_field.value;
 			document.getElementById('start_game').style.display = 'block';
 			document.getElementById('enter_id').style.display = 'none';
+			document.getElementById('warning').style.display = 'block';
 		}
 	}
 
@@ -394,6 +395,7 @@
 	
 	function endSession()
 	{
+		document.getElementById('warning').style.display = 'none';
 		document.getElementById('wrap').style.display = 'none';
 		document.getElementById('get_code_block').style.display = 'block';
 		
@@ -455,44 +457,67 @@
 		req.send(params_enc);
 		return req;
 	}
+
+	function submitKeyDown(e)
+	{
+		var evt = e || window.event;
+		if (evt.keyCode == 13)
+		{
+			document.getElementById('new_dialog_button').click();
+			evt.returnValue=false;
+			evt.cancel=true;
+		}
+	}
+
+	function userInputKeyDown(e)
+	{
+		var evt = e || window.event;
+		if (evt.keyCode == 13)
+		{
+			document.getElementsByName('user_input_button')[0].click();
+			evt.returnValue=false;
+			evt.cancel=true;
+		}
+	}
+
 </SCRIPT>
 
 <STYLE>
 #err {
-	width=100%
-	float:top;
+	width: 100%;
+	float: top;
 }
 #inst {
-	width:100%
-	float:top;
+	width: 100%;
+	float: top;
 }
 #wrap {
-	width:100%;
-	margin:0 auto;
+	width: 100%;
+	margin: 0 auto;
 }
 #wrap_top {
-	float:top;
-	width:100%;
+	float: top;
+	width: 100%;
 }
 #wrap_bottom {
-	float:bottom;
-	width:100%;
+	float: bottom;
+	width: 100%;
 }
 
 .history_table {
-	width:100%;
+	width: 100%;
 }
 .history_table_speaker {
-	width:15%;
+	width: 15%;
 }
 .history_table_words {
-	width:85%;
+	width: 85%;
 }
 .divider{
-    width:10px;
-    min-height:1px;
-    height:auto;
-    display:inline-block;
+    width: 10px;
+    min-height: 1px;
+    height: auto;
+    display: inline-block;
 }
 </STYLE>
 
@@ -507,9 +532,9 @@
 
 <p>
 <DIV ID="enter_id" style="display:block">
-	<FORM>
+	<FORM onsubmit="return false;">
 		Enter Amazon Mechanical Turk ID:
-		<INPUT ID="mturk_id" TYPE="text" NAME="mturk_id" VALUE="<?=rand(10000,99999)?>" style="width:100%" onkeydown="if (event.keyCode == 13) {document.getElementById('new_dialog_button').click();event.returnValue=false;event.cancel=true;}">
+		<INPUT ID="mturk_id" TYPE="text" NAME="mturk_id" VALUE="<?=rand(10000,99999)?>" style="width:100%" onkeydown="submitKeyDown(event)">
 		<INPUT TYPE="button" ID="new_dialog_button" Value="submit" onClick="submitID()" style="display:none">
 		<SPAN id="start_result" style="color:red"></SPAN>
 	</FORM>
@@ -518,7 +543,7 @@
 
 <p>
 <DIV ID="warning" style="display:none;color:red" >
-	Do not navigate away from or refresh the page until you have completed all tasks and the exit survey to receive your code. Leaving or refreshing the page <b>will</b> prevent you from completing this HIT.
+	Do not navigate away from or refresh the page until you have completed all tasks and received your code. Leaving or refreshing the page <b>will</b> prevent you from completing this HIT.
 </DIV>
 </p>
 
@@ -533,7 +558,7 @@
 </DIV>
 <DIV ID="wrap_bottom">
 	<DIV ID="start_game" style="display:none">
-		<p>You will play the game I, Spy with a robot. You will take turns using a single sentence to describe an object, then guessing which object is being specified. Then, you will complete a small survey about your experiences and receive your code for Mechanical Turk.</p>
+		<p>You will play the game I, Spy with a robot. You will take turns using a single phrase to describe an object, then guessing which object is being specified. Then you will receive your code for Mechanical Turk to complete the HIT.</p>
 		<p><FORM NAME="start_game_form" ACTION="" METHOD="GET">
 			Click the button below to begin.<br/>
 			<INPUT TYPE="button" NAME="start_button" Value="See Objects" onClick="startGame()">
@@ -541,7 +566,8 @@
 	</DIV>
 
 	<DIV ID="introduce_task" style="display:none">
-		<b>TASK TO COMPLETE</b><p ID="task_description_text"></p>
+		<p ID="task_description_text"></p>
+		<p>Be patient with the robot; it can take sometimes take up to a minute for it to respond.</p>
 	</DIV>
 
 	<DIV ID="object_display" style="display:none">
@@ -549,7 +575,7 @@
 	</DIV>
 	
 	<DIV ID="dialog_start_block" style="display:none">
-		<FORM NAME="user_start_dialog_form" ACTION="" METHOD="GET">
+		<FORM NAME="user_start_dialog_form" ACTION="" METHOD="GET" ONSUBMIT="return false;">
 			<INPUT TYPE="button" NAME="user_start_dialog_button" Value="Start" onClick="startDialog()">
 		</FORM>
 	</DIV>
@@ -561,12 +587,12 @@
 				<TH class="history_table_words">&nbsp;</TH></TR>
 		</THEAD>
 		<TBODY>
-		<FORM ID="user_input_form" NAME="user_input_form" ACTION="" METHOD="GET">
+		<FORM ID="user_input_form" NAME="user_input_form" ACTION="" METHOD="GET" ONSUBMIT="return false;">
 		<TR ID="user_input_table_row">
 			<TD class="history_table_speaker" style="background-color:AliceBlue">YOU</TD>
 			<TD class="history_table_words" style="background-color:AliceBlue">
 				<DIV ID="user_input_box_div" style="display:block">
-					<INPUT TYPE="text" ID="user_input_box" NAME="user_input_box" VALUE="" style="width:100%" onkeydown="if (event.keyCode == 13) {document.getElementsByName('user_input_button')[0].click();event.returnValue=false;event.cancel=true;}">
+					<INPUT TYPE="text" ID="user_input_box" NAME="user_input_box" VALUE="" style="width:100%" onkeydown="userInputKeyDown(event)">
 					<INPUT TYPE="button" NAME="user_input_button" Value="submit" onClick="getDialogResponse(this.form)" style="display:none">
 				</DIV>
 				<DIV ID="user_input_binary" style="display:none">
@@ -582,13 +608,13 @@
 	</DIV>
 	
 	<DIV ID="continue_game_block" style="display:none">
-		<p><FORM NAME="continue_game_form" ACTION="" METHOD="GET">
+		<p><FORM NAME="continue_game_form" ACTION="" METHOD="GET" ONSUBMIT="return false;">
 			<INPUT TYPE="button" NAME="continue_button" Value="Continue Game" onClick="startGame()">
 		</FORM></p>
 	</DIV>
 
 	<DIV ID="end_session_block" style="display:none">
-		<FORM NAME="user_end_session_form" ACTION="" METHOD="GET">
+		<FORM NAME="user_end_session_form" ACTION="" METHOD="GET" ONSUBMIT="return false;">
 			<INPUT TYPE="button" NAME="user_end_session_button" Value="Exit and Get Code" onClick="endSession()">
 		</FORM>
 	</DIV>

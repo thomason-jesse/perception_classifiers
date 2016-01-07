@@ -8,7 +8,7 @@ from agent_io import *
 from perception_classifiers.srv import *
 
 
-# python ispyRetrain.py [stopwords_en] [experimental_cond=True/False] [out_fn_prefix] [num_objects] [base_agent]
+# python ispyRetrain.py [stopwords_en] [experimental_cond=control/classifiers/clusters] [out_fn_prefix] [num_objects] [base_agent]
 def main():
 
     stopwords_fn = sys.argv[1]
@@ -17,7 +17,7 @@ def main():
     num_objects = int(sys.argv[4])
     base_agent = None if sys.argv[5] == "None" else sys.argv[5]
 
-    if experimental_cond != "None" and experimental_cond != "classifiers" and experimental_cond != "clusters":
+    if experimental_cond != "control" and experimental_cond != "classifiers" and experimental_cond != "clusters":
         sys.exit("Unrecognized experimental condition")
 
     path_to_ispy = '/u/jesse/public_html/ispy'
@@ -69,7 +69,7 @@ def main():
     print "retraining classifiers from gathered data"
     A.retrain_predicate_classifiers()
 
-    if experimental_cond != "False":
+    if experimental_cond != "control":
         print "detecting synonymy and polysemy across and within attributes using "+str(experimental_cond)
         A.refactor_predicates(num_objects, experimental_cond)
     else:

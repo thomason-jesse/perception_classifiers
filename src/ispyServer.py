@@ -72,7 +72,7 @@ class IspyServer:
         res = getPointResponse()
         fn = os.path.join(self.path_to_ispy, 'communications', req.id+".point.out")
         print "checking for "+fn
-        t = 6
+        t = 10
         while not os.path.isfile(fn) and t > 0:
             time.sleep(1)
             t -= 1
@@ -95,8 +95,10 @@ class IspyServer:
         args = [req.object_ids, "1",
                 "/u/jesse/catkin_ws/src/perception_classifiers/src/stopwords_en.txt",
                 req.id, "True"]
-        if req.exp_cond:
-            args.append("synpol.local.agent")
+        if req.exp_cond == "clusters":
+            args.append("clusters.local.agent")
+        elif req.exp_cond == "classifiers":
+            args.append("classifiers.local.agent")
         else:
             args.append("control.local.agent")
         process = self.start_rosrun_process(self.package, self.script, args=args, log=log)

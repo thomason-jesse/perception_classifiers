@@ -356,7 +356,11 @@ class IspyAgent:
                 for oidx in r_with_confidence:
                     r[oidx] = {}
                     for pred in r_with_confidence[oidx]:
-                        r[oidx][pred] = r_with_confidence[oidx][pred][0]*r_with_confidence[oidx][pred][1]
+                        # stores decision in [-1, 1] weighted by confidence score
+                        # r[oidx][pred] = r_with_confidence[oidx][pred][0]*r_with_confidence[oidx][pred][1]
+                        # stores decision as {-1, 0, 1}, discarding confidence scores that are nonzero
+                        r[oidx][pred] = 0 if r_with_confidence[oidx][pred][1] == 0 \
+                            else r_with_confidence[oidx][pred][0]
 
                 # detect synonymy
                 # observes the cosine distance between predicate vectors in |O|-dimensional space
@@ -417,6 +421,10 @@ class IspyAgent:
                             for b in self.predicate_examples[active_predicates[qidx]][oidx]:
                                 if b:
                                     d.append(object_fvs[oidx])
+
+                        # abandon if data too small using a heuristic to prevent unnecessary joining
+                        if len(d) < 4:
+                            continue
 
                         # perform a clustering with k=2 on positive data from p, q
                         d = numpy.float32(d)
@@ -517,9 +525,15 @@ class IspyAgent:
         # naive algorithm: assign random class to positive objects and iteratively
         # adjust classes based on SVM margins
 
+        # gets object descriptions as sub-classifier decisions in [-1,1] weighted by confidence
+        # object_v = numpy.asarray(
+        #     self.get_predicate_classifier_decision_conf_matrices(p, objects_to_split),
+        #     dtype=numpy.float32)
+        # gets object descriptions as sub-classifier decisions in {-1, 0, 1} ignoring non-zero confidence
         object_v = numpy.asarray(
-            self.get_predicate_classifier_decision_conf_matrices(p, objects_to_split),
+            self.get_predicate_classifier_decision_matrices(p, objects_to_split),
             dtype=numpy.float32)
+        # initially random labels will be adjusted according to distance from the margin
         object_l = numpy.asarray(
             [1 if random.random() > 0.5 else -1 for _ in range(0, len(objects_to_split))],
             dtype=numpy.float32)
@@ -538,7 +552,7 @@ class IspyAgent:
             m = SVM()
             m.train(object_v, object_l)
 
-            # find max distance mislabeled object
+            # find max distance mislabeled object to flip
             mdmo = None
             md = None
             r = m.predict(object_v)
@@ -705,6 +719,23 @@ class IspyAgent:
             cidx = self.predicate_to_classifier_map[pred]
             _, _, sub_decisions = self.run_classifier_client(cidx, oidx)
             ov.append(sub_decisions)
+        return ov
+
+    # given predicate and object idxs, return a vector of behavior/modality decision vectors
+    def get_predicate_classifier_decision_matrices(self, pred, oidxs):
+        ov = []
+        for oidx in oidxs:
+            cidx = self.predicate_to_classifier_map[pred]
+            _, _, sub_decisions = self.run_classifier_client(cidx, oidx)
+            sds = []
+            for sd in sub_decisions:
+                if sd > 0:
+                    sds.append(1)
+                elif sd < 0:
+                    sds.append(-1)
+                else:
+                    sds.append(sd)  # 0
+            ov.append(sds)
         return ov
 
     # given a string input, strip stopwords and use word to predicate map to build cnf clauses
