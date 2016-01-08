@@ -4,6 +4,7 @@ __author__ = 'jesse'
 import rospy
 from perception_classifiers.srv import *
 from std_srvs.srv import *
+from segbot_arm_perception.srv import *
 import operator
 import math
 import random
@@ -101,6 +102,21 @@ class IspyAgent:
             self.stopwords.append(line.strip())
         fin.close()
 
+        # set point cloud vars to None; will be instantiated if simulation later set to False
+        self.pointCloud2_plane = None
+        self.cloud_plane_coef = None
+        self.pointCloud2_objects = None
+
+    # set simulation parameter
+    def set_simulation(self, s):
+        self.simulation = s
+        if not s:
+            # get the point cloud objects on the table for pointing / recognizing touches
+            self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.get_pointCloud2_objects()
+            if len(self.pointCloud2_objects) != len(self.object_IDs):
+                sys.exit("ERROR: "+str(len(self.pointCloud2_objects))+" PointCloud2 objects detected " +
+                         "while "+str(len(self.object_IDs))+" objects were expected")
+
     # invite the human to describe an object, parse the description, and start formulating response strategy
     def human_take_turn(self):
 
@@ -130,12 +146,6 @@ class IspyAgent:
                     all_predicates.extend(d)
                 classifier_results = self.get_classifier_results(all_predicates, self.object_IDs)
 
-                # TODO
-                # maybe have option to explicitly ask about whether objects have predicates when
-                # classification confidence is below some threshold; getting confirmation/denial
-                # can update the classifier_results structure as well as add training data before
-                # final guessing begins (talk with Jivko about this option)
-
                 # calculate simple best-fit ranking from interpolation of result and confidence
                 match_scores = {}
                 for p_oidx in range(0, len(self.object_IDs)):
@@ -163,8 +173,7 @@ class IspyAgent:
                     if self.simulation:
                         self.u_out.point(guess_idx)
                     else:
-                        # TODO: call pointing service with guess_idx
-                        pass
+                        self.robot_touch(guess_idx)
                     got_confirmation = False
                     while not got_confirmation:
                         got_confirmation = True
@@ -182,8 +191,7 @@ class IspyAgent:
                 if self.simulation:
                     self.u_out.point(-1)  # stop pointing
                 else:
-                    # TODO: call pointing service to retract arm
-                    pass
+                    self.robot_touch(-1)  # retract arm
 
             # utterance failed to parse, so get a new one
             else:
@@ -279,8 +287,7 @@ class IspyAgent:
             if self.simulation:
                 guess_idx = self.object_IDs[self.u_in.get_guess()]
             else:
-                # TODO: call looking for hand over object service
-                guess_idx = None
+                guess_idx = self.object_IDs[self.get_human_touch()]
             num_guesses += 1
             if guess_idx == ob_idx:
                 self.u_out.say("That's the one!")
@@ -290,14 +297,21 @@ class IspyAgent:
                 # TODO: think about adding passive positive examples when user thinks a different
                 # TODO: object is being described
 
+    # touch an object
+    def robot_touch(self, idx):
+        self.touch_client(idx)
+
+    # perceive a human object touch
+    def get_human_touch(self):
+        return self.detect_touch_client()
+
     # point to object at pos_idx and ask whether it meets the attributes of aidx chosen to point it out
     def elicit_labels_for_predicates_of_object(self, pos_idx, preds):
         l = []
         if self.simulation:
             self.u_out.point(pos_idx)
         else:
-            # TODO: call pointing service with pos_idx
-            pass
+            self.robot_touch(pos_idx)
         for pred in preds:
             self.u_out.say("Would you use the word '" + self.choose_word_for_pred(pred) +
                            "' when describing this object?")
@@ -315,8 +329,7 @@ class IspyAgent:
         if self.simulation:
             self.u_out.point(-1)  # stop pointing
         else:
-            # TODO: call pointing service to retract arm
-            pass
+            self.robot_touch(-1)  # retract arm
         return l
 
     # pick the word users use most often to describe the predicate
@@ -862,6 +875,50 @@ class IspyAgent:
     # fetch all features from an object id
     def fetch_all_features(self, oidx):
         return self.fetch_all_features_client(oidx)
+
+    # get PointCloud2 objects from service
+    def get_pointCloud2_objects(self):
+
+        # query to get the blobs on the table
+        req = TabletopPerceptionRequest()
+        rospy.wait_for_service('tabletop_object_detection_service')
+        try:
+            tabletop_object_detection_service = rospy.ServiceProxy(
+                'tabletop_object_detection_service', TabletopPerception)
+            res = tabletop_object_detection_service(req)
+            return res.cloud_plane, res.cloud_plane_coef, res.cloud_clusters
+        except rospy.ServiceException,e:
+            print "Service call failed: %s " % e
+            return []
+
+    # use the arm to touch an object
+    def touch_client(self, idx):
+        req = ispyTouchRequest()
+        req.cloud_plane = self.pointCloud2_plane
+        req.cloud_plane_coef = self.cloud_plane_coef
+        req.objects = self.pointCloud2_objects
+        req.touch_index = idx
+        rospy.wait_for_service('ispy/touch_object_service')
+        try:
+            touch = rospy.ServiceProxy('ispy/touch_object_service', ispyTouch)
+            res = touch(req)
+            return res.success
+        except rospy.ServiceException, e:
+            print "Service call failed: %s" % e
+
+    # detect a touch above an object
+    def detect_touch_client(self):
+        req = ispyDetectTouchRequest()
+        req.cloud_plane = self.pointCloud2_plane
+        req.cloud_plane_coef = self.cloud_plane_coef
+        req.objects = self.pointCloud2_objects
+        rospy.wait_for_service('ispy/human_detect_touch_object_service')
+        try:
+            detect_touch = rospy.ServiceProxy('ispy/human_detect_touch_object_service', ispyDetectTouch)
+            res = detect_touch(req)
+            return res.detected_touch_index
+        except rospy.ServiceException, e:
+            print "Service call failed: %s" % e
 
     # access the perceptual classifiers package load classifier service
     def get_free_classifier_id_client(self):

@@ -9,7 +9,8 @@ from agent_io import *
 from perception_classifiers.srv import *
 
 
-# rosrun nlu_pipeline ispy.py [object_IDs] [num_rounds] [stopwords_fn] [user_id] [simulation=True/False] [agent_to_load]
+# rosrun perception_classifiers ispy.py
+#   [object_IDs] [num_rounds] [stopwords_fn] [user_id] [simulation=True|False] [agent_to_load=None]
 # start a game of ispy with user_id or with the keyboard/screen
 # if user_id provided, agents are pickled so that an aggregator can later extract
 # all examples across users for retraining classifiers and performing splits/merges
@@ -30,11 +31,11 @@ def main():
     object_IDs = [int(oid) for oid in sys.argv[1].split(',')]
     num_rounds = int(sys.argv[2])
     stopwords_fn = sys.argv[3]
-    user_id = sys.argv[4]
+    user_id = None if sys.argv[4] == "None" else sys.argv[4]
     simulation = True if sys.argv[5] == "True" else False
     agent_fn = sys.argv[6] if len(sys.argv) == 7 else None
 
-    log_fn = os.path.join(path_to_logs, user_id+".trans.log")
+    log_fn = os.path.join(path_to_logs, str(user_id)+".trans.log")
     f = open(log_fn, 'a')
     f.write("object_IDs:"+str(object_IDs)+"\n")
     f.write("num_rounds:"+str(num_rounds)+"\n")
@@ -56,11 +57,14 @@ def main():
         print "... loading perceptual classifiers"
         A.load_classifiers()
     else:
+        print "... from scratch"
         A = IspyAgent.IspyAgent(None, None, object_IDs, stopwords_fn, log_fn=log_fn)
     if user_id is None:
+        print "... with input from keyboard and output to screen"
         u_in = InputFromKeyboard()
         u_out = OutputToStdout()
     else:
+        print "... with input and output from files"
         u_in = InputFromFile(os.path.join(cp, user_id+".get.in"),
                              os.path.join(cp, user_id+".guess.in"),
                              log_fn)
@@ -69,7 +73,7 @@ def main():
                              log_fn)
     A.u_in = u_in
     A.u_out = u_out
-    A.simulation = simulation
+    A.set_simulation(simulation)
 
     print "beginning game"
     for rnd in range(0, num_rounds):
@@ -91,7 +95,7 @@ def main():
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
     A.u_out.say("Thanks for playing!")
 
-    f = open(os.path.join(pp, user_id+"_"+"-".join([str(oid) for oid in object_IDs])+".agent"), 'wb')
+    f = open(os.path.join(pp, str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])+".agent"), 'wb')
     pickle.dump(A, f)
     f.close()
 
