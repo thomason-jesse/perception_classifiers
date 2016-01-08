@@ -5,6 +5,7 @@ import rospy
 from perception_classifiers.srv import *
 from std_srvs.srv import *
 from segbot_arm_perception.srv import *
+from segbot_arm_manipulation.srv import *
 import operator
 import math
 import random
@@ -893,14 +894,14 @@ class IspyAgent:
 
     # use the arm to touch an object
     def touch_client(self, idx):
-        req = ispyTouchRequest()
+        req = iSpyTouchRequest()
         req.cloud_plane = self.pointCloud2_plane
         req.cloud_plane_coef = self.cloud_plane_coef
         req.objects = self.pointCloud2_objects
         req.touch_index = idx
         rospy.wait_for_service('ispy/touch_object_service')
         try:
-            touch = rospy.ServiceProxy('ispy/touch_object_service', ispyTouch)
+            touch = rospy.ServiceProxy('ispy/touch_object_service', iSpyTouch)
             res = touch(req)
             return res.success
         except rospy.ServiceException, e:
@@ -908,13 +909,13 @@ class IspyAgent:
 
     # detect a touch above an object
     def detect_touch_client(self):
-        req = ispyDetectTouchRequest()
+        req = iSpyDetectTouchRequest()
         req.cloud_plane = self.pointCloud2_plane
         req.cloud_plane_coef = self.cloud_plane_coef
         req.objects = self.pointCloud2_objects
         rospy.wait_for_service('ispy/human_detect_touch_object_service')
         try:
-            detect_touch = rospy.ServiceProxy('ispy/human_detect_touch_object_service', ispyDetectTouch)
+            detect_touch = rospy.ServiceProxy('ispy/human_detect_touch_object_service', iSpyDetectTouch)
             res = detect_touch(req)
             return res.detected_touch_index
         except rospy.ServiceException, e:

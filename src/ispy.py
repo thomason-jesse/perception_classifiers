@@ -17,8 +17,8 @@ from perception_classifiers.srv import *
 # is user_id not provided, classifiers are retrained and saved after each game with just single-user data
 def main():
 
-    path_to_ispy = '/u/jesse/public_html/ispy'
-    path_to_logs = '/u/jesse/catkin_ws/src/perception_classifiers/logs/'
+    path_to_ispy = '/home/bwi/catkin_ws/src/perception_classifiers/www/'
+    path_to_logs = '/home/bwi/catkin_ws/src/perception_classifiers/logs/'
     pp = os.path.join(path_to_ispy, "pickles")
     if not os.path.isdir(pp):
         os.system("mkdir "+pp)
