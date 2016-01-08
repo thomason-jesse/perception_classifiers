@@ -23,6 +23,7 @@ std::string object_base 				= "obj";
 std::vector<std::string> behaviorList;
 std::vector<std::string> modalList;
 std::map<int, std::map<int, std::map<int, std::vector<perception_classifiers::Observations*>* > > > featuresCache;
+std::string config_fn = ros::package::getPath("perception_classifiers") + "/config.txt";
 
 bool g_caught_sigint=false;
 
@@ -175,9 +176,44 @@ int main(int argc, char **argv){
 	ros::ServiceServer fetch_feature_service = n.advertiseService("fetch_feature_service", service_cb);
 	ros::ServiceServer fetch_all_features_service = n.advertiseService("fetch_all_features_service", get_all_features_service);
 
-	// TODO: should be read from config.txt header and first column
-	behaviorList +=  "look";
-	modalList += "shape", "color", "fc7";
+	// read config file to get behaviors and modalities
+	// config file format: CSV with first line names of modalities, subsequent lines behavior names
+	// followed by list of features in behavior/modality combination, 0 if no classifier in combo
+	std::ifstream infile(config_fn.c_str());
+	if (infile.fail())
+	{
+		ROS_ERROR("missing config file at %s", config_fn.c_str());
+	}
+	bool first_line = true;
+	std::cout << "reading " << config_fn.c_str() << "\n"; // debug
+	while (!infile.eof())
+	{
+		std::string line;
+		std::string entry;
+		if (!getline(infile, line).eof() || first_line)
+		{
+			first_line = false;
+			std::istringstream ss(line);
+			bool blank_entry = true;
+			while (getline(ss, entry, ','))
+			{
+				if (blank_entry == true)
+				{
+					blank_entry = false;
+					continue;
+				}
+				modalList.push_back(entry.c_str());
+				std::cout << "pushed modality " << entry.c_str() << "\n";  // DEBUG
+			}
+		}
+		else
+		{
+			std::istringstream ss(line);
+			getline(ss, entry, ',');
+			behaviorList.push_back(entry.c_str());
+			std::cout << "pushed behavior " << entry.c_str() << "\n";  // DEBUG
+		}
+	}
 
 	// set shutdown procedure call
   	signal(SIGINT, sig_handler);
