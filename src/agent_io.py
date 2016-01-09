@@ -126,6 +126,18 @@ class IORobot:
         self.sound_client = SoundClient()
         rospy.sleep(2)  # give sound_play node a chance to connect to publishers
 
+        # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
+        print "touching objects from left-most to right-most... please watch and confirm detection and order"
+        for i in range(0, len(object_IDs)):
+            print "... touching object in position "+str(i)
+            self.point(i)
+        op_resp = None
+        while op_resp != "Y" and op_resp != "N":
+            print "confirm detection and ordering[Y/N]:"
+            op_resp = raw_input()
+            if op_resp == "N":
+                sys.exit("Try to fix my detection and try again.")
+
     # for now, default to IOFile behavior, but might eventually do ASR instead
     def get(self):
 
@@ -178,15 +190,23 @@ class IORobot:
             if len(res.cloud_clusters) == 0:
                 sys.exit("ERROR: no objects detected")
 
-            # TODO: re-index clusters so order matches left-to-right indexing expected
-            clusters = []
-            cloud_cluster_ys = []
-            for cc in res.cloud_clusters:
-                print res.cloud_clusters[0].fields  # DEBUG - need to see what this looks like to make sense
-                print res.cloud_clusters[0].data  # DEBUG
-                sys.exit()  # DEBUG
+            # re-index clusters so order matches left-to-right indexing expected
+            ordered_cloud_clusters = self.reorder_client("x", True)
 
-            return res.cloud_plane, res.cloud_plane_coef, res.cloud_clusters
+            return res.cloud_plane, res.cloud_plane_coef, ordered_cloud_clusters
+        except rospy.ServiceException, e:
+            sys.exit("Service call failed: %s " % e)
+
+    # reorder PointCloud2 objects returned in arbitrary order from table detection
+    def reorder_client(self, coord, forward):
+        req = TabletopReorderRequest()
+        req.coord = coord
+        req.forward = forward
+        rospy.wait_for_service('tabletop_object_reorder_service')
+        try:
+            reorder = rospy.ServiceProxy('tabletop_object_reorder_service', TabletopReorder)
+            res = reorder(req)
+            return res.ordered_cloud_clusters
         except rospy.ServiceException, e:
             sys.exit("Service call failed: %s " % e)
 
