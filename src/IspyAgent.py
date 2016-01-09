@@ -4,8 +4,6 @@ __author__ = 'jesse'
 import rospy
 from perception_classifiers.srv import *
 from std_srvs.srv import *
-from segbot_arm_perception.srv import *
-from segbot_arm_manipulation.srv import *
 import operator
 import math
 import random
@@ -39,7 +37,7 @@ def join_dicts(a, b, allow_duplicates=True, warn_duplicates=False):
                                  str(c[key]) + "' and being added from '" + str(b[key]) + "'")
             elif type(c[key]) is dict:
                 c[key] = join_dicts(c[key], b[key],
-                                allow_duplicates=allow_duplicates, warn_duplicates=warn_duplicates)
+                                    allow_duplicates=allow_duplicates, warn_duplicates=warn_duplicates)
             elif c[key] != b[key]:
                 sys.exit("ERROR: join_dicts collision '"+str(key) +
                          "' trying to take values '" + str(c[key]) + "', '" + str(b[key]) + "'")
@@ -55,8 +53,8 @@ class SVM:
 
     def __init__(self, C=1, gamma=0.5):
         self.params = dict(kernel_type=cv2.SVM_LINEAR,
-                      svm_type=cv2.SVM_C_SVC,
-                      c=C, gamma=gamma)
+                           svm_type=cv2.SVM_C_SVC,
+                           c=C, gamma=gamma)
         self.model = cv2.SVM()
 
     def train(self, samples, responses):
@@ -73,14 +71,12 @@ class SVM:
 
 class IspyAgent:
 
-    def __init__(self, u_in, u_out, object_IDs, stopwords_fn, log_fn=None, alpha=0.9, simulation=False):
+    def __init__(self, io, object_IDs, stopwords_fn, log_fn=None, alpha=0.9):
 
-        self.u_in = u_in
-        self.u_out = u_out
+        self.io = io
         self.object_IDs = object_IDs
         self.log_fn = log_fn
         self.alpha = alpha
-        self.simulation = simulation
 
         # lists of predicates and words currently known
         self.predicates = []
@@ -103,25 +99,10 @@ class IspyAgent:
             self.stopwords.append(line.strip())
         fin.close()
 
-        # set point cloud vars to None; will be instantiated if simulation later set to False
-        self.pointCloud2_plane = None
-        self.cloud_plane_coef = None
-        self.pointCloud2_objects = None
-
-    # set simulation parameter
-    def set_simulation(self, s):
-        self.simulation = s
-        if not s:
-            # get the point cloud objects on the table for pointing / recognizing touches
-            self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.get_pointCloud2_objects()
-            if len(self.pointCloud2_objects) != len(self.object_IDs):
-                sys.exit("ERROR: "+str(len(self.pointCloud2_objects))+" PointCloud2 objects detected " +
-                         "while "+str(len(self.object_IDs))+" objects were expected")
-
     # invite the human to describe an object, parse the description, and start formulating response strategy
     def human_take_turn(self):
 
-        self.u_out.say("Please pick an object that you see and describe it to me in one phrase.")
+        self.io.say("Please pick an object that you see and describe it to me in one phrase.")
 
         understood = False
         guess_idx = None
@@ -129,7 +110,7 @@ class IspyAgent:
         cnf_clauses = None
         while not understood:
 
-            utterance = self.u_in.get().strip()
+            utterance = self.io.get().strip()
             cnf_clauses = self.get_predicate_cnf_clauses_for_utterance(utterance)
 
             if self.log_fn is not None:
@@ -171,32 +152,26 @@ class IspyAgent:
                 guesses = [gidx for (gidx, score) in sorted_match_scores]
                 while not correct:
                     guess_idx = guesses.pop(0)
-                    if self.simulation:
-                        self.u_out.point(guess_idx)
-                    else:
-                        self.robot_touch(guess_idx)
+                    self.io.point(guess_idx)
                     got_confirmation = False
                     while not got_confirmation:
                         got_confirmation = True
-                        self.u_out.say("Is this the object you have in mind?")
-                        confirmation = self.u_in.get()
+                        self.io.say("Is this the object you have in mind?")
+                        confirmation = self.io.get()
                         if confirmation == 'yes':
                             correct = True
                         elif confirmation != 'no':
                             got_confirmation = False
-                            self.u_out.say("I didn't catch that.")
+                            self.io.say("I didn't catch that.")
                         # TODO: think about adding passive negative training when user says guess was wrong
                     if not correct and len(guesses) == 0:
-                        self.u_out.say("I tried them all!")
+                        self.io.say("I tried them all!")
                         guesses = [gidx for (gidx, score) in sorted_match_scores]
-                if self.simulation:
-                    self.u_out.point(-1)  # stop pointing
-                else:
-                    self.robot_touch(-1)  # retract arm
+                self.io.point(-1)  # stop pointing
 
             # utterance failed to parse, so get a new one
             else:
-                self.u_out.say("Sorry; I didn't catch that. Could you re-word your description?")
+                self.io.say("Sorry; I didn't catch that. Could you re-word your description?")
 
         return utterance, cnf_clauses, guess_idx
 
@@ -277,7 +252,7 @@ class IspyAgent:
         else:
             desc = "I am thinking of an object I would describe as " + \
                    self.choose_word_for_pred(predicates_chosen[0]) + "."
-        self.u_out.say(desc)
+        self.io.say(desc)
 
         # wait for user to find and select correct object
         num_guesses = 0
@@ -285,52 +260,35 @@ class IspyAgent:
         predicates_to_ask.extend(lcps)
         random.shuffle(predicates_to_ask)
         while True:
-            if self.simulation:
-                guess_idx = self.object_IDs[self.u_in.get_guess()]
-            else:
-                guess_idx = self.object_IDs[self.get_human_touch()]
+            guess_idx = self.object_IDs[self.io.get_guess()]
             num_guesses += 1
             if guess_idx == ob_idx:
-                self.u_out.say("That's the one!")
+                self.io.say("That's the one!")
                 return desc, predicates_to_ask, num_guesses
             else:
-                self.u_out.say("That's not the object I am thinking of.")
+                self.io.say("That's not the object I am thinking of.")
                 # TODO: think about adding passive positive examples when user thinks a different
                 # TODO: object is being described
-
-    # touch an object
-    def robot_touch(self, idx):
-        self.touch_client(idx)
-
-    # perceive a human object touch
-    def get_human_touch(self):
-        return self.detect_touch_client()
 
     # point to object at pos_idx and ask whether it meets the attributes of aidx chosen to point it out
     def elicit_labels_for_predicates_of_object(self, pos_idx, preds):
         l = []
-        if self.simulation:
-            self.u_out.point(pos_idx)
-        else:
-            self.robot_touch(pos_idx)
+        self.io.point(pos_idx)
         for pred in preds:
-            self.u_out.say("Would you use the word '" + self.choose_word_for_pred(pred) +
-                           "' when describing this object?")
+            self.io.say("Would you use the word '" + self.choose_word_for_pred(pred) +
+                        "' when describing this object?")
             got_r = False
             while not got_r:
                 got_r = True
-                r = self.u_in.get()
+                r = self.io.get()
                 if r == "yes":
                     l.append(True)
                 elif r == "no":
                     l.append(False)
                 else:
                     got_r = False
-                    self.u_out.say("I didn't catch that.")
-        if self.simulation:
-            self.u_out.point(-1)  # stop pointing
-        else:
-            self.robot_touch(-1)  # retract arm
+                    self.io.say("I didn't catch that.")
+        self.io.point(-1)  # stop pointing
         return l
 
     # pick the word users use most often to describe the predicate
@@ -876,50 +834,6 @@ class IspyAgent:
     # fetch all features from an object id
     def fetch_all_features(self, oidx):
         return self.fetch_all_features_client(oidx)
-
-    # get PointCloud2 objects from service
-    def get_pointCloud2_objects(self):
-
-        # query to get the blobs on the table
-        req = TabletopPerceptionRequest()
-        rospy.wait_for_service('tabletop_object_detection_service')
-        try:
-            tabletop_object_detection_service = rospy.ServiceProxy(
-                'tabletop_object_detection_service', TabletopPerception)
-            res = tabletop_object_detection_service(req)
-            return res.cloud_plane, res.cloud_plane_coef, res.cloud_clusters
-        except rospy.ServiceException,e:
-            print "Service call failed: %s " % e
-            return []
-
-    # use the arm to touch an object
-    def touch_client(self, idx):
-        req = iSpyTouchRequest()
-        req.cloud_plane = self.pointCloud2_plane
-        req.cloud_plane_coef = self.cloud_plane_coef
-        req.objects = self.pointCloud2_objects
-        req.touch_index = idx
-        rospy.wait_for_service('ispy/touch_object_service')
-        try:
-            touch = rospy.ServiceProxy('ispy/touch_object_service', iSpyTouch)
-            res = touch(req)
-            return res.success
-        except rospy.ServiceException, e:
-            print "Service call failed: %s" % e
-
-    # detect a touch above an object
-    def detect_touch_client(self):
-        req = iSpyDetectTouchRequest()
-        req.cloud_plane = self.pointCloud2_plane
-        req.cloud_plane_coef = self.cloud_plane_coef
-        req.objects = self.pointCloud2_objects
-        rospy.wait_for_service('ispy/human_detect_touch_object_service')
-        try:
-            detect_touch = rospy.ServiceProxy('ispy/human_detect_touch_object_service', iSpyDetectTouch)
-            res = detect_touch(req)
-            return res.detected_touch_index
-        except rospy.ServiceException, e:
-            print "Service call failed: %s" % e
 
     # access the perceptual classifiers package load classifier service
     def get_free_classifier_id_client(self):

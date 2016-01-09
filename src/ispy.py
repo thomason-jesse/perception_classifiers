@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 __author__ = 'jesse'
 
-import rospy
+import rospkg
 import random
 import pickle
 import IspyAgent
@@ -10,15 +10,16 @@ from perception_classifiers.srv import *
 
 
 # rosrun perception_classifiers ispy.py
-#   [object_IDs] [num_rounds] [stopwords_fn] [user_id] [simulation=True|False] [agent_to_load=None]
+#   [object_IDs] [num_rounds] [stopwords_fn] [user_id] [iotype=std|file|robot] [agent_to_load=None]
 # start a game of ispy with user_id or with the keyboard/screen
 # if user_id provided, agents are pickled so that an aggregator can later extract
 # all examples across users for retraining classifiers and performing splits/merges
 # is user_id not provided, classifiers are retrained and saved after each game with just single-user data
 def main():
 
-    path_to_ispy = '/home/bwi/catkin_ws/src/perception_classifiers/www/'
-    path_to_logs = '/home/bwi/catkin_ws/src/perception_classifiers/logs/'
+    path_to_perception_classifiers = rospkg.RosPack().get_path('perception_classifiers')
+    path_to_ispy = os.path.join(path_to_perception_classifiers, 'www/')
+    path_to_logs = os.path.join(path_to_perception_classifiers, 'logs/')
     pp = os.path.join(path_to_ispy, "pickles")
     if not os.path.isdir(pp):
         os.system("mkdir "+pp)
@@ -32,7 +33,9 @@ def main():
     num_rounds = int(sys.argv[2])
     stopwords_fn = sys.argv[3]
     user_id = None if sys.argv[4] == "None" else sys.argv[4]
-    simulation = True if sys.argv[5] == "True" else False
+    io_type = sys.argv[5]
+    if io_type != "std" and io_type != "file" and io_type != "robot":
+        sys.exit("Unrecognized 'iotype'; options std|file|robot")
     agent_fn = sys.argv[6] if len(sys.argv) == 7 else None
 
     log_fn = os.path.join(path_to_logs, str(user_id)+".trans.log")
@@ -58,22 +61,24 @@ def main():
         A.load_classifiers()
     else:
         print "... from scratch"
-        A = IspyAgent.IspyAgent(None, None, object_IDs, stopwords_fn, log_fn=log_fn)
-    if user_id is None:
+        A = IspyAgent.IspyAgent(None, object_IDs, stopwords_fn, log_fn=log_fn)
+
+    io = None
+    if io_type == "std":
         print "... with input from keyboard and output to screen"
-        u_in = InputFromKeyboard()
-        u_out = OutputToStdout()
-    else:
-        print "... with input and output from files"
-        u_in = InputFromFile(os.path.join(cp, user_id+".get.in"),
-                             os.path.join(cp, user_id+".guess.in"),
-                             log_fn)
-        u_out = OutputToFile(os.path.join(cp, user_id+".say.out"),
-                             os.path.join(cp, user_id+".point.out"),
-                             log_fn)
-    A.u_in = u_in
-    A.u_out = u_out
-    A.set_simulation(simulation)
+        io = IOStd(log_fn)
+    elif io_type == "file":
+        print "... with input and output through files"
+        io = IOFile(os.path.join(cp, str(user_id)+".get.in"),
+                    os.path.join(cp, str(user_id)+".guess.in"),
+                    os.path.join(cp, str(user_id)+".say.out"),
+                    os.path.join(cp, str(user_id)+".point.out"),
+                    log_fn)
+    elif io_type == "robot":
+        print "... with input and output through embodied robot"
+        io = IORobot(os.path.join(cp, str(user_id)+".get.in"), log_fn, object_IDs)
+
+    A.io = io
 
     print "beginning game"
     for rnd in range(0, num_rounds):
@@ -93,7 +98,7 @@ def main():
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
-    A.u_out.say("Thanks for playing!")
+    A.io.say("Thanks for playing!")
 
     f = open(os.path.join(pp, str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])+".agent"), 'wb')
     pickle.dump(A, f)

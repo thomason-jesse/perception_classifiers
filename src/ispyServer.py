@@ -94,7 +94,7 @@ class IspyServer:
         rospy.loginfo("  Logs at: " + self.logs_folder + '/' + req.id + "*.log")
         args = [req.object_ids, "1",
                 "/u/jesse/catkin_ws/src/perception_classifiers/src/stopwords_en.txt",
-                req.id, "True"]
+                req.id, "file"]
         if req.exp_cond == "clusters":
             args.append("clusters.local.agent")
         elif req.exp_cond == "classifiers":
