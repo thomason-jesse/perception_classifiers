@@ -91,9 +91,9 @@ def main():
                     A.update_predicate_data(pred, [[object_IDs[correct_idx], True]])
 
         # robot turn
-        idx_selection = correct_idx
-        while idx_selection == correct_idx:
-            idx_selection = random.randint(0, len(object_IDs)-1)
+        idx_selection = random.randint(0, len(object_IDs)-1)
+        # while idx_selection == correct_idx:  # ensures object described by human isn't picked again
+        #     idx_selection = random.randint(0, len(object_IDs)-1)
         r_utterance, r_predicates, num_guesses = A.robot_take_turn(idx_selection)
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):
