@@ -99,6 +99,7 @@ def main():
         for idx in range(0, len(r_predicates)):
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
     A.io.say("Thanks for playing!")
+    A.io = None  # don't want to pickle IO structures, which get re-instantiated through this script on agent load
 
     f = open(os.path.join(pp, str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])+".agent"), 'wb')
     pickle.dump(A, f)

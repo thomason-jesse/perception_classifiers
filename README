@@ -1,12 +1,22 @@
 run with
 
+$ rosrun perception_classifiers fetch_features
 $ rosrun perception_classifiers classifier_services
 
+---
+
+for robot, also run for TTS
+$ rosrun sound_play soundplay_node.py
+
+then start the game by calling ispy.py
+$ rosrun perception_classifiers ispy.py [object_IDs] [num_rounds] \
+  src/perception_classifiers/src/stopwords_en.txt [user_id/None] robot
+
+---
+
 for mechanical turk interface, also run rosbridge_websocket and ispyServer
+$ rosrun rosbridge_server rosbridge_websocket
+$ rosrun perception_classifiers ispyServer.py
 
-there are fairly clear places in IspyAgent.py where pointing / looking for a guess should be added, 
-marked with # TODO flags
-
-Quick test of fetch_features:
-$ rosrun perception_classifiers fetch_features
-$ rosservice call /fetch_feature_service <double tab to complete message header>
+then access the web server at
+www.cs.utexas.edu/users/jesse/ispy/ispy.php

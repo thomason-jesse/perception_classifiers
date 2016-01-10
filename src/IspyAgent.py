@@ -259,8 +259,13 @@ class IspyAgent:
         predicates_to_ask = predicates_chosen[:]
         predicates_to_ask.extend(lcps)
         random.shuffle(predicates_to_ask)
+
         while True:
-            guess_idx = self.object_IDs[self.io.get_guess()]
+            g_idx = self.io.get_guess()
+            while g_idx == -1:
+                self.io.say(desc)
+                g_idx = self.io.get_guess()
+            guess_idx = self.object_IDs[g_idx]
             num_guesses += 1
             if guess_idx == ob_idx:
                 self.io.say("That's the one!")

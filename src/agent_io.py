@@ -4,6 +4,7 @@ __author__ = 'jesse'
 import os
 import sys
 import time
+import math
 import rospy
 from segbot_arm_perception.srv import *
 from segbot_arm_manipulation.srv import *
@@ -122,15 +123,15 @@ class IORobot:
                      "while "+str(len(self.object_IDs))+" objects were expected")
 
         # initialize a sound client instance for TTS
-        rospy.init_node('ispy_tts')
         self.sound_client = SoundClient()
-        rospy.sleep(2)  # give sound_play node a chance to connect to publishers
+        rospy.sleep(1)
+        self.sound_client.stopAll()
 
         # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
         print "touching objects from left-most to right-most... please watch and confirm detection and order"
         for i in range(0, len(object_IDs)):
             print "... touching object in position "+str(i)
-            self.point(i)
+            self.point(i, log=False)
         op_resp = None
         while op_resp != "Y" and op_resp != "N":
             print "confirm detection and ordering[Y/N]:"
@@ -139,7 +140,7 @@ class IORobot:
                 sys.exit("Try to fix my detection and try again.")
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
-    def get(self):
+    def get(self, log=True):
 
         # spin until input get exists, then read
         print "waiting for "+self.get_fn
@@ -161,18 +162,19 @@ class IORobot:
         return c
 
     # get guesses by detecting human touches on top of objects
-    def get_guess(self):
+    def get_guess(self, log=True):
         idx = self.detect_touch_client()
         append_to_file("guess:"+str(idx)+"\n", self.trans_fn)
         return int(idx)
 
     # use built-in ROS sound client to do TTS
-    def say(self, s):
+    def say(self, s, log=True):
         append_to_file("say:"+str(s)+"\n", self.trans_fn)
-        self.sound_client.voiceSound(str(s))
+        self.sound_client.voiceSound(str(s)).play()
+        rospy.sleep(int(math.sqrt(len(str(s).split()))))
 
     # point using the robot arm
-    def point(self, idx):
+    def point(self, idx, log=True):
         append_to_file("point:"+str(idx)+"\n", self.trans_fn)
         self.touch_client(idx)
 
