@@ -132,15 +132,40 @@ class IORobot:
         for i in range(0, len(object_IDs)):
             print "... touching object in position "+str(i)
             self.point(i, log=False)
+            rospy.sleep(2)
+            self.point(-1, log=False)
+            rospy.sleep(2)
         op_resp = None
         while op_resp != "Y" and op_resp != "N":
             print "confirm detection and ordering[Y/N]:"
             op_resp = raw_input()
             if op_resp == "N":
                 sys.exit("Try to fix my detection and try again.")
+        self.point(-1, log=False)
+        
+        # have open-ended operator interaction to confirm detection of touches is working
+        op_resp = None
+        while op_resp != "Y" and op_resp != "N":
+            print "detect a new touch?[Y/N]:"
+            op_resp = raw_input()
+            if op_resp == "Y":
+                print "...waiting to see what you point to"
+                t_idx = self.get_guess(log=False)
+                if t_idx == -1:
+                    print "...no touch detected"
+                else:
+                    print "...touching at detected position "+str(t_idx)
+                    self.point(t_idx, log=False)
+            self.point(-1, log=False)
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
     def get(self, log=True):
+
+        # get from command-line
+        # TODO: remove this when we're done testing touch
+        uin = raw_input().lower()
+        append_to_file("get:"+str(uin)+"\n", self.trans_fn)
+        return uin
 
         # spin until input get exists, then read
         print "waiting for "+self.get_fn
