@@ -122,7 +122,6 @@ class IORobot:
                      "while "+str(len(self.object_IDs))+" objects were expected")
 
         # initialize a sound client instance for TTS
-        rospy.init_node('ispy_tts')
         self.sound_client = SoundClient()
         rospy.sleep(2)  # give sound_play node a chance to connect to publishers
 
@@ -131,15 +130,39 @@ class IORobot:
         for i in range(0, len(object_IDs)):
             print "... touching object in position "+str(i)
             self.point(i)
+            rospy.sleep(2)
+            self.point(-1)
+            rospy.sleep(2)
         op_resp = None
         while op_resp != "Y" and op_resp != "N":
             print "confirm detection and ordering[Y/N]:"
             op_resp = raw_input()
             if op_resp == "N":
                 sys.exit("Try to fix my detection and try again.")
+        self.point(-1);
+        
+        # have open-ended operator interaction to confirm detection of touches is working
+        op_resp = None
+        while op_resp != "Y" and op_resp != "N":
+            print "detect a new touch?[Y/N]:"
+            op_resp = raw_input()
+            if op_resp == "Y":
+				print "...waiting to see what you point to"
+				t_idx = self.get_guess()
+				if t_idx == -1:
+					print "...no touch detected"
+				else:
+					print "...touching at detected position "+str(t_idx)
+					self.point(t_idx)
+            self.point(-1)
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
     def get(self):
+		
+		# get from command-line
+        uin = raw_input().lower()
+        append_to_file("get:"+str(uin)+"\n", self.trans_fn)
+        return uin
 
         # spin until input get exists, then read
         print "waiting for "+self.get_fn
