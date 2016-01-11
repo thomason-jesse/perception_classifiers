@@ -152,7 +152,8 @@ int main(int argc, char **argv)
 	while (!infile.eof())
 	{
 		string line;
-		if (!getline(infile, line).eof() || first_line)
+		getline(infile, line);
+		if (first_line)
 		{
 			first_line = false;
 			continue;
