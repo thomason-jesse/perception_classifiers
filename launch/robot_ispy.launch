@@ -1,0 +1,32 @@
+<launch>
+	<node
+		pkg="segbot_arm_perception"
+		type="table_object_detection_node"
+		name="segbot_arm_table_object_detector"
+		output="screen"
+	/>
+	<node
+		pkg="segbot_arm_manipulation"
+		type="ispy_arm_server"
+		name="ispy_arm_server"
+		output="screen"
+	/>
+	<node
+		pkg="perception_classifiers"
+		type="fetch_features"
+		name="fetch_feature_node"
+		output="screen"
+	/>
+	<node
+		pkg="perception_classifiers"
+		type="classifier_services"
+		name="classifier_services"
+		output="screen"
+	/>
+	<node
+		pkg="sound_play"
+		type="soundplay_node.py"
+		name="soundplay_node"
+		output="screen"
+	/>
+</launch>

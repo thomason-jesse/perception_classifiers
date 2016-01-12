@@ -117,8 +117,13 @@ class IORobot:
         self.object_IDs = object_IDs
 
         # get the point cloud objects on the table for pointing / recognizing touches
-        self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.get_pointCloud2_objects()
-        if len(self.pointCloud2_objects) != len(self.object_IDs):
+        tries = 10
+        while tries > 0:
+            self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.get_pointCloud2_objects()
+            if len(self.pointCloud2_objects) == len(self.object_IDs):
+                break
+            tries -= 1
+        if tries == 0:
             sys.exit("ERROR: "+str(len(self.pointCloud2_objects))+" PointCloud2 objects detected " +
                      "while "+str(len(self.object_IDs))+" objects were expected")
 
@@ -160,12 +165,6 @@ class IORobot:
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
     def get(self, log=True):
-
-        # get from command-line
-        # TODO: remove this when we're done testing touch
-        uin = raw_input().lower()
-        append_to_file("get:"+str(uin)+"\n", self.trans_fn)
-        return uin
 
         # spin until input get exists, then read
         print "waiting for "+self.get_fn
