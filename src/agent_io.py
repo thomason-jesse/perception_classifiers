@@ -181,27 +181,31 @@ class IORobot:
         os.system("rm -f "+self.get_fn)
 
         # log gotten get
-        append_to_file("get:"+str(c)+"\n", self.trans_fn)
+        if log:
+            append_to_file("get:"+str(c)+"\n", self.trans_fn)
 
         return c
 
     # get guesses by detecting human touches on top of objects
     def get_guess(self, log=True, block_until_prompted=True):
         if block_until_prompted:
-            operator_okay = self.get(log=False)
+            _ = self.get(log=False)
         idx = self.detect_touch_client()
-        append_to_file("guess:"+str(idx)+"\n", self.trans_fn)
+        if log:
+            append_to_file("guess:"+str(idx)+"\n", self.trans_fn)
         return int(idx)
 
     # use built-in ROS sound client to do TTS
     def say(self, s, log=True):
-        append_to_file("say:"+str(s)+"\n", self.trans_fn)
+        if log:
+            append_to_file("say:"+str(s)+"\n", self.trans_fn)
         self.sound_client.voiceSound(str(s)).play()
         rospy.sleep(int(math.sqrt(len(str(s).split()))))
 
     # point using the robot arm
     def point(self, idx, log=True):
-        append_to_file("point:"+str(idx)+"\n", self.trans_fn)
+        if log:
+            append_to_file("point:"+str(idx)+"\n", self.trans_fn)
         self.touch_client(idx)
 
     # get PointCloud2 objects from service

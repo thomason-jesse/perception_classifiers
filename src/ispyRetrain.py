@@ -71,7 +71,7 @@ def main():
 
     if experimental_cond != "control":
         print "detecting synonymy and polysemy across and within attributes using "+str(experimental_cond)
-        A.refactor_predicates(num_objects, experimental_cond)
+        A.refactor_predicates(num_objects, experimental_cond, 1)
     else:
         print "skipping synonymy and polysemy detection"
 
