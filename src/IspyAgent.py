@@ -140,12 +140,26 @@ class IspyAgent:
                                               classifier_results[oidx][pred][1])
                         object_score += max(cnf_scores)
                     match_scores[p_oidx] = object_score
-                sorted_match_scores = sorted(match_scores.items(), key=operator.itemgetter(1), reverse=True)
 
+                # log match scores
                 if self.log_fn is not None:
                     f = open(self.log_fn, 'a')
                     f.write("match_scores:"+str(match_scores)+"\n")
                     f.close()
+
+                # introduce small, random pertubations to identical scores to mix up guess order
+                min_nonzero_margin = sys.maxint
+                for i in match_scores:
+                    for j in match_scores:
+                        d = abs(match_scores[i]-match_scores[j])
+                        if 0 < d < min_nonzero_margin:
+                            min_nonzero_margin = d
+                for ob_idx in match_scores:
+                    if sum([1 for match_scores[ob_idx] in match_scores.values()]) > 1:
+                        match_scores[ob_idx] += (random.random()-0.5)*min_nonzero_margin
+
+                # then sort by match score to get guess order
+                sorted_match_scores = sorted(match_scores.items(), key=operator.itemgetter(1), reverse=True)
 
                 # iteratively take best guess
                 correct = False
@@ -259,8 +273,13 @@ class IspyAgent:
         predicates_to_ask = predicates_chosen[:]
         predicates_to_ask.extend(lcps)
         random.shuffle(predicates_to_ask)
+
         while True:
-            guess_idx = self.object_IDs[self.io.get_guess()]
+            g_idx = self.io.get_guess()
+            while g_idx == -1:
+                self.io.say(desc)
+                g_idx = self.io.get_guess()
+            guess_idx = self.object_IDs[g_idx]
             num_guesses += 1
             if guess_idx == ob_idx:
                 self.io.say("That's the one!")

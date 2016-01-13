@@ -260,7 +260,6 @@ let's
 like
 liked
 likely
-little
 look
 looking
 looks

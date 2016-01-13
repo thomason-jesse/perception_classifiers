@@ -91,14 +91,15 @@ def main():
                     A.update_predicate_data(pred, [[object_IDs[correct_idx], True]])
 
         # robot turn
-        idx_selection = correct_idx
-        while idx_selection == correct_idx:
-            idx_selection = random.randint(0, len(object_IDs)-1)
+        idx_selection = random.randint(0, len(object_IDs)-1)
+        # while idx_selection == correct_idx:  # ensures object described by human isn't picked again
+        #     idx_selection = random.randint(0, len(object_IDs)-1)
         r_utterance, r_predicates, num_guesses = A.robot_take_turn(idx_selection)
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
     A.io.say("Thanks for playing!")
+    A.io = None  # don't want to pickle IO structures, which get re-instantiated through this script on agent load
 
     f = open(os.path.join(pp, str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])+".agent"), 'wb')
     pickle.dump(A, f)

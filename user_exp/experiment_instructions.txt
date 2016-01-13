@@ -1,0 +1,30 @@
+Running multi-modal grounding experiment:
+
+We will compare robot performance in two conditions: baseline condition (BC) and experimental condition (EC)
+
+In BC:
+	-the config.txt will be modified to have only the 'look' behavior
+In EC:
+	-the config.txt will contain all behaviors
+
+This will allow us to study whether enabling multi-modal object exploration substantially improves robot performance at the ispy task.
+
+===
+
+The experiment will run over 4 folds of objects. Initially, the robot will have no training data while users interact with objects in fold 0. After all users in a condition have interacted with the robot for fold 0, the classifiers will be retrained with the gathered information. This will be repeated for folds 1, 2, and 3. Robot performance at each fold will be extracted post-hoc from log files.
+	Hypotheses: (1) the average number of guesses for the robot to identify the object specified by the human will be lower in EC than in BC by fold 3. (2) the average number of guesses for the human to identify the object specified by the robot will be lower in EC than in BC by fold 3.
+
+Because we are using 4 objects at a time on the table, the order of objects to be presented for a new user are to be chosen at random from the 8 available in the fold. The folds are:
+
+Fold 0: 29, 3, 26, 19, 16, 27, 5, 32
+Fold 1: 30, 12, 11, 14, 6, 25, 7, 8
+Fold 2: 31, 9, 4, 23, 2, 13, 22, 24
+Fold 3: 18, 17, 28, 1, 15, 10, 21, 20
+
+Refer to data/etc/object_list.csv for a mapping between verbal descriptions and object IDs.
+
+We can have people play for at most 2 rounds per set of 4 objects (each player takes 2 turns). I think that will be safe if we give them a handout that doesn't imply they shouldn't pick the same object twice and that does imply they shouldn't try to use predicates on turn 2 they suspect the robot understands because of turn 1.
+
+===
+
+It would be nice to have the same subject complete both the BC and EC for every fold, but getting people to cooperate over time as we retrain the system and bring them back in might be tricky unless our set of testers is small. Alternatively, we can allow repeat users but make the assumption statistically that all users are indendent (i.e. ignore that we have repeaters) but not constrain people to have to come in for every fold or always do both conditions (which they'll be blind to). I think we should run BC and EC for fold 0 and then see how many users we're dealing with before making this call, but I'm open to feedback.

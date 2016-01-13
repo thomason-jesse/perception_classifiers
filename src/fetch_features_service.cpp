@@ -190,7 +190,8 @@ int main(int argc, char **argv){
 	{
 		std::string line;
 		std::string entry;
-		if (!getline(infile, line).eof() || first_line)
+		getline(infile, line);
+		if (first_line)
 		{
 			first_line = false;
 			std::istringstream ss(line);
