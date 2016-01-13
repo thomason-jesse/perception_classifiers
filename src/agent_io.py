@@ -126,20 +126,20 @@ class IORobot:
         rospy.sleep(2)  # give sound_play node a chance to connect to publishers
 
         # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
-        print "touching objects from left-most to right-most... please watch and confirm detection and order"
-        for i in range(0, len(object_IDs)):
-            print "... touching object in position "+str(i)
-            self.point(i)
-            rospy.sleep(2)
-            self.point(-1)
-            rospy.sleep(2)
-        op_resp = None
-        while op_resp != "Y" and op_resp != "N":
-            print "confirm detection and ordering[Y/N]:"
-            op_resp = raw_input()
-            if op_resp == "N":
-                sys.exit("Try to fix my detection and try again.")
-        self.point(-1);
+        #print "touching objects from left-most to right-most... please watch and confirm detection and order"
+        #for i in range(0, len(object_IDs)):
+        #    print "... touching object in position "+str(i)
+        #    self.point(i)
+        #    rospy.sleep(2)
+        #    self.point(-1)
+        #    rospy.sleep(2)
+        #op_resp = None
+        #while op_resp != "Y" and op_resp != "N":
+        #    print "confirm detection and ordering[Y/N]:"
+        #    op_resp = raw_input()
+        #    if op_resp == "N":
+        #        sys.exit("Try to fix my detection and try again.")
+        #self.point(-1);
         
         # have open-ended operator interaction to confirm detection of touches is working
         op_resp = None
@@ -154,7 +154,9 @@ class IORobot:
 				else:
 					print "...touching at detected position "+str(t_idx)
 					self.point(t_idx)
+				op_resp = None
             self.point(-1)
+            
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
     def get(self):
