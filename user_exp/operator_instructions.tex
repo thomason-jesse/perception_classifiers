@@ -1,0 +1,33 @@
+\documentclass{article} 
+\usepackage{fullpage}
+
+\begin{document}
+
+\section{Initial Setup}
+
+\paragraph{} Launch the \texttt{segbot\_arm} according to standard instructions. Then launch the ispy robot nodes with \texttt{roslaunch perception\_classifiers robot\_ispy.launch}
+
+\section{Setup Per User}
+
+\paragraph{} Assign the user a unique numerical ID and write this ID together with the user's name and the current fold on the log sheet. Get an ordering for the objects by typing the current fold number into the form at \texttt{http://www.cs.utexas.edu/users/jesse/ispy/randomize\_objects.php} 
+
+\paragraph{} Find the objects with the first 4 IDs returned and arrange them from left-to-right on the table from the robot's perspective in the same order in which they were returned.
+
+\paragraph{} Now run\\ \texttt{rosrun perception\_classifiers ispy.py [object\_IDs] 2 src/perception\_classifiers/src/stopwords\_en.txt [user\_ID] robot}
+where \texttt{[object\_IDs]} is the first 4 of the IDs returned by \texttt{randomize\_objects.php} and the \texttt{[user\_ID]} is as set by you earlier.
+
+\paragraph{} There will be a brief confirmation dialog between you and the robot to confirm its understanding of the objects on the table. It will first touch them each in sequence and ask you to confirm that it touched them left-to-right. Then it will test its ability to recognize touches. One at a time, ask it to recognize a touch and then pick up an object from the user's perspective and ensure the robot reaches out and touches that object afterwards.
+
+\paragraph{} Now the user is ready to be shown in and given instructions. After they have read the instructions, confirm with the robot that you're done testing touches and dialog will begin. By this point, the oracle needs to be ready to transcribe user speech.
+
+\paragraph{} After the two rounds of turns are over, find the next 4 objects by ID returned earlier and repeat the steps from arranging these new objects on the table. The user should be shown to another room to wait until the new objects are confirmed with the system and dialog is ready to begin.
+
+\section{Oracle Duties}
+
+\paragraph{} When the user speaks to the robot, you can transcribe what they say using the robot scribe tool at \texttt{http://www.cs.utexas.edu/users/jesse/ispy/robot\_scribe.php}
+
+\paragraph{} To use the scribe, enter the password, `\texttt{frozenfish3768}', then supply the user id and the user utterance with each submission.
+
+\paragraph{} When the robot is taking its turn, the user is able to exlore objects after hearing the robot describe them. When they're ready to make a guess, they are to move their hands away from the objects and say ``okay". Transcribe this ``okay" to let the robot know it's okay to start recognizing hand movements as guesses. This must be done before every user guess.
+
+\end{document}

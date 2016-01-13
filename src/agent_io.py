@@ -155,7 +155,7 @@ class IORobot:
             op_resp = raw_input()
             if op_resp == "Y":
                 print "...waiting to see what you point to"
-                t_idx = self.get_guess(log=False)
+                t_idx = self.get_guess(log=False, block_until_prompted=False)
                 if t_idx == -1:
                     print "...no touch detected"
                 else:
@@ -186,7 +186,9 @@ class IORobot:
         return c
 
     # get guesses by detecting human touches on top of objects
-    def get_guess(self, log=True):
+    def get_guess(self, log=True, block_until_prompted=True):
+        if block_until_prompted:
+            operator_okay = self.get(log=False)
         idx = self.detect_touch_client()
         append_to_file("guess:"+str(idx)+"\n", self.trans_fn)
         return int(idx)
