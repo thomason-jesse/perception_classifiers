@@ -274,11 +274,14 @@ class IspyAgent:
         predicates_to_ask.extend(lcps)
         random.shuffle(predicates_to_ask)
 
+        first_guess = True
+        self.io.say("When you're ready to guess, say okay, then pick up the object.")
         while True:
-            g_idx = self.io.get_guess()
+            g_idx = self.io.get_guess(block_until_prompted=first_guess)
             while g_idx == -1:
                 self.io.say(desc)
-                g_idx = self.io.get_guess()
+                g_idx = self.io.get_guess(block_until_prompted=first_guess)
+            first_guess = False
             guess_idx = self.object_IDs[g_idx]
             num_guesses += 1
             if guess_idx == ob_idx:
@@ -286,8 +289,6 @@ class IspyAgent:
                 return desc, predicates_to_ask, num_guesses
             else:
                 self.io.say("That's not the object I am thinking of.")
-                # TODO: think about adding passive positive examples when user thinks a different
-                # TODO: object is being described
 
     # point to object at pos_idx and ask whether it meets the attributes of aidx chosen to point it out
     def elicit_labels_for_predicates_of_object(self, pos_idx, preds):

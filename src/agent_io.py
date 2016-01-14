@@ -134,22 +134,27 @@ class IORobot:
         self.sound_client.stopAll()
 
         # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
-        print "touching objects from left-most to right-most... please watch and confirm detection and order"
-        for i in range(0, len(object_IDs)):
-            print "... touching object in position "+str(i)
-            self.point(i, log=False)
-            rospy.sleep(2)
-            self.point(-1, log=False)
-            rospy.sleep(2)
         op_resp = None
         while op_resp != "Y" and op_resp != "N":
-            print "confirm detection and ordering[Y/N]:"
+            print "perform detection and ordering check?[Y/N]:"
             op_resp = raw_input()
-            if op_resp == "N":
-                sys.exit("Try to fix my detection and try again.")
-        self.point(-1, log=False)
-        
+            if op_resp == "Y":
+                print "touching objects from left-most to right-most... please watch and confirm detection and order"
+                for i in range(0, len(object_IDs)):
+                    print "... touching object in position "+str(i)
+                    self.point(i, log=False)
+                    rospy.sleep(2)
+                    self.point(-1, log=False)
+                    rospy.sleep(2)
+                op_resp = None
+                while op_resp != "Y" and op_resp != "N":
+                    print "confirm detection and ordering[Y/N]:"
+                    op_resp = raw_input()
+                    if op_resp == "N":
+                        sys.exit("Try to fix my detection and try again.")
+
         # have open-ended operator interaction to confirm detection of touches is working
+        print "testing touch detection..."
         op_resp = None
         while op_resp != "Y" and op_resp != "N":
             print "detect a new touch?[Y/N]:"
@@ -194,7 +199,7 @@ class IORobot:
         return c
 
     # get guesses by detecting human touches on top of objects
-    def get_guess(self, log=True, block_until_prompted=True):
+    def get_guess(self, log=True, block_until_prompted=False):
         if block_until_prompted:
             _ = self.get(log=False)
         idx = self.detect_touch_client()

@@ -24,10 +24,8 @@ where \texttt{[object\_IDs]} is the first 4 of the IDs returned by \texttt{rando
 
 \section{Oracle Duties}
 
-\paragraph{} When the user speaks to the robot, you can transcribe what they say using the robot scribe tool at \texttt{http://www.cs.utexas.edu/users/jesse/ispy/robot\_scribe.php}
+\paragraph{} When the user speaks to the robot, you can transcribe what they say using the robot scribe tool by tunneling into the arm robot machine and writing file \texttt{/home/bwi/catkin\_ws/src/perception\_classifiers/www/communications/[user\_ID].get.in} with the user's utterance. Use all lowercase and no punctuation.
 
-\paragraph{} To use the scribe, enter the password, `\texttt{frozenfish3768}', then supply the user id and the user utterance with each submission.
-
-\paragraph{} When the robot is taking its turn, the user is able to exlore objects after hearing the robot describe them. When they're ready to make a guess, they are to move their hands away from the objects and say ``okay". Transcribe this ``okay" to let the robot know it's okay to start recognizing hand movements as guesses. This must be done before every user guess.
+\paragraph{} When the robot is taking its turn, the user is able to explore objects after hearing the robot describe them. When they're ready to start guessing, they are to move their hands away from the objects and say ``okay''. Transcribe this ``okay'' to let the robot know it's okay to start recognizing hand movements as guesses.
 
 \end{document}
