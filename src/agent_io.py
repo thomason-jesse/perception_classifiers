@@ -167,6 +167,7 @@ class IORobot:
                 else:
                     print "...touching at detected position "+str(t_idx)
                     self.point(t_idx, log=False)
+                op_resp = None
             self.point(-1, log=False)
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
@@ -185,6 +186,7 @@ class IORobot:
         c = f.read()
         f.close()
         os.system("rm -f "+self.get_fn)
+        c = c.strip()
 
         # log gotten get
         if log:
