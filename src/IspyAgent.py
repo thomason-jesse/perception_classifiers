@@ -319,15 +319,15 @@ class IspyAgent:
     # objects have locations in concept-dimensional space for that classifier
     # detect classifiers that should be split into two because this space has two distinct clusters of objects,
     # as well as classifiers whose object spaces look so similar we should collapse the classifiers
-    def refactor_predicates(self, num_objects, method):
+    def refactor_predicates(self, num_objects, obj_idx_offset, method):
 
-        obj_range = range(0, num_objects)
+        obj_range = range(obj_idx_offset, num_objects+obj_idx_offset)
 
         # get feature vectors for all objects
         if method == "clusters":
             object_fvs = []
             print "gathering all features from objects..."  # DEBUG
-            for oidx in range(0, num_objects):
+            for oidx in obj_range:
                 print "... for object "+str(oidx)  # DEBUG
                 fv = self.fetch_all_features(oidx)
                 fv = numpy.float32(fv)
@@ -381,7 +381,7 @@ class IspyAgent:
 
                 # detect polysemy
                 for p in active_predicates:
-                    if self.attempt_predicate_split(p, num_objects):
+                    if self.attempt_predicate_split(p, num_objects, obj_idx_offset):
                         change_made = True
                         self.retrain_predicate_classifiers()
                         break
@@ -504,10 +504,10 @@ class IspyAgent:
         _ = raw_input()  # DEBUG
 
     # attempt to split a predicate
-    def attempt_predicate_split(self, p, num_objects):
+    def attempt_predicate_split(self, p, num_objects, obj_idx_offset):
 
         # get positive examples from predicate
-        objects_to_split = [oidx for oidx in range(0, num_objects)
+        objects_to_split = [oidx for oidx in range(obj_idx_offset, num_objects+obj_idx_offset)
                             if oidx in self.predicate_examples[p] and
                             True in self.predicate_examples[p][oidx]]
         if len(objects_to_split) < 4:  # heuristic to prevent unnecessary splitting

@@ -1,9 +1,6 @@
 <launch>
-	<node
-		pkg="segbot_arm_perception"
-		type="table_object_detection_node"
-		name="segbot_arm_table_object_detector"
-		output="screen"
+	<include
+		file="$(find segbot_arm_perception)/launch/segbot_arm_perception.launch"
 	/>
 	<node
 		pkg="segbot_arm_manipulation"

@@ -76,7 +76,7 @@ def main():
                     log_fn)
     elif io_type == "robot":
         print "... with input and output through embodied robot"
-        io = IORobot(os.path.join(cp, str(user_id)+".get.in"), log_fn, object_IDs)
+        io = IORobot(os.path.join(cp, str(user_id))+".get.in", log_fn, object_IDs)
 
     A.io = io
 
