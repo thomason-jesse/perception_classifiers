@@ -1,0 +1,67 @@
+\typeout{IJCAI-16 Instructions for Authors}
+
+\documentclass{article}
+% The file ijcai16.sty is the style file for IJCAI-16 (same as ijcai07.sty).
+\usepackage{ijcai16}
+
+% Use the postscript times font!
+\usepackage{times}
+
+% the following package is optional:
+%\usepackage{latexsym} 
+
+\newcommand{\ispy}{\textit{I, Spy} }
+
+\title{Grounded Attribute Learning with Multi-Modal Perception}
+%\author{name \\ 
+%affiliation  \\
+%email}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+	% The abstract should be no more than 200 words long
+	We build models of object attributes that use visual, haptic, auditory, and proprioceptive perceptual data, acquired through robot exploratory behaviors, using supervision from human-robot interaction.
+\end{abstract}
+
+\section{Introduction}
+
+\section{Related Work}
+
+	% relation to grounded language learning tasks
+	Robots exist in a phyiscal environment that they must be able to understand parts of in order to have meaningful language interactions with humans. In the past few years, researchers have made substantial progress on grounding language for robots, enabling tasks like object recognition~\cite{liu:acl14}[more] and route following[CITE] from verbal descriptions. Many of these works, at their core, use attribute classifiers as tools to map from words like `red', `square', and `left' to objects in the environment. They differ in how they gather data for these classifiers, how classifiers are trained, and how classifier decisions and confidences are chained together to arrive at a set of objects.
+
+	% vision+language tasks
+	Much of this work has focused on combining language with visual information. For grounding objects in an environment, many focus on learning perceptual classifiers for adjectives (properties) and nouns (instances) given some pairing of human descriptions and labeled scenes~\cite{dindo:iros10,sun:icra13}[more]. Others incorporate language models into the learning phase~\cite{perera:aaai13}. One builds classifiers for 12 attributes describing shapes and colors using semantic parses of human descriptions of objects in a workspace~\cite{matuszek:icml12}. Another builds on that with a richer semantic representation that allows relational attributes like ``on'' and jointly trains a language model alongside attribute classifiers induced as new attributes are seen in the training data~\cite{krishnamurthy:acl13}. Our method also constructs new attribute classifiers when unseen attributes are used by a human playing \textit{I, Spy}, but our classifiers take advantage of more than just visual data from objects.
+
+	% previous use of ispy and how we surpass this
+	Including a human in the learning loop provides a more realistic learning scenario for applications such as household robotics. Past work has used human speech plus gestures describing sets of objects on a table as supervision to learn instance and relational classifiers such as `mug' and `left of'~\cite{kollar:rss13}. Recent work introduced the \ispy game as a framework for supervision~\cite{parde:ijcai15} for grounded language learning. Our work differs from these in that we use haptic, auditory, and proprioceptive features alongside visual features to build object attribute classifiers. Further, in our instantiation of the \ispy task, the robot and the human both take a turn describing objects, where in previous work~\shortcite{parde:ijcai15} only the human played this role.
+
+	% multi-modal (?)
+
+% relation to multi-modal perception (e.g. jivko's work)
+
+\section{Task Definition}
+
+\section{Implementation}
+
+	\subsection{Grounded Language Learning}
+
+	\subsection{Multi-Modal Perception}
+
+\section{Experiment}
+
+	\subsection{Setup}
+
+	\subsection{Results}
+
+% \section*{Acknowledgments}
+
+%% The file named.bst is a bibliography style file for BibTeX 0.99c
+\bibliographystyle{named}
+\bibliography{/u/ml/bib/lunar,/u/jesse/local}
+
+\end{document}
+
