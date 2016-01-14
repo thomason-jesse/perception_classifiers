@@ -161,6 +161,7 @@ class IORobot:
                 else:
                     print "...touching at detected position "+str(t_idx)
                     self.point(t_idx, log=False)
+                op_resp = None
             self.point(-1, log=False)
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
@@ -179,6 +180,7 @@ class IORobot:
         c = f.read()
         f.close()
         os.system("rm -f "+self.get_fn)
+        c = c.strip()
 
         # log gotten get
         append_to_file("get:"+str(c)+"\n", self.trans_fn)
@@ -196,6 +198,7 @@ class IORobot:
     # use built-in ROS sound client to do TTS
     def say(self, s, log=True):
         append_to_file("say:"+str(s)+"\n", self.trans_fn)
+        print "ROBOT: "+str(s)  # DEBUG
         self.sound_client.voiceSound(str(s)).play()
         rospy.sleep(int(math.sqrt(len(str(s).split()))))
 
