@@ -115,6 +115,7 @@ class IORobot:
         self.get_fn = get_fn
         self.trans_fn = trans_fn
         self.object_IDs = object_IDs
+        self.last_say = None
 
         # get the point cloud objects on the table for pointing / recognizing touches
         tries = 10
@@ -184,6 +185,12 @@ class IORobot:
         if log:
             append_to_file("get:"+str(c)+"\n", self.trans_fn)
 
+        # catch 'get' if it is a repeat command
+        parts = c.split()
+        if self.last_say is not None and ("repeat" in parts or "what" in parts):
+            self.say(self.last_say)
+            return self.get(log=log)
+
         return c
 
     # get guesses by detecting human touches on top of objects
@@ -197,6 +204,7 @@ class IORobot:
 
     # use built-in ROS sound client to do TTS
     def say(self, s, log=True):
+        last_say = s
         if log:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
         self.sound_client.voiceSound(str(s)).play()
