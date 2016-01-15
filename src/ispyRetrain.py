@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 __author__ = 'jesse'
 
+import rospkg
 import rospy
-import pickle
+import pickle, sys
 import IspyAgent
 from agent_io import *
 from perception_classifiers.srv import *
@@ -20,14 +21,15 @@ def main():
     if experimental_cond != "control" and experimental_cond != "classifiers" and experimental_cond != "clusters":
         sys.exit("Unrecognized experimental condition")
 
-    path_to_ispy = '/u/jesse/public_html/ispy'
+    path_to_perception_classifiers = rospkg.RosPack().get_path('perception_classifiers')
+    path_to_ispy = os.path.join(path_to_perception_classifiers, 'www/')
     pp = os.path.join(path_to_ispy, "pickles")
 
     print "calling ROSpy init"
     rospy.init_node('ispy_retrain')
 
     print "instantiating blank ispyAgent"
-    A = IspyAgent.IspyAgent(None, None, None, stopwords_fn)
+    A = IspyAgent.IspyAgent(None, None, stopwords_fn)
 
     print "loading existing perceptual classifiers"
     A.load_classifiers()
@@ -46,7 +48,7 @@ def main():
         A.unify_with_agent(B)
         os.system("mv "+pfn+" "+os.path.join(pp, prev_dir, base_agent))
     else:
-        B = IspyAgent.IspyAgent(None, None, None, stopwords_fn)
+        B = IspyAgent.IspyAgent(None, None, stopwords_fn)
 
     print "tracing pickles folder to gather data from user agents"
     for root, dirs, files in os.walk(pp):
