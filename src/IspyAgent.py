@@ -301,15 +301,32 @@ class IspyAgent:
             while not got_r:
                 got_r = True
                 r = self.io.get()
-                if r == "yes":
+                if self.is_yes(r):
                     l.append(True)
-                elif r == "no":
+                elif self.is_no(r):
                     l.append(False)
                 else:
                     got_r = False
                     self.io.say("I didn't catch that.")
         self.io.point(-1)  # stop pointing
         return l
+
+    # determine whether an utterance is basically 'yes' or 'no'
+    def is_yes(self, u):
+        ws = u.split()
+        yw = ['yes', 'sure', 'yeah']
+        for y in yw:
+            if y in ws:
+                return True
+        return False
+
+    def is_no(self, u):
+        ws = u.split()
+        nw = ['no', 'nope', 'nah']
+        for n in nw:
+            if n in ws:
+                return True
+        return False
 
     # pick the word users use most often to describe the predicate
     def choose_word_for_pred(self, p):

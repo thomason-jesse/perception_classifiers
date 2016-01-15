@@ -18,6 +18,10 @@ def append_to_file(s, fn):
     f.write(s)
     f.close()
 
+vowels = ['a', 'e', 'i', 'o', 'u']
+secs_per_vowel = 0.26875
+speech_sec_buffer = 1
+
 
 class IOStd:
     def __init__(self, trans_fn):
@@ -28,7 +32,9 @@ class IOStd:
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin
 
-    def get_guess(self):
+    def get_guess(self, block_until_prompted=False):
+        if block_until_prompted:
+            _ = self.get()
         uin = int(raw_input())
         append_to_file("guess:"+str(uin)+"\n", self.trans_fn)
         return uin
@@ -72,7 +78,10 @@ class IOFile:
 
         return c
 
-    def get_guess(self):
+    def get_guess(self, block_until_prompted=False):
+
+        if block_until_prompted:
+            _ = self.get()
 
         # spin until guess exists, then read
         print "waiting for "+self.guess_fn
@@ -203,7 +212,7 @@ class IORobot:
     # get guesses by detecting human touches on top of objects
     def get_guess(self, log=True, block_until_prompted=False):
         if block_until_prompted:
-            _ = self.get(log=False)
+            _ = self.get()
         idx = self.detect_touch_client()
         if log:
             append_to_file("guess:"+str(idx)+"\n", self.trans_fn)
@@ -211,11 +220,11 @@ class IORobot:
 
     # use built-in ROS sound client to do TTS
     def say(self, s, log=True):
-        last_say = s
+        self.last_say = s
         if log:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
         self.sound_client.voiceSound(str(s)).play()
-        rospy.sleep(int(math.sqrt(len(str(s).split()))))
+        rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
 
     # point using the robot arm
     def point(self, idx, log=True):
