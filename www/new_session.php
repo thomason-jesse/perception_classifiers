@@ -147,7 +147,7 @@ $input_fn = 'robot_users_data.txt';
 $input_file = fopen($input_fn, 'a') or die("<p><div style=\"color:red\">unable to open data file</div></p>");
 for ($i=1; $i>=0; $i--)
 {
-	$data = implode("|",array($user_id+$i, $user_name, $user_fold.$fold_letters[$i], $object_ids_folds[$i]));
+	$data = implode("|",array($user_id, $user_name, $user_fold.$fold_letters[$i], $object_ids_folds[$i]));
 	fwrite($input_file, $data."\n");
 }
 fclose($input_file);
