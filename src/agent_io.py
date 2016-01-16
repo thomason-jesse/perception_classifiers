@@ -225,6 +225,7 @@ class IORobot:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
         self.sound_client.voiceSound(str(s)).play()
         rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
+        print "SYSTEM: "+s
 
     # point using the robot arm
     def point(self, idx, log=True):

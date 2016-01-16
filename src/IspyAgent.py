@@ -172,9 +172,9 @@ class IspyAgent:
                         got_confirmation = True
                         self.io.say("Is this the object you have in mind?")
                         confirmation = self.io.get()
-                        if confirmation == 'yes':
+                        if self.is_yes(confirmation):
                             correct = True
-                        elif confirmation != 'no':
+                        elif not self.is_no(confirmation):
                             got_confirmation = False
                             self.io.say("I didn't catch that.")
                         # TODO: think about adding passive negative training when user says guess was wrong

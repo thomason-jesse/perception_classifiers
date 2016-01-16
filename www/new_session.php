@@ -13,11 +13,11 @@ function render_table()
 	echo "<input type=\"submit\" value=\"Add\">";
 	echo "<input type=\"hidden\" name=\"pw\" value=\"".($_POST['pw'])."\">";
 	echo "<table border=1 cellpadding=3>";
-	echo "<tr><th>ID</th><th>Name</th><th>Fold</th><th>Object IDs</th><th>Object Pics</th></tr>";
+	echo "<tr><th>ID</th><th>Name</th><th>Fold</th><th>Object IDs</th><th>Object Pics</th><th>Command</th></tr>";
 	echo "<tr><td>&nbsp;</td>";
 	echo "<td><input type=\"text\" name=\"user_name\"></td>";
 	echo "<td><input type=\"text\" name=\"fold\"></td>";
-	echo "<td>&nbsp;</td><td>&nbsp;</td></tr>";
+	echo "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 	write_table_rows_from_file();
 	echo "</table>";
 	echo "</form></p>";
@@ -48,7 +48,9 @@ function write_table_rows_from_file()
 		{
 			echo "<td>".$entries[$i][$j]."</td>";
 		}
-		echo "<td>".image_list(explode(', ', $entries[$i][count($entries[$i])-1]))."</td>";
+		$image_array = explode(', ', $entries[$i][count($entries[$i])-1]);
+		echo "<td>".image_list($image_array)."</td>";
+		echo "<td>".build_command($entries[$i][0], $image_array)."</td>";
 		echo "</tr>";
 	}
 }
@@ -59,6 +61,13 @@ function image_list($l)
 	{
 		$s .= "<img src=\"images/".$l[$i].".JPG\" style=\"width:100px;height:100px;\">";
 	}
+	return $s;
+}
+function build_command($id, $l)
+{
+	$s = "rosrun perception_classifiers ispy.py ";
+	$s .= implode(',', $l);
+	$s .= " 2 ".$id." robot [agent_to_load]";
 	return $s;
 }
 function read_data_from_file()
@@ -136,7 +145,7 @@ $fold_letters = array('a', 'b');
 // write new information to file
 $input_fn = 'robot_users_data.txt';
 $input_file = fopen($input_fn, 'a') or die("<p><div style=\"color:red\">unable to open data file</div></p>");
-for ($i=0; $i<2; $i++)
+for ($i=1; $i>=0; $i--)
 {
 	$data = implode("|",array($user_id+$i, $user_name, $user_fold.$fold_letters[$i], $object_ids_folds[$i]));
 	fwrite($input_file, $data."\n");

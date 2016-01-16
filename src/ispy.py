@@ -10,7 +10,7 @@ from perception_classifiers.srv import *
 
 
 # rosrun perception_classifiers ispy.py
-#   [object_IDs] [num_rounds] [stopwords_fn] [user_id] [iotype=std|file|robot] [agent_to_load=None]
+#   [object_IDs] [num_rounds] [user_id] [iotype=std|file|robot] [agent_to_load]
 # start a game of ispy with user_id or with the keyboard/screen
 # if user_id provided, agents are pickled so that an aggregator can later extract
 # all examples across users for retraining classifiers and performing splits/merges
@@ -18,6 +18,7 @@ from perception_classifiers.srv import *
 def main():
 
     path_to_perception_classifiers = rospkg.RosPack().get_path('perception_classifiers')
+    stopwords_fn = os.path.join(path_to_perception_classifiers, 'src', 'stopwords_en.txt')
     path_to_ispy = os.path.join(path_to_perception_classifiers, 'www/')
     path_to_logs = os.path.join(path_to_perception_classifiers, 'logs/')
     pp = os.path.join(path_to_ispy, "pickles")
@@ -31,12 +32,11 @@ def main():
 
     object_IDs = [int(oid) for oid in sys.argv[1].split(',')]
     num_rounds = int(sys.argv[2])
-    stopwords_fn = sys.argv[3]
-    user_id = None if sys.argv[4] == "None" else sys.argv[4]
-    io_type = sys.argv[5]
+    user_id = None if sys.argv[3] == "None" else sys.argv[3]
+    io_type = sys.argv[4]
     if io_type != "std" and io_type != "file" and io_type != "robot":
         sys.exit("Unrecognized 'iotype'; options std|file|robot")
-    agent_fn = sys.argv[6] if len(sys.argv) == 7 else None
+    agent_fn = None if sys.argv[5] == "None" else sys.argv[5]
 
     log_fn = os.path.join(path_to_logs, str(user_id)+".trans.log")
     f = open(log_fn, 'a')

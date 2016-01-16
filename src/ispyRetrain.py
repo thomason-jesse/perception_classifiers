@@ -9,19 +9,19 @@ from agent_io import *
 from perception_classifiers.srv import *
 
 
-# python ispyRetrain.py [stopwords_en] [experimental_cond=control/classifiers/clusters] [out_fn_prefix] [num_objects] [base_agent]
+# python ispyRetrain.py [experimental_cond=control/classifiers/clusters] [out_fn_prefix] [num_objects] [base_agent]
 def main():
 
-    stopwords_fn = sys.argv[1]
-    experimental_cond = sys.argv[2]
-    out_fn_prefix = sys.argv[3]
-    num_objects = int(sys.argv[4])
-    base_agent = None if sys.argv[5] == "None" else sys.argv[5]
+    experimental_cond = sys.argv[1]
+    out_fn_prefix = sys.argv[2]
+    num_objects = int(sys.argv[3])
+    base_agent = None if sys.argv[4] == "None" else sys.argv[4]
 
     if experimental_cond != "control" and experimental_cond != "classifiers" and experimental_cond != "clusters":
         sys.exit("Unrecognized experimental condition")
 
     path_to_perception_classifiers = rospkg.RosPack().get_path('perception_classifiers')
+    stopwords_fn = os.path.join(path_to_perception_classifiers, 'src', 'stopwords_en.txt')
     path_to_ispy = os.path.join(path_to_perception_classifiers, 'www/')
     pp = os.path.join(path_to_ispy, "pickles")
 

@@ -13,8 +13,7 @@
 
 \paragraph{} Find the objects with the 4 IDs given for fold ``a'' and arrange them from left-to-right on the table from the robot's perspective in the same order in which they are given.
 
-\paragraph{} Now run\\ \texttt{rosrun perception\_classifiers ispy.py [object\_IDs] 2 src/perception\_classifiers/src/stopwords\_en.txt [user\_ID] robot}
-where \texttt{[object\_IDs]} is the IDs of current fold ``a'' and the \texttt{[user\_ID]} is the associated ID.
+\paragraph{} Now run the command given in the Command column. For \texttt{[agent\_to\_load]} supply ``None'' if this is fold 0 and the name of the current trained agent otherwise.
 
 \paragraph{} There is an optional brief confirmation dialog between you and the robot to confirm its understanding of the objects on the table. It will first touch them each in sequence and ask you to confirm that it touched them left-to-right. Then it will test its ability to recognize touches. One at a time, ask it to recognize a touch and then pick up an object from the user's perspective and ensure the robot reaches out and touches that object afterwards.
 
@@ -28,8 +27,8 @@ where \texttt{[object\_IDs]} is the IDs of current fold ``a'' and the \texttt{[u
 
 \texttt{/home/bwi/catkin\_ws/src/perception\_classifiers/www/communications/[user\_ID].get.in} 
 
-with the user's utterance. Use all lowercase and no punctuation.
+with the user's utterance. Use all lowercase and no punctuation. If the user says a filler word (e.g. ``uh'', ``um'', etc) transcribe the special token ``uh'' which the system knows to ignore.
 
-\paragraph{} When the robot is taking its turn, the user is able to explore objects after hearing the robot describe them. When they're ready to start guessing, they are to move their hands away from the objects and say ``okay''. Transcribe this ``okay'' to let the robot know it's okay to start recognizing hand movements as guesses.
+\paragraph{} When the robot is taking its turn, the user is able to explore objects after hearing the robot describe them. When they're ready to start guessing, they are to move their hands away from the objects and say ``okay''. Transcribe that message to let the robot know it's okay to start recognizing hand movements as guesses.
 
 \end{document}
