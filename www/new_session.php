@@ -89,12 +89,16 @@ function read_data_from_file()
 	fclose($f);
 	return $entries;
 }
-function next_available_id()
+function get_id($name)
 {
 	$entries = read_data_from_file();
 	$max_id = -1;
 	for ($i=0; $i<count($entries); $i++)
 	{
+		if (strcmp($entries[$i][1], $name) == 0)
+		{
+			return $entries[$i][0];
+		}
 		if ($entries[$i][0] > $max_id)
 		{
 			$max_id = $entries[$i][0];
@@ -129,8 +133,8 @@ if (!isset($_POST['user_name']) || !isset($_POST['fold']))
 $user_name = $_POST['user_name'];
 $user_fold = $_POST['fold'];
 
-// calculate next available id
-$user_id = next_available_id();
+// calculate next available id if new user or get old user id if returning
+$user_id = get_id($user_name);
 
 // get a randomized object ordering for user
 $folds = array();
