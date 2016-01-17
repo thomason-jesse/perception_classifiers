@@ -207,6 +207,7 @@ class IORobot:
             self.say(self.last_say)
             return self.get(log=log)
 
+        self.last_say = None
         return c
 
     # get guesses by detecting human touches on top of objects
@@ -220,9 +221,15 @@ class IORobot:
 
     # use built-in ROS sound client to do TTS
     def say(self, s, log=True):
-        self.last_say = s
+
+        if self.last_say is None:
+            self.last_say = s
+        else:
+            self.last_say += " " + s
+
         if log:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
+
         self.sound_client.voiceSound(str(s)).play()
         rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
         print "SYSTEM: "+s

@@ -147,7 +147,7 @@ class IspyAgent:
                     f.write("match_scores:"+str(match_scores)+"\n")
                     f.close()
 
-                # introduce small, random pertubations to identical scores to mix up guess order
+                # introduce small, random perturbations to identical scores to mix up guess order
                 min_nonzero_margin = sys.maxint
                 for i in match_scores:
                     for j in match_scores:
@@ -155,7 +155,7 @@ class IspyAgent:
                         if 0 < d < min_nonzero_margin:
                             min_nonzero_margin = d
                 for ob_idx in match_scores:
-                    if sum([1 for match_scores[ob_idx] in match_scores.values()]) > 1:
+                    if match_scores.values().count(match_scores[ob_idx]) > 1:
                         match_scores[ob_idx] += (random.random()-0.5)*min_nonzero_margin
 
                 # then sort by match score to get guess order

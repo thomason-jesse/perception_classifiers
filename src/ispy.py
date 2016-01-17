@@ -78,9 +78,14 @@ def main():
         print "... with input and output through embodied robot"
         io = IORobot(os.path.join(cp, str(user_id))+".get.in", log_fn, object_IDs)
 
+        print "... preemptively calling active predicates on objects to cache results"
+        active_predicates = [p for p in A.predicates if A.predicate_active[p]]
+        _ = A.get_classifier_results(active_predicates, A.object_IDs)
+
     A.io = io
 
     print "beginning game"
+    robot_choices = []
     for rnd in range(0, num_rounds):
 
         # human turn
@@ -92,12 +97,14 @@ def main():
 
         # robot turn
         idx_selection = random.randint(0, len(object_IDs)-1)
-        # while idx_selection == correct_idx:  # ensures object described by human isn't picked again
-        #     idx_selection = random.randint(0, len(object_IDs)-1)
+        while idx_selection not in robot_choices:  # ensures objects already picked by robot not picked again
+            idx_selection = random.randint(0, len(object_IDs)-1)
+        robot_choices.append(idx_selection)
         r_utterance, r_predicates, num_guesses = A.robot_take_turn(idx_selection)
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
+
     A.io.say("Thanks for playing!")
     A.io = None  # don't want to pickle IO structures, which get re-instantiated through this script on agent load
 
