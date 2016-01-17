@@ -72,6 +72,39 @@ struct cache_response
 };
 map<int, map<int, cache_response*> > run_classifier_cache;
 
+// calculate kappa statistic
+float kappa(int cm[2][2])
+{
+	double sr[2];
+    double sc[2];
+    double sw = 0.0;
+    for (int i = 0; i < 2; i++)
+    {
+		for (int j = 0; j < 2; j++)
+		{
+			sr[i] += cm[i][j];
+			sc[j] += cm[i][j];
+			sw += cm[i][j];
+		}
+    }
+    if (sw == 0)
+    	return 0;
+    double po = 0.0;
+    double pe = 0.0;
+    for (int i = 0; i < 2; i++)
+    {
+		pe += (sr[i] * sc[i]);
+		po += cm[i][i];
+    }
+    pe /= (sw*sw);
+    po /= sw;
+
+    if (pe < 1.0)
+		return (po - pe) / (1.0 - pe);
+    else
+		return 1.0;
+}
+
 void freeClassifierCache(int cid)
 {
 	for (map<int, cache_response*>::iterator oiter = run_classifier_cache[cid].begin();
@@ -563,6 +596,7 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 			}
 
 			float x_fold_correct = 0;
+			int cm[2][2] = {{0, 0}, {0, 0}};
 			if (seen_class_true && seen_class_false)
 			{
 				// do leave-one-out cross validation to determine confidence in this classifier
@@ -605,8 +639,16 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 						for (int obs_idx=0; obs_idx < num_observations[fo_idx]; obs_idx++)
 						{
 							int response = c_fold.predict(train_data.row(fold_rows_begin+obs_idx));
-							if (response == responses.at<int>(fo_idx, 0))
+							int gsr = responses.at<int>(fo_idx, 0);
+							if (response == gsr)
 								observations_correct += 1.0;
+							int gsrb = gsr;
+							if (gsr == -1)
+								gsrb = 0;
+							int response_b = response;
+							if (response == -1)
+								response_b = 0;
+							cm[gsrb][response_b] += 1;
 						}
 					}
 					float local_correctness = observations_correct / num_observations[fo_idx];
@@ -628,9 +670,20 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 			}
 
 			// calculate confidence and store it
-			float confidence = x_fold_correct / static_cast<float>(num_objects);
-			cout << "......primary classifier confidence " << confidence << "\n";  // debug
-			modality_confidence.push_back(confidence);
+			float k = kappa(cm);
+			float k_conf = k;
+			if (k_conf < 0)
+				k_conf = 0.0;
+			float confidence;
+			if (num_objects > 0)
+				confidence = x_fold_correct / static_cast<float>(num_objects);
+			else
+				confidence = 0;
+			//cout << "......primary classifier confidence " << confidence << "\n";  // debug
+			// modality_confidence.push_back(confidence);  // use accuracy for confidence
+			cout << "......primary classifier confidence " << k_conf << "\n";  // debug
+			modality_confidence.push_back(k_conf);  // use kappa statistic for confidence
+			
 		}
 
 		sub_classifiers.push_back(modality_classifiers);
@@ -642,4 +695,3 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 	res.success = true;
 	return true;
 }
-

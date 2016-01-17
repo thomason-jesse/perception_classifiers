@@ -97,7 +97,7 @@ def main():
 
         # robot turn
         idx_selection = random.randint(0, len(object_IDs)-1)
-        while idx_selection not in robot_choices:  # ensures objects already picked by robot not picked again
+        while idx_selection in robot_choices:  # ensures objects already picked by robot not picked again
             idx_selection = random.randint(0, len(object_IDs)-1)
         robot_choices.append(idx_selection)
         r_utterance, r_predicates, num_guesses = A.robot_take_turn(idx_selection)
