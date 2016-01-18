@@ -27,7 +27,7 @@
 
 \texttt{/home/bwi/catkin\_ws/src/perception\_classifiers/www/communications/[user\_ID].get.in} 
 
-with the user's utterance. Use all lowercase and no punctuation. If the user says a filler word (e.g. ``uh'', ``um'', etc) transcribe the special token ``uh'' which the system knows to ignore.
+with the user's utterance. Use all lowercase and no punctuation. If the user says a filler word (e.g. ``uh'', ``um'', etc) transcribe the special token ``uh'' which the system knows to ignore. If you are unsure of a word the user said, transcribe a ``?'' in place of the whole word. This will make the system ask the user to repeat themselves.
 
 \paragraph{} When the robot is taking its turn, the user is able to explore objects after hearing the robot describe them. When they're ready to start guessing, they are to move their hands away from the objects and say ``okay''. Transcribe that message to let the robot know it's okay to start recognizing hand movements as guesses.
 
