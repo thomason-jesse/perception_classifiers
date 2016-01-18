@@ -206,8 +206,13 @@ class IORobot:
         if self.last_say is not None and ("repeat" in parts or "what" in parts):
             self.say(self.last_say)
             return self.get(log=log)
-
         self.last_say = None
+
+        # catch 'get' if part of it was not understood
+        if '?' in parts:
+            self.say("I didn't catch that.")
+            return self.get(log=log)
+
         return c
 
     # get guesses by detecting human touches on top of objects
