@@ -257,7 +257,7 @@ class IspyAgent:
         # describe object to user
         if len(predicates_chosen) > 2:
             desc = "I am thinking of an object I would describe as " + \
-                ', '.join([self.choose_word_for_pred(pred) for pred in predicates_chosen[:-1]]) + \
+                ', and '.join([self.choose_word_for_pred(pred) for pred in predicates_chosen[:-1]]) + \
                 ", and "+self.choose_word_for_pred(predicates_chosen[-1]) + "."
         elif len(predicates_chosen) == 2:
             desc = "I am thinking of an object I would describe as " + \
