@@ -38,7 +38,8 @@ def main():
         sys.exit("Unrecognized 'iotype'; options std|file|robot")
     agent_fn = None if sys.argv[5] == "None" else sys.argv[5]
 
-    log_fn = os.path.join(path_to_logs, str(user_id)+".trans.log")
+    unique_name = str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])
+    log_fn = os.path.join(path_to_logs, unique_name+".trans.log")
     f = open(log_fn, 'a')
     f.write("object_IDs:"+str(object_IDs)+"\n")
     f.write("num_rounds:"+str(num_rounds)+"\n")
@@ -105,10 +106,14 @@ def main():
         for idx in range(0, len(r_predicates)):
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])
 
+        # special case for 'robot' io; clear 'say' cache in case user asks for repeat
+        if io_type == "robot":
+            io.last_say = None
+
     A.io.say("Thanks for playing!")
     A.io = None  # don't want to pickle IO structures, which get re-instantiated through this script on agent load
 
-    f = open(os.path.join(pp, str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])+".agent"), 'wb')
+    f = open(os.path.join(pp, unique_name+".agent"), 'wb')
     pickle.dump(A, f)
     f.close()
 

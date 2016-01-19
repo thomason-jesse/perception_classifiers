@@ -19,7 +19,7 @@ def append_to_file(s, fn):
     f.close()
 
 vowels = ['a', 'e', 'i', 'o', 'u']
-secs_per_vowel = 0.26875
+secs_per_vowel = 0.3
 speech_sec_buffer = 1
 
 
@@ -180,7 +180,7 @@ class IORobot:
             self.point(-1, log=False)
 
     # for now, default to IOFile behavior, but might eventually do ASR instead
-    def get(self, log=True):
+    def get(self, log=True, repeat_timeout=None):
 
         # spin until input get exists, then read
         print "waiting for "+self.get_fn
@@ -188,6 +188,10 @@ class IORobot:
         while not os.path.isfile(self.get_fn):
             time.sleep(1)
             t -= 1
+            if repeat_timeout is not None and t % repeat_timeout == 0:  # say previous but don't double them up in log
+                prev = self.last_say
+                self.say(self.last_say)
+                self.last_say = prev
             if t == 0:
                 print "... FATAL: timed out waiting for "+self.get_fn
                 sys.exit()
@@ -218,7 +222,8 @@ class IORobot:
     # get guesses by detecting human touches on top of objects
     def get_guess(self, log=True, block_until_prompted=False):
         if block_until_prompted:
-            _ = self.get()
+            _ = self.get(repeat_timeout=20)
+            self.say("Okay, go on")
         idx = self.detect_touch_client()
         if log:
             append_to_file("guess:"+str(idx)+"\n", self.trans_fn)
