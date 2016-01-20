@@ -102,6 +102,12 @@ def main():
             idx_selection = random.randint(0, len(object_IDs)-1)
         robot_choices.append(idx_selection)
         r_utterance, r_predicates, num_guesses = A.robot_take_turn(idx_selection)
+        
+        # special case for 'robot' io; clear 'say' cache in case user asks for repeat
+        if io_type == "robot":
+            io.last_say = None
+        
+        # get labels after robot turn
         labels = A.elicit_labels_for_predicates_of_object(idx_selection, r_predicates)
         for idx in range(0, len(r_predicates)):
             A.update_predicate_data(r_predicates[idx], [[object_IDs[idx_selection], labels[idx]]])

@@ -184,15 +184,15 @@ class IORobot:
 
         # spin until input get exists, then read
         print "waiting for "+self.get_fn
-        t = 60*60
+        t = 0
         while not os.path.isfile(self.get_fn):
             time.sleep(1)
-            t -= 1
-            if repeat_timeout is not None and t % repeat_timeout == 0:  # say previous but don't double them up in log
+            t += 1
+            if repeat_timeout is not None and t % repeat_timeout == 0:  # say previous but don't double them up in cache
                 prev = self.last_say
                 self.say(self.last_say)
                 self.last_say = prev
-            if t == 0:
+            if t == 60*60:
                 print "... FATAL: timed out waiting for "+self.get_fn
                 sys.exit()
         f = open(self.get_fn, 'r')
@@ -208,7 +208,9 @@ class IORobot:
         # catch 'get' if it is a repeat command
         parts = c.split()
         if self.last_say is not None and ("repeat" in parts or "what" in parts):
-            self.say(self.last_say)
+            prev = self.last_say
+            self.say(self.last_say, voice='voice_cmu_us_bdl_arctic_clunits')
+            self.last_say = prev
             return self.get(log=log)
         self.last_say = None
 
@@ -230,7 +232,7 @@ class IORobot:
         return int(idx)
 
     # use built-in ROS sound client to do TTS
-    def say(self, s, log=True):
+    def say(self, s, log=True, voice='voice_cmu_us_slt_arctic_hts'):
 
         if self.last_say is None:
             self.last_say = s
@@ -240,7 +242,8 @@ class IORobot:
         if log:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
 
-        self.sound_client.say(str(s), voice='voice_cmu_us_rms_arctic_clunits')
+        self.sound_client.say(str(s), voice=voice)
+        self.sound_client.say(str(s), voice=voice)
         rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
         print "SYSTEM: "+s
 
