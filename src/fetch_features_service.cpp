@@ -23,7 +23,8 @@ std::string object_base 				= "obj";
 std::vector<std::string> behaviorList;
 std::vector<std::string> modalList;
 std::map<int, std::map<int, std::map<int, std::vector<perception_classifiers::Observations*>* > > > featuresCache;
-std::string config_fn = ros::package::getPath("perception_classifiers") + "/config.txt";
+std::string condition;
+std::string config_fn;
 
 bool g_caught_sigint=false;
 
@@ -170,7 +171,12 @@ bool get_all_features_service(perception_classifiers::FetchAllFeatures::Request 
 	return true;
 }
 
-int main(int argc, char **argv){
+int main(int argc, char **argv)
+{
+
+	condition = argv[1];
+	config_fn = ros::package::getPath("perception_classifiers") + "/" + condition +".config";
+
 	ros::init(argc, argv, "fetch_feature_node");
 	ros::NodeHandle n;
 	ros::ServiceServer fetch_feature_service = n.advertiseService("fetch_feature_service", service_cb);

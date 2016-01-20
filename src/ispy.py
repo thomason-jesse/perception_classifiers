@@ -10,7 +10,7 @@ from perception_classifiers.srv import *
 
 
 # rosrun perception_classifiers ispy.py
-#   [object_IDs] [num_rounds] [user_id] [iotype=std|file|robot] [agent_to_load]
+#   [object_IDs] [num_rounds] [user_id] [iotype=std|file|robot] [agent_to_load] [condition]
 # start a game of ispy with user_id or with the keyboard/screen
 # if user_id provided, agents are pickled so that an aggregator can later extract
 # all examples across users for retraining classifiers and performing splits/merges
@@ -37,8 +37,12 @@ def main():
     if io_type != "std" and io_type != "file" and io_type != "robot":
         sys.exit("Unrecognized 'iotype'; options std|file|robot")
     agent_fn = None if sys.argv[5] == "None" else sys.argv[5]
+    cond = None if sys.argv[6] == "None" else sys.argv[6]
 
-    unique_name = str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])
+    if cond is None:
+        unique_name = str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])
+    else:
+        unique_name = str(cond)+"_"+str(user_id)+"_"+"-".join([str(oid) for oid in object_IDs])
     log_fn = os.path.join(path_to_logs, unique_name+".trans.log")
     f = open(log_fn, 'a')
     f.write("object_IDs:"+str(object_IDs)+"\n")

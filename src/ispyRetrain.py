@@ -35,7 +35,10 @@ def main():
     A.load_classifiers()
 
     found_agents = False
-    prev_dir = str(time.time())+"_previous"
+    if base_agent is None:
+        prev_dir = str(time.time())+"_previous"
+    else:
+        prev_dir = str(base_agent)+"_"+str(time.time())+"_previous"
     if not os.path.isdir(os.path.join(pp, prev_dir)):
         os.system("mkdir "+os.path.join(pp, prev_dir))
 
@@ -54,7 +57,7 @@ def main():
     for root, dirs, files in os.walk(pp):
         if 'previous' not in root:
             for fn in files:
-                if 'local' not in fn.split('.'):
+                if 'local' not in fn.split('.') and (base_agent is None or str(base_agent) in fn.split('.')):
                     pfn = os.path.join(pp, fn)
                     print "...loading and unifying agent '"+pfn+"'"
                     f = open(pfn, 'rb')
