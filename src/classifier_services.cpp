@@ -45,9 +45,10 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 				     perception_classifiers::trainClassifier::Response &res);
 
 // filepath data
-string config_fn = ros::package::getPath("perception_classifiers") + "/config.txt";
-string class_fn = ros::package::getPath("perception_classifiers") + "/classifiers/";
-string conf_fn = ros::package::getPath("perception_classifiers") + "/classifiers/confidences.csv";
+string condition;
+string config_fn;
+string class_fn;
+string conf_fn;
 
 // variables related to feature space, to be read in from configuration file
 int max_classifier_ID;
@@ -155,6 +156,11 @@ void customShutdown(int sig)
 // initialize node and offer services
 int main(int argc, char **argv)
 {
+	string condition = argv[1];
+	config_fn = ros::package::getPath("perception_classifiers") + "/" + condition +".config";
+	class_fn = ros::package::getPath("perception_classifiers") + "/" + condition +"_classifiers/";
+	conf_fn = class_fn + "confidences.csv";
+
 	ros::init(argc, argv, "classifier_services");
   	ros::NodeHandle n;
 

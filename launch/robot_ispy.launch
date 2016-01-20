@@ -13,11 +13,13 @@
 		type="fetch_features"
 		name="fetch_feature_node"
 		output="screen"
+		args="$(arg config)"
 	/>
 	<node
 		pkg="perception_classifiers"
 		type="classifier_services"
 		name="classifier_services"
+		args="$(arg config)"
 		output="screen"
 	/>
 	<node
