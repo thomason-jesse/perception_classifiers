@@ -275,7 +275,7 @@ class IspyAgent:
         random.shuffle(predicates_to_ask)
 
         first_guess = True
-        self.io.say("When you're ready to guess, say okay, then pick up the object.")
+        self.io.say("When you're ready to guess, say 'okay'.")
         while True:
             g_idx = self.io.get_guess(block_until_prompted=first_guess)
             while g_idx == -1:
