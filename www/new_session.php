@@ -157,7 +157,7 @@ $user_id = get_id($user_name);
 $user_cond = array('exp','con','exp','con');
 shuffle($user_cond);
 if ($user_fold == 0)
-	$user_cond = array_slice($user_cond, 0, 2);
+	$user_cond = array('con','con');
 
 // get a randomized object ordering for user
 $folds = array();
