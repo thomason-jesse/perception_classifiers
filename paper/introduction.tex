@@ -1,0 +1,18 @@
+In order to have meaningful verbal interaction with humans, robots need to be able to connect language to their environment. 
+Mapping from referring expressions like ``the blue cup'' to their object referents in the real world is part of the \textit{symbol grounding problem}~\cite{harnad:phys90}. 
+Symbol grounding involves connecting internal representations of information in a machine to real-world data from its sensory perception. \textit{Grounded language learning} bridges these symbols with natural language. 
+
+Early work on grounded language learning enabled a machine to map between adjectives and nouns like ``red'' and ``block'' to objects in a scene through vision-based classifiers~\cite{roy:evocomm01}.
+We refer to adjectives and nouns such as these that describe properties of objects as language \textit{predicates}.
+Most work has focused on grounding language predicates through visual information.
+However, other sensory modalities such haptic and auditory are also useful in allowing robots to discrimate objects~\cite{sinapov:icra14}.
+Therefore, this paper explors grounding language predicates using visual, haptic, auditory, and proprioceptive senses. 
+
+% TODO: intro paragraph briefly introducing data gathering through robot arm manipulation behaviors
+% TODO: jivko
+
+While a home or office robot can explore objects in an unsupervised way to gather perceptual data, language labels are needed to understand predicates like ``red''.
+Learning grounded semantics through natural human-robot dialog allows a system to acquire the relevant knowledge without the need for laborious labeling of numerous object for every potential lexical descriptor.
+A few other groups have explored learning from interactive linguistic games such as \ispy and ``20 Questions'' \cite{parde:ijcai15,vogel:aaai10}; however, these studies have been restricted to simple objects, have methodological issues, and only employed vision (see section \ref{sec:relatedwork}).
+We use a variation on the children's game \ispy, allowing both a human and robot turn, as a learning framework for gathering human language labels for objects to learn multi-modal grounded lexical semantics.
+Our experimental results that test generalization to new objects not seen during training illustrate that the system learns accurate word meanings and that modalities other than vision improve its performance.
