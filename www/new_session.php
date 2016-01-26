@@ -157,7 +157,7 @@ $user_id = get_id($user_name);
 $user_cond = array('exp','con','exp','con');
 shuffle($user_cond);
 if ($user_fold == 0)
-	$user_cond = array_slice($user_cond, 0, 2);
+	$user_cond = array('con','con');
 
 // get a randomized object ordering for user
 $folds = array();
@@ -170,10 +170,11 @@ $object_ids_cond_folds = get_object_ids($folds[$user_fold], $user_cond);
 // write new information to file
 $input_fn = 'robot_users_data.txt';
 $input_file = fopen($input_fn, 'a') or die("<p><div style=\"color:red\">unable to open data file</div></p>");
+$cond_seen = array("con"=>0, "exp"=>0);
 for ($c=0; $c<count($user_cond); $c++)
 {
-	$i = $c % 2;
-	$data = implode("|",array($user_id, $user_name, $user_fold, $user_cond[$c], $object_ids_cond_folds[$user_cond[$c]][$i]));
+	$data = implode("|",array($user_id, $user_name, $user_fold, $user_cond[$c], $object_ids_cond_folds[$user_cond[$c]][$cond_seen[$user_cond[$c]]]));
+	$cond_seen[$user_cond[$c]] += 1;
 	fwrite($input_file, $data."\n");
 }
 fclose($input_file);

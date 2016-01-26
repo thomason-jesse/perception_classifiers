@@ -820,30 +820,40 @@ class IspyAgent:
         self.predicate_examples = join_dicts(
             self.predicate_examples, other.predicate_examples, allow_duplicates=True)
 
+        # establish new classifier IDs and mark all for retraining
+        for i in range(0, len(self.predicates)):
+            self.predicate_to_classifier_map[self.predicates[i]] = i
+            self.classifier_to_predicate_map[i] = self.predicates[i]
+            self.classifier_data_modified[i] = True
+        for p in self.predicate_to_classifier_map:
+            if p not in self.predicate_active:
+                self.predicate_active[p] = other.predicate_active[p]
+
+        # THIS CODE CAUSES A NON INVERTED RELATIONSHIP BETWEEN PREDS AND CLASSIFIER IDS
         # join predicate<->classifier maps into one-to-many maps
-        sptcm_list = {p: [self.predicate_to_classifier_map[p]] for p in self.predicate_to_classifier_map}
-        optcm_list = {p: [other.predicate_to_classifier_map[p]] for p in other.predicate_to_classifier_map}
-        self.predicate_to_classifier_map = join_dicts(sptcm_list, optcm_list, warn_duplicates=True)
+        # sptcm_list = {p: [self.predicate_to_classifier_map[p]] for p in self.predicate_to_classifier_map}
+        # optcm_list = {p: [other.predicate_to_classifier_map[p]] for p in other.predicate_to_classifier_map}
+        # self.predicate_to_classifier_map = join_dicts(sptcm_list, optcm_list, warn_duplicates=True)
 
         # reduce one-to-many maps back to one-to-one maps by dropping colliding classifier IDs
         # this happens when two users introduce the same new predicate in parallel, which is assigned
         # two unique IDs
-        self.classifier_to_predicate_map = {}
-        for p in self.predicate_to_classifier_map:
-            c = max(self.predicate_to_classifier_map[p])
-            self.predicate_to_classifier_map[p] = c
-            self.classifier_to_predicate_map[c] = p
-            if p not in self.predicate_active:
-                self.predicate_active[p] = other.predicate_active[p]
+        # self.classifier_to_predicate_map = {}
+        # for p in self.predicate_to_classifier_map:
+        #     c = max(self.predicate_to_classifier_map[p])
+        #    self.predicate_to_classifier_map[p] = c
+        #    self.classifier_to_predicate_map[c] = p
+        #    if p not in self.predicate_active:
+        #        self.predicate_active[p] = other.predicate_active[p]
 
         # build a new map of what needs to be retrained
-        cdm = {}
-        for cidx in self.classifier_to_predicate_map:
-            if cidx in other.classifier_data_modified and other.classifier_data_modified[cidx]:
-                cdm[cidx] = True
-            if cidx in self.classifier_data_modified and self.classifier_data_modified[cidx]:
-                cdm[cidx] = True
-        self.classifier_data_modified = cdm
+        # cdm = {}
+        # for cidx in self.classifier_to_predicate_map:
+        #     if cidx in other.classifier_data_modified and other.classifier_data_modified[cidx]:
+        #         cdm[cidx] = True
+        #     if cidx in self.classifier_data_modified and self.classifier_data_modified[cidx]:
+        #         cdm[cidx] = True
+        # self.classifier_data_modified = cdm
 
     # remove predicate examples in structure from self
     def subtract_predicate_examples(self, pe):

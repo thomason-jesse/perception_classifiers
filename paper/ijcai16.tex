@@ -10,9 +10,13 @@
 % the following package is optional:
 %\usepackage{latexsym} 
 
-\newcommand{\ispy}{\textit{I, Spy} }
+% author added packages
+\usepackage{xspace}
+
+\newcommand{\ispy}{\textit{I, Spy}\xspace}
 
 \title{Grounded Attribute Learning with Multi-Modal Perception}
+%\title{Learning Multi-Modal Grounded Linguistic Semantics by Playing ``I Spy''}
 \author{Paper XXX}
 %\author{name \\ 
 %affiliation  \\
@@ -28,72 +32,43 @@
 \end{abstract}
 
 \section{Introduction}
-
-	In order to have meaningful verbal interaction with humans, robots need to be able to connect language to their environment. 
-	Mapping from referring expressions like ``the blue cup'' to their object referents in the real world is part of the \textit{symbol grounding problem}~\cite{harnad:phys90}. 
-	Symbol grounding involves connecting internal representations of information in a machine to real-world data from its sensory perception. \textit{Grounded language learning} bridges these symbols with natural language. 
-
-	Early work on grounded language learning enabled a machine to map between adjectives and nouns like ``red'' and ``block'' to objects in a scene through vision-based classifiers~\cite{roy:evocomm01}.
-	We refer to adjectives and nouns such as these that describe properties of objects as language \textit{predicates}.
-	Most work has focused on grounding language predicates through visual information.
-	This work goes beyond vision and allows a robot to additionally ground language predicates using haptic, auditory, and proprioceptive perceptual information. 
-
-	% TODO: intro paragraph briefly introducing data gathering through robot arm manipulation behaviors
-
-	While a home or office robot can explore objects in an unsupervised way to gather perceptual data, language labels are needed to understand predicates like ``red''.
-	We use the children's game \ispy as a learning framework for gathering human language labels for objects.
-	This paradigm was introduced by previous work~\cite{parde:ijcai15}, but we expand the game in several ways, such as allowing both a human and robot turn.
-	An assistive robot could play this game with a willing user, and in this paper we show that interactions from the game improve predicate models over time.
+\label{sec:introduction}
+\input{introduction.tex}
 
 \section{Related Work}
-
-	% relation to grounded language learning tasks
-	Researchers have made substantial progress on grounding language for robots, enabling tasks like object recognition and route following from verbal descriptions. 
-	Early work used vision together with speech descriptions of objects for this learning~\cite{roy:cogsci02}.
-
-	In the past few years, much of this work has focused on combining language with visual information. 
-	For grounding referring expressions in an environment, many learn perceptual classifiers for words like `red', `square', and `left' given some pairing of human descriptions and labeled scenes~\cite{liu:acl14,malinowski:nips14,mohan:acs13,sun:icra13,dindo:iros10}. 
-	Some works additionally incorporate language models into the learning phase~\cite{spranger:ijcai15,krishnamurthy:acl13,perera:aaai13,matuszek:icml12}. 
-	Our method uses simple language understanding and constructs new attribute classifiers for new, unseen words used by a human playing \ispy. 
-	Unlike any previous methods, our classifiers take advantage of more than just visual data from objects.
-
-	Including a human in the learning loop provides a more realistic learning scenario for applications such as household robotics. 
-	Past work has used human speech plus gestures describing sets of objects on a table as supervision to learn attribute classifiers~\cite{matuszek:aaai14,kollar:rss13}. 
-	Recent work introduced the \ispy game as a framework for supervision~\cite{parde:ijcai15} for grounded language learning. 
-	Outside of robotics, there has been some work on combining language with other sensory modalities than vision, such as audio~\cite{kiela:emnlp15}. 
-	Our work differs from these in that we use experience gathered from more than vision to build object attribute classifiers. 
-	In our instantiation of the \ispy task, the robot and the human both take a turn describing objects, where in previous work~\shortcite{parde:ijcai15} only the human played this role. 
-	To our knowledge, ours is the first work to integrate visual, haptic, auditory, and proprioceptive information for language grounding by an embodied robot.
-
-	% relation to multi-modal perception (i.e. jivko's work)
+\label{sec:relatedwork}
+\input{relatedwork.tex}
 
 \section{Task Definition}
+\label{sec:taskdefinition}
+\input{taskdefinition.tex}
 
-	% ispy task definition and metrics
+\section{Object Dataset}
+\label{sec:dataset}
+\input{dataset.tex}
+	% overview that data was gathered using arm behaviors
+	% TODO: jivko
 
 \section{Implementation}
-
-	% overview that data was gathered using arm behaviors and classifiers were built for language predicates with labels from ispy game
-
-	% briefly describe arm services needed to play ispy (detecting objects on table, touching, detecting human touches)
+\label{sec:implementation}
+	\input{implementation.tex}
 
 	\subsection{Multi-Modal Perception}
+	\label{ssec:mmp}
 
 		% object dataset and arm behaviors data collection
 
 	\subsection{Grounded Language Learning}
-
-		% predicate classifier definition
-
-		% how to play ispy on the user's turn
-
-		% how to play ispy on the robot's turn
+	\label{ssec:gll}
+	\input{gll.tex}
 
 \section{Experiment}
+\label{sec:experiment}
 
 	% overview
 
 	\subsection{Methodology}
+	\label{ssec:methodology}
 
 		% folds to allow incremental learning and results; way folds were formed
 
@@ -102,11 +77,13 @@
 		% description of setup wrt operator being a transcription service
 
 	\subsection{Results}
+	\label{ssec:results}
 
 		% average robot turns to guess human pick over folds; average human turns to guess robot pick over folds; statistical comparison to true random (0.25), maybe fold-fold tests too
 		% if enough users return, can do paired tests of fold0-fold3 for example
 
 \section{Conclusion}
+\label{sec:conclusion}
 
 % \section*{Acknowledgments}
 
