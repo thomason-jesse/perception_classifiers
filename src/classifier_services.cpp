@@ -542,7 +542,8 @@ bool trainClassifier(perception_classifiers::trainClassifier::Request &req,
 
 	CvSVMParams params;
     params.svm_type    = CvSVM::C_SVC;
-    params.kernel_type = CvSVM::LINEAR;
+    params.kernel_type = CvSVM::POLY;
+    params.degree      = 2;
     params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
 
 	// for each behavior and modality, retrieve relevant features for each object and train sub-classifiers

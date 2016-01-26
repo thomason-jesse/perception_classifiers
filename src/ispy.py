@@ -82,7 +82,7 @@ def main():
     elif io_type == "robot":
         print "... preemptively calling active predicates on objects to cache results"
         active_predicates = [p for p in A.predicates if A.predicate_active[p]]
-        _ = A.get_classifier_results(active_predicates, A.object_IDs)
+        _ = A.get_classifier_results(A.predicates, A.object_IDs)
         
         print "... with input and output through embodied robot"
         io = IORobot(os.path.join(cp, str(user_id))+".get.in", log_fn, object_IDs)
