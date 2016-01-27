@@ -830,6 +830,8 @@ class IspyAgent:
                 self.predicate_active[p] = other.predicate_active[p]
 
         # THIS CODE CAUSES A NON INVERTED RELATIONSHIP BETWEEN PREDS AND CLASSIFIER IDS
+        # THIS HAPPENS WHEN THE CLASSIFIER_SERVICES NODE IS RESET BETWEEN USERS
+        # AND SHOULD NOT PRESENT A PROBLEM FOR MECHANICAL TURK
         # join predicate<->classifier maps into one-to-many maps
         # sptcm_list = {p: [self.predicate_to_classifier_map[p]] for p in self.predicate_to_classifier_map}
         # optcm_list = {p: [other.predicate_to_classifier_map[p]] for p in other.predicate_to_classifier_map}

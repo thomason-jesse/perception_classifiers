@@ -16,7 +16,7 @@
 \newcommand{\ispy}{\textit{I, Spy}\xspace}
 
 \title{Grounded Attribute Learning with Multi-Modal Perception}
-%\title{Learning Multi-Modal Grounded Linguistic Semantics by Playing ``I Spy''}
+%\title{Learning Multi-Modal Grounded Linguistic Semantics by Playing \ispy}
 \author{Paper XXX}
 %\author{name \\ 
 %affiliation  \\
@@ -27,27 +27,31 @@
 \maketitle
 
 \begin{abstract}
-	% The abstract should be no more than 200 words long
-	We build models of object attributes that use visual, haptic, auditory, and proprioceptive perceptual data acquired through robot exploratory behaviors using supervision from human-robot interaction.
+% The abstract should be no more than 200 words long
+Grounded language learning bridges human language words like `red' and `square' with robot perception.
+The vast majority of existing work to connect language with robot perception is limited to vision.
+We build perceptual models use visual, haptic, auditory, and proprioceptive data acquired through robot exploratory behaviors that go beyond vision.
+Our system learns to ground natural language predicates about objects using supervision from an interactive human-robot \ispy game.
+In this game, the human and robot take turns describing an object on a table, then trying to guess which object the other has described.
+We demonstrate that our multi-modal system for grounding natural language outperforms a traditional, vision-only grounding framework by comparing the two on the \ispy task.
+We also provide a qualitative analysis of the predicates learned in the game, visualizing groups of predicates that can be understood from the same kinds of robot perception and pointing out predicates for which vision alone is insufficient (e.g. `heavy').
 \end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
-\input{introduction.tex}
+	\input{introduction.tex}
 
 \section{Related Work}
 \label{sec:relatedwork}
-\input{relatedwork.tex}
+	\input{relatedwork.tex}
 
 \section{Task Definition}
 \label{sec:taskdefinition}
-\input{taskdefinition.tex}
+	\input{taskdefinition.tex}
 
 \section{Object Dataset}
 \label{sec:dataset}
-\input{dataset.tex}
-	% overview that data was gathered using arm behaviors
-	% TODO: jivko
+	\input{dataset.tex}
 
 \section{Implementation}
 \label{sec:implementation}
@@ -55,8 +59,7 @@
 
 	\subsection{Multi-Modal Perception}
 	\label{ssec:mmp}
-
-		% object dataset and arm behaviors data collection
+	\input{mmp.tex}
 
 	\subsection{Grounded Language Learning}
 	\label{ssec:gll}
@@ -64,17 +67,11 @@
 
 \section{Experiment}
 \label{sec:experiment}
-
-	% overview
+	\input{experiment.tex}
 
 	\subsection{Methodology}
 	\label{ssec:methodology}
-
-		% folds to allow incremental learning and results; way folds were formed
-
-		% description of handout and instruction video
-
-		% description of setup wrt operator being a transcription service
+	\input{methodology.tex}
 
 	\subsection{Results}
 	\label{ssec:results}

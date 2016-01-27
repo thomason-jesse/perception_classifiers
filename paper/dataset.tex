@@ -1,19 +1,28 @@
 
 %description of dataset here
 
-In order to make use of the raw data collected, we choose a feature representation and downsample for each modality.
-Audio features are described by the Discrete Fourier Transform of the recorded audio sample, and then downsampled into 10 time and 10 frequency bins. 
-Using a 3D pointcloud, we define the object's local invarient features using the Fast Point Feature Histogram~\cite{rusu:icra09}  across 308 bins, and gather the color distribution in a histogram into 64 bins.
-Proprioception is represented by the finger locations on the arm's end effector as a range from 0 to 1500, which corresponds to the fingers being closed and open respectively. 
-Proprioceptive data is recorded only for the \i{grasp} behavior and thus has a uniform length of 30 time bins. 
-Finally, haptic data is recorded for each of the 6 joints of the arm and are represented as raw features, reduced into 10 time bins for each joint. 
+\begin{table}
+\centering
+\begin{tabular}[h]{|l|r|r|r|}
+	\hline
+	& \bf color & \bf fpfh & \bf vgg \\ \hline
+	\bf look & 64 & 308 & 4096 \\ \hline \hline
+	& \bf audio & \bf haptics & \bf finger \\ \hline
+	\bf grasp & 100 & 60 & 20 \\ \hline
+	\bf drop, hold & & & \\
+	\bf lift, lower & 100 & 60 & \\
+	\bf press, push & & & \\ \hline
+\end{tabular}
+\caption{The number of features extracted from each \textit{context}, or combination of robot behavior and perceptual modality.}
+\label{tab:feature_space_of_contexts}
+\end{table}
 
-%citation for bibliog.
-@inproceedings{rusu:icra09,
-  title={Fast point feature histograms (FPFH) for 3D registration},
-  author={Rusu, Radu Bogdan and Blodow, Nico and Beetz, Michael},
-  booktitle={Robotics and Automation, 2009. ICRA'09. IEEE International Conference on},
-  pages={3212--3217},
-  year={2009},
-  organization={IEEE}
-}
+In order to make use of the raw data collected, we choose a feature representation and downsample for each modality.
+Using a 3D pointcloud, we define the object's local invarient features using the Fast Point Feature Histogram~\cite{rusu:icra09}  across 308 bins (\textbf{fpfh}), and gather the color distribution in a histogram into 64 bins (\textbf{color}).
+Using RGB images of objects, we extract deep visual features from the 16-layer VGG network~\cite{simonyan:corr14} (\textbf{vgg}).
+
+Audio features are described by the Discrete Fourier Transform of the recorded audio sample, and then downsampled into 10 time and 10 frequency bins (\textbf{audio}). 
+Haptic data is recorded for each of the 6 joints of the arm and are represented as raw features, reduced into 10 time bins for each joint (\textbf{audio}).
+
+Finally, proprioception is represented by the finger locations on the arm's end effector as a range from 0 to 1500, which corresponds to the fingers being closed and open respectively. 
+Proprioceptive data is recorded only for the \textbf{grasp} behavior and thus has a uniform length of 20 time bins (\textbf{finger}). 

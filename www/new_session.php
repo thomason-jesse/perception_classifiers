@@ -80,7 +80,7 @@ function build_run_command($id, $l, $f, $c)
 {
 	$s = "rosrun perception_classifiers ispy.py ";
 	$s .= implode(',', $l);
-	$s .= " 2 ".$id." robot ";
+	$s .= " 1 ".$id." robot ";
 	if ($f == 0)
 		$s .= "None None";
 	else

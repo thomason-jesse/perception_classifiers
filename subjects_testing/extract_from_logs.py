@@ -81,7 +81,7 @@ def extract_data_from_log(fn):
     robot_first_guess = 0
     robot_expectation_guesses = 0
     robot_expectation_rewards = {}
-    last_guess = -1
+    last_guesses = []
     first_guess_worth = -1
     num_rounds = 0
     for l_idx in range(0, len(lines)):
@@ -99,7 +99,7 @@ def extract_data_from_log(fn):
             robot_first_guess = 0
             robot_expectation_guesses = 0
             robot_expectation_rewards = {}
-            last_guess = -1
+            last_guesses = []
             first_guess_worth = -1
             num_rounds = 0
 
@@ -128,12 +128,13 @@ def extract_data_from_log(fn):
                 first_guess_worth = -1
 
         # count human guesses, discarding guessing the same object twice in a row
-        elif p[0] == "guess" and p[1] != "None" and int(p[1]) != last_guess:
+        elif p[0] == "guess" and p[1] != "None" and int(p[1]) not in last_guesses:
             human_guesses += 1
-            last_guess = int(p[1])
+            last_guesses.append(int(p[1]))
             if lines[l_idx+2].strip().split(':')[1] == p[1]:  # this was correct guess
                 if human_guesses == 1:
                     human_first_guess += 1
+                last_guesses = []
 
         # calculate net reward based on match scores to remove noise of guessing randomly
         elif p[0] == "match_scores":

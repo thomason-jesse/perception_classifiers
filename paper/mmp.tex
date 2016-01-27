@@ -1,0 +1,17 @@
+For each language predicate $p$ the system encountered, a classifier $D_p$ was constructed to decide whether objects possessed the attribute denoted by $p$.
+This classifier was informed by sub-classifiers that determined whether $p$ held for a particular subset of the features describing objects.
+
+The feature space of objects was divided up according to the robot behavior, $b\in B$, used to gather the data for those features, as well as the modality, $m\in M$, to which that data belonged.
+A behavior together with a modality describe a \textit{context}.
+Table~\ref{tab:feature_space_of_contexts} gives the behaviors, modalities, and the number of features assiated with each context.
+Each context classifier $C_{bm}$ was a quadratic kernel SVM trained with the positive- and negative-labelled context feature vectors, with labels derived from the \ispy game (section~\ref{ssec:gll}).
+Given an object $o\in O$ the set of objects, the features relevant for context classifier $C_{bm}$ are denoted $o_{bm}$.
+For each object there were a number of \textit{observations} per behavior.
+For example, there were 6 angles of images used to compute features in the \textit{look} behavior, and the robot repeated other behaviors like \textit{drop} 6 times to gather data.
+Then $C_{bm}(o_{bm})\in [-1,1]$, the average over all observations for $o$ where individual decisions on observations were binary.
+We calculated the associated Cohen's Kappa $\kappa_{bm}$ of each classifier with the ground truth labels from the \ispy game versus the decisions of $C_{bm}$ (at the observation level) to determine a confidence in $[0,1]$ (we ceiling negative $\kappa$ to $0$).
+
+Given these context classifiers and confidences, we calculate $F_p(o)$ for $o\in O$ for each behavior $b$ and modality $m$ as
+\begin{equation}
+	F_p(o) = \sum_{b\in B,m\in M}{\kappa_{bm} C_{bm}(o_{bm})} \in [-1,1]
+\end{equation}
