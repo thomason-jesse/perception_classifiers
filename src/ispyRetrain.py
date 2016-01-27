@@ -57,7 +57,7 @@ def main():
     for root, dirs, files in os.walk(pp):
         if 'previous' not in root:
             for fn in files:
-                if 'local' not in fn.split('.') and (base_agent is None or str(base_agent) in fn.split('.')):
+                if 'local' not in fn.split('.') and (base_agent is None or fn[:len(out_fn_prefix)] == str(out_fn_prefix)):
                     pfn = os.path.join(pp, fn)
                     print "...loading and unifying agent '"+pfn+"'"
                     f = open(pfn, 'rb')
