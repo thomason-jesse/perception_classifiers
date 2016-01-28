@@ -1,18 +1,19 @@
 \paragraph{Data Folds.}
 We divided our 32-object dataset into 8 folds.
 For each fold, 10 human subjects played \ispy with both the \textbf{vision only} and \textbf{multi-modal} systems.
-Four of the 8 objects in the fold were used at a time, with all 8 seen by both systems.
-The orderings of objects and order of systems with which the subject played were randomized per subject.
+Four games were played by each subject.
+The \textbf{vision only} system and \textbf{multi-modal} system each drove two of these games, and their temporal order was randomized.
+Each system played with all 8 objects, but the split and the order of objects on the table were randomized.
 
 For fold 0, the systems were undifferentiated and so only one set of two games was played by each subject.
-For subsequent folds, the \ispy playing systems were incrementally trained using labels from previous folds only, such that the systems were always being tested against unseen objects (in contrast with prior work in the \ispy paradigm~\cite{parde:ijcai:15}).
+For subsequent folds, the \ispy playing systems were incrementally trained using labels from previous folds only, such that the systems were always being tested against unseen objects (in contrast with prior work using the \ispy game~\cite{parde:ijcai15}).
 
 \paragraph{Human Subjects.}
 Our 40 subjects were undergraduate and graduate students as well as some staff at our university.
 We had XX male and XX female study participants aged XX[freshmen] to XX[chempostdocs].
 
-At the beginning of each trial, subjects were shown an instructional video of one of the authors playing a single round (one turn each) of \ispy with the robot, then given a sheet of instructions about the task's turn-taking and how to interact with the robot.
-In every game (set of four objects and one of the two \ispy systems), subjects took one turn and the robot took one turn.
+At the beginning of each trial, subjects were shown an instructional video of one of the authors playing a single game of \ispy with the robot, then given a sheet of instructions about the task's turn-taking and how to communicate with the robot.
+In every game, subjects took one turn and the robot took one turn.
 
 A study coordinator remained in the room to deal with system mechanical and software failures, both of which resulted in the current game starting over.
 To avoid noise from automatic speech recognition, the study coordinator also transcribed the subject's speech to the system from a remote computer, but this was done discretely and not revealed to the subject until debriefing when the games were over.

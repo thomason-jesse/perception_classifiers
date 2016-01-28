@@ -5,14 +5,15 @@ Early work used vision together with speech descriptions of objects for this lea
 In the past few years, much of this work has focused on combining language with visual information. 
 For grounding referring expressions in an environment, many learn perceptual classifiers for words like `red', `square', and `left' given some pairing of human descriptions and labeled scenes~\cite{liu:acl14,malinowski:nips14,mohan:acs13,sun:icra13,dindo:iros10,vogel:aaai10}. 
 Some works additionally incorporate language models into the learning phase~\cite{spranger:ijcai15,krishnamurthy:acl13,perera:aaai13,matuszek:icml12}. 
-Our method uses simple language understanding and constructs new attribute classifiers for new, unseen words used by a human playing \ispy. 
-Unlike any previous methods, our classifiers take advantage of more than just visual data from objects.
+Our method uses simple language understanding and constructs new attribute classifiers for each unseen context word used by a human playing \ispy. 
+Outside of robotics, there has been some work on combining language with other sensory modalities than vision, such as audio~\cite{kiela:emnlp15}. 
+Unlike previous methods, our system is embodied in a learning robot that takes advantage of more than just visual data from objects to ground language predicates.
 
-Including a human in the learning loop provides a more realistic learning scenario for applications such as household robotics. 
+Including a human in the learning loop provides a more realistic learning scenario for applications such as household and office robotics. 
 Past work has used human speech plus gestures describing sets of objects on a table as supervision to learn attribute classifiers~\cite{matuszek:aaai14,kollar:rss13}. 
 Recent work introduced the \ispy game as a framework for supervision~\cite{parde:ijcai15} for grounded language learning. 
-Outside of robotics, there has been some work on combining language with other sensory modalities than vision, such as audio~\cite{kiela:emnlp15}. 
 Our work differs from these in that we use experience gathered from more than vision to build object attribute classifiers. 
+
 In our instantiation of the \ispy task, the robot and the human both take a turn describing objects, where in previous work~\shortcite{parde:ijcai15} only the human played this role. 
 To our knowledge, ours is the first work to integrate visual, haptic, auditory, and proprioceptive information for language grounding by an embodied robot.
 

@@ -1,10 +1,8 @@
-
-%description of dataset here
-
 \begin{table}
 \centering
 \begin{tabular}[h]{|l|r|r|r|}
 	\hline
+	\bf Behavior & \multicolumn{3}{c|}{\bf Modality} \\ \hline \hline
 	& \bf color & \bf fpfh & \bf vgg \\ \hline
 	\bf look & 64 & 308 & 4096 \\ \hline \hline
 	& \bf audio & \bf haptics & \bf finger \\ \hline
@@ -18,6 +16,8 @@
 \end{table}
 
 In order to make use of the raw data collected, we choose a feature representation and downsample for each modality.
+Table~\ref{tab:feature_space_of_contexts} gives the size of the feature vectors extracted for each \textit{context}, or combination of robot exploratory behavior and perceptual modality.
+
 Using a 3D pointcloud, we define the object's local invarient features using the Fast Point Feature Histogram~\cite{rusu:icra09}  across 308 bins (\textbf{fpfh}), and gather the color distribution in a histogram into 64 bins (\textbf{color}).
 Using RGB images of objects, we extract deep visual features from the 16-layer VGG network~\cite{simonyan:corr14} (\textbf{vgg}).
 
