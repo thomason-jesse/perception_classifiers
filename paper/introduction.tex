@@ -1,23 +1,23 @@
 In order to have meaningful verbal interaction with humans, robots need to be
 able to connect language to their environment.  Mapping from referring
-expressions like ``the blue cup'' to their object referents in the real world
+expressions such as ``the blue cup'' to their object referents in the real world
 is part of the \textit{symbol grounding problem}~\cite{harnad:phys90}.  Symbol
 grounding involves connecting internal representations of information in a
 machine to real-world data from its sensory perception. \textit{Grounded
 language learning} bridges these symbols with natural language.
 
-Early work on grounded language learning enabled a machine to map between adjectives and nouns like ``red'' and ``block'' to objects in a scene through vision-based classifiers~\cite{roy:evocomm01}.
+Early work on grounded language learning enabled a machine to map between adjectives and nouns such as ``red'' and ``block'' to objects in a scene through vision-based classifiers~\cite{roy:evocomm01}.
 We refer to adjectives and nouns that describe properties of objects as language \textit{predicates}.
 Most work has focused on grounding language predicates through visual information.
-However, other sensory modalities such haptic and auditory are also useful in
-allowing robots to discrimate between objects~\cite{sinapov:icra14}. Therefore, this paper explores grounding language predicates using visual, haptic, auditory, and proprioceptive senses. 
+However, other sensory modalities such as haptic and auditory are also useful in
+allowing robots to discrimate between objects~\cite{sinapov:icra14}. This paper explores grounding language predicates using visual, haptic, auditory, and proprioceptive senses. 
 
 % TODO: intro paragraph briefly introducing data gathering through robot arm manipulation behaviors
 [[brief paragraph on data gathering through robot arm behaviors?]]
 
-A home or office robot can explore objects in an unsupervised way to gather perceptual data, but language labels are needed to understand predicates like ``red''.
+A home or office robot can explore objects in an unsupervised way to gather perceptual data, but language labels are needed to understand predicates such as ``red''.
 Learning grounded semantics through natural human-robot dialog allows a system to acquire the relevant knowledge without the need for laborious labeling of numerous objects for every potential lexical descriptor.
-A few other groups have explored learning from interactive linguistic games such as \ispy and ``20 Questions'' \cite{parde:ijcai15,vogel:aaai10}; however, these studies have been restricted to simple objects, have methodological issues, and only employed vision (see section \ref{sec:relatedwork}).
+A few other groups have explored learning from interactive linguistic games such as \ispy and ``20 Questions'' \cite{parde:ijcai15,vogel:aaai10}; however, these studies have been restricted to simple objects and only employed vision (see Section \ref{sec:relatedwork}).
 
 We use a variation on the children's game \ispy, allowing both humans and the
 robot to generate object descriptions and guess their referents, as a

@@ -12,12 +12,12 @@ be an effective method for multi-modal learning in robots
 behaviors, modalities, and the number of features associated with each context.
 Each context classifier $C_{bm}$ is a quadratic-kernel SVM trained with the
 positively and negatively labelled context feature vectors derived from the
-\ispy game (section~\ref{ssec:gll}).  Given an object $o\in O$ from the set of
+\ispy game (Section~\ref{ssec:gll}).  Given an object $o\in O$ from the set of
 objects, the features relevant for context classifier $C_{bm}$ are denoted
 $o_{bm}$.  For each object, there were a number of \textit{observations} for
 each behavior.  For example, there were 6 angles of images used to compute
 features in the \textbf{look} behavior, and the robot repeated other behaviors
-like \textbf{drop} 6 times to gather sufficient data.  Finally,
+such as \textbf{drop} 6 times to gather sufficient data.  Finally,
 $C_{bm}(o_{bm})\in [-1,1]$ is the average classifier output over all
 observations for $o$, where individual SVM decisions on observations were in
 $\{-1,1\}$. Then, for each context, $bm$, we calculated the Cohen's Kappa
