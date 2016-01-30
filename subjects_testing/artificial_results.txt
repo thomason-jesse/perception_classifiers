@@ -1,0 +1,12 @@
+avg_reg
+		123_0	023_1	013_2*	012_3
+con		2.45	2.45	2.68	2.4
+exp		2.23	2.7		2.1		2.1
+
+avg_rr@1
+		123_0	023_1	013_2*	012_3
+con		.3		.354+1	.167	.271
+exp		.279	.258	.342	.406
+
+* significantly different across experimental conditions 'con' and 'exp'
++n significantly different against fold n
