@@ -17,6 +17,7 @@ def main():
 
     # known info
     fold_user_id_ranges = [range(i*10, (i+1)*10) for i in range(0, 4)]
+    fold_user_id_ranges[3].extend([40, 41])  # extra subjects
     identifying_headers = ["user_id", "fold", "cond"]
     data_to_extract = ["avg_rg", "avg_hg", "avg_reg", "avg_rr@1", "avg_hr@1"]
 

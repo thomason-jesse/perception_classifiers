@@ -44,57 +44,50 @@ def main():
     lines = f.readlines()
     f.close()
     context_confidences = {}  # indexed first by classifier id, then behavior, then modality
+    pred_confidences = {}  # indexed by classifier id, valued at sum of all kappa
     for line in lines:
         p = line.split(',')
         context_confidences[int(p[0])] = {}
+        pred_confidences[int(p[0])] = 0
         p_idx = 1
         for b in behaviors:
             context_confidences[int(p[0])][b] = {}
             for m in modalities:
                 context_confidences[int(p[0])][b][m] = float(p[p_idx])
+                pred_confidences[int(p[0])] += float(p[p_idx])
                 p_idx += 1
+        pred_confidences[int(p[0])] = len(a.predicate_examples[a.classifier_to_predicate_map[int(p[0])]])
 
     # save predicates and their context matrices to file
     f = open(os.path.join(out_dir, 'pred_conf_matrices.txt'), 'w')
-    for c in context_confidences:
-        f.write(str(c) + ":" + a.classifier_to_predicate_map[c] + '\n')
+    for c, v in sorted(pred_confidences.items(), key=operator.itemgetter(1), reverse=True):
+        f.write(str(c) + ":" + a.classifier_to_predicate_map[c] + '\t' + str(v) + '\n')
         f.write(matrix_str(context_confidences[c], context_feature_sizes) + '\n')
     f.close()
 
-    # calculate k nearest neighbors of each predicate in the kappa classifier space
+    # calculate cosine distance between predicates in the kappa classifier space
     norm = {}  # indexed by classifier id
-    cos_sim = {}  # indexed by classifier id, classifier id
+    cos_sim = {}  # indexed by (classifier id, classifier id)
     for aidx in context_confidences:
         if aidx not in norm:
             norm[aidx] = calc_norm([context_confidences[aidx][b][m] for b in behaviors for m in modalities])
         if norm[aidx] == 0:
             continue
-        cos_sim[aidx] = {}
         for bidx in context_confidences:
-            if aidx == bidx:
-                cos_sim[aidx][bidx] = 1
+            if aidx == bidx or (bidx, aidx) in cos_sim:
+                continue
             if bidx not in norm:
                 norm[bidx] = calc_norm([context_confidences[bidx][b][m] for b in behaviors for m in modalities])
             if norm[bidx] == 0:
                 continue
-            cos_sim[aidx][bidx] = sum([context_confidences[aidx][b][m]*context_confidences[bidx][b][m]
-                                       for b in behaviors for m in modalities]) / (norm[aidx]*norm[bidx])
-    knn = {}  # indexed by classifier id
-    k = 3  # number of nearest neighbors to retrieve
-    for idx in context_confidences:
-        print str(idx) + ":" + a.classifier_to_predicate_map[idx]
-        if idx not in cos_sim:
-            print "\tno classifier representation\n"
-            continue
-        knn[idx] = []
-        candidates = sorted(cos_sim[idx].items(), key=operator.itemgetter(1), reverse=True)
-        while len(knn[idx]) < k and len(candidates) > 0:
-            nidx, sim = candidates.pop(0)
-            if nidx == idx:
-                continue
-            knn[idx].append([nidx, sim])
-        print '\t' + '\t'.join([a.classifier_to_predicate_map[knn[idx][n][0]] + ',' +
-                                str(knn[idx][n][1]) for n in range(0, len(knn[idx]))]) + '\n'
+            cos_sim[(aidx, bidx)] = sum([context_confidences[aidx][b][m]*context_confidences[bidx][b][m]
+                                        for b in behaviors for m in modalities]) / (norm[aidx]*norm[bidx])
+
+    # save distances to file
+    f = open(os.path.join(out_dir, 'pred_cos_distances.txt'), 'w')
+    for k, v in sorted(cos_sim.items(), key=operator.itemgetter(1), reverse=True):
+        f.write(','.join([a.classifier_to_predicate_map[k[0]], a.classifier_to_predicate_map[k[1]], str(v)])+'\n')
+    f.close()
 
 
 # take in a list of numbers and return the 2 norm

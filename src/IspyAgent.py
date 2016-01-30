@@ -122,24 +122,7 @@ class IspyAgent:
             if len(cnf_clauses) > 0:
                 understood = True
 
-                # get matrix of results and confidences for each object against each predicate in cnfs
-                all_predicates = []
-                for d in cnf_clauses:
-                    all_predicates.extend(d)
-                classifier_results = self.get_classifier_results(all_predicates, self.object_IDs)
-
-                # calculate simple best-fit ranking from interpolation of result and confidence
-                match_scores = {}
-                for p_oidx in range(0, len(self.object_IDs)):
-                    oidx = self.object_IDs[p_oidx]
-                    object_score = 0
-                    for d in cnf_clauses:  # take the maximum score of predicates in disjunction
-                        cnf_scores = []
-                        for pred in d:
-                            cnf_scores.append(classifier_results[oidx][pred][0] *
-                                              classifier_results[oidx][pred][1])
-                        object_score += max(cnf_scores)
-                    match_scores[p_oidx] = object_score
+                match_scores = self.get_match_scores(cnf_clauses)
 
                 # log match scores
                 if self.log_fn is not None:
@@ -332,6 +315,30 @@ class IspyAgent:
     def choose_word_for_pred(self, p):
         wc = [self.word_counts[w] for w in self.predicates_to_words[p]]
         return self.predicates_to_words[p][wc.index(max(wc))]
+
+    # calculate match scores from an object given a set of cnf clauses of predicates
+    def get_match_scores(self, cnf_clauses):
+
+        # get matrix of results and confidences for each object against each predicate in cnfs
+        all_predicates = []
+        for d in cnf_clauses:
+            all_predicates.extend(d)
+        classifier_results = self.get_classifier_results(all_predicates, self.object_IDs)
+
+        # calculate simple best-fit ranking from interpolation of result and confidence
+        match_scores = {}
+        for p_oidx in range(0, len(self.object_IDs)):
+            oidx = self.object_IDs[p_oidx]
+            object_score = 0
+            for d in cnf_clauses:  # take the maximum score of predicates in disjunction
+                cnf_scores = []
+                for pred in d:
+                    cnf_scores.append(classifier_results[oidx][pred][0] *
+                                      classifier_results[oidx][pred][1])
+                object_score += max(cnf_scores)
+            match_scores[p_oidx] = object_score
+
+        return match_scores
 
     # get results for each perceptual classifier over all objects so that for any given perceptual classifier,
     # objects have locations in concept-dimensional space for that classifier
