@@ -5,7 +5,8 @@ Early work used vision together with speech descriptions of objects to learn gro
 In the past few years, much of this work has focused on combining language with visual information.
 For grounding referring expressions in an environment, many learn perceptual classifiers for words such as `red', `square', and `left' given some pairing of human descriptions and labeled scenes~\cite{liu:acl14,malinowski:nips14,mohan:acs13,sun:icra13,dindo:iros10,vogel:aaai10}.
 Some approaches additionally incorporate language models into the learning phase~\cite{spranger:ijcai15,krishnamurthy:acl13,perera:aaai13,matuszek:icml12}.
-Our method uses simple language understanding and constructs new attribute classifiers for each unseen context word used by a human playing \ispy.
+Incorporating a language model also allows for more robust generation of robot referring expressions for objects, as explored in~\cite{tellex:rss14}.
+Our method uses simple language understanding and constructs new predicate classifiers for each unseen context word used by a human playing \ispy, and our generation system for describing objects is based only on these predicate classifiers.
 Outside of robotics, there has been some work on combining language with other sensory modalities than vision, such as audio~\cite{kiela:emnlp15}.
 Unlike previous methods, our system is embodied in a learning robot that takes advantage of more than just visual data from objects to ground language predicates.
 
