@@ -1,33 +1,33 @@
 Language predicates and positive/negative labels for those predicates were gathered through human-robot dialog during the \ispy game.
 The human subject and robot were seated at opposite ends of a small table.
 A set of 4 objects were placed on the table for both to see.
-We denote the objects on the table during a given game as set $O_T$.
+We denote the objects on the table during a given game as set $\mathcal{O}_T$.
 
 \paragraph{Human Turn.} On the subject's turn, the robot asked her or him to pick an object and describe it in one phrase.
 Following~\cite{parde:ijcai15}, we used a standard stopword list to strip out non-content words from the subject's description.
-The remaining words were treated as a set of language predicates, $H_p$.
+The remaining words were treated as a set of language predicates, $\mathcal{H}_p$.
 To guess which object the subject was describing, the robot assigned scores to each object on the table.
-The score $S$ of each object $o\in O_T$ was calculated as
+The score $S$ of each object $i\in \mathcal{O}_T$ was calculated as
 \begin{equation}
-	S(o) = \sum_{p\in H_p}{D_p(o)}
+	S(i) = \sum_{p\in \mathcal{H}_p}{D_p(i)}
 \end{equation}
 The robot guessed objects in descending order by score (ties broken randomly) by pointing at them and asking whether it was correct.
-When the correct object was found, it was added as a positive training example for all classifiers  $p\in H_p$ used in the subject's description for use in future training.
+When the correct object was found, it was added as a positive training example for all classifiers  $p\in \mathcal{H}_p$ used in the subject's description for use in future training.
 
 \paragraph{Robot Turn.} On the robot's turn, an object was chosen at random from those on the table.
 To describe the object, the robot scored the set of known predicates learned from previous play.
 Following Gricean principles~\cite{grice:bkchapter75}, the robot should describe the object with predicates that apply to it but do not ambiguously refer to other objects on the table.
-With this in mind, we develop a predicate score that rewards describing the chosen object $o_c$ and penalizes describing the other objects on the table.
+With this in mind, we develop a predicate score that rewards describing the chosen object $i^*$ and penalizes describing the other objects on the table.
 The score $R$ for each predicate $p$ was calculated as
 \begin{equation}
-	R(p) = |O_T|D_p(o_c) - \sum{o_{d\in{O_T}\setminus\{o_c\}}}{D_p(o_d)}
+	R(p) = |O_T|D_p(i^*) - \sum_{j\in{\mathcal{O}_T}\setminus\{i^*\}}{D_p(j)}
 \end{equation}
-Note that this scoring equation also rewards predicates for describing $o_c$ while clearly {\it not} describing the other objects on the table (\textit{e.g.}  $D_p(o_d)<0$).
-The robot choose up to three highest scoring predicates $\hat{P}$ to describe object $o_c$ to the subject, using fewer if $S<0$ for any remaining predicates.
-Once ready to guess, the subject touched objects until the robot confirmed that they had guessed the right one ($o_c$).
+Note that this scoring equation also rewards predicates for describing $i^*$ while clearly {\it not} describing the other objects on the table (\textit{e.g.}  $D_p(j)<0$).
+The robot choose up to three highest scoring predicates $\hat{P}$ to describe object $i^*$ to the subject, using fewer if $S<0$ for any remaining predicates.
+Once ready to guess, the subject touched objects until the robot confirmed that they had guessed the right one ($i^*$).
 
-The robot then pointed to $o_c$ and engaged the user in a brief follow-up dialog in order to gather both positive and negative labels for $o_c$.
-In addition to predicates $\hat{P}$ used to describe the object, the robot selected two additional predicates $\bar{P}$ for which it was uncertain whether the property applied to $o_c$.
-$\bar{P}$ were selected randomly with $p\in P$ having a chance of inclusion proportional to $1-|D_p(o_c)|$, such that classifiers with low confidence in whether or not $p$ applied to $o_c$ were more likely to be selected.
-The robot then asked the subject whether they would describe the object $o_c$ using each $p\in\hat{P}\cup\bar{P}$.
+The robot then pointed to $i^*$ and engaged the user in a brief follow-up dialog in order to gather both positive and negative labels for $i^*$.
+In addition to predicates $\hat{P}$ used to describe the object, the robot selected two additional predicates $\bar{P}$ for which it was uncertain whether the property applied to $i^*$.
+$\bar{P}$ were selected randomly with $p\in P$ having a chance of inclusion proportional to $1-|D_p(i^*)|$, such that classifiers with low confidence in whether or not $p$ applied to $i^*$ were more likely to be selected.
+The robot then asked the subject whether they would describe the object $i^*$ using each $p\in\hat{P}\cup\bar{P}$.
 The subject's responses to these questions provided additional positive/negative labels to the classifiers of these predicates for use in future training.

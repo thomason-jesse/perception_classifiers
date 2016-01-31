@@ -1,19 +1,14 @@
 For each language predicate $p$, a classifier $D_p$ was learned to decide whether objects possessed the attribute denoted by $p$.
 This classifier was informed by sub-classifiers that determined whether $p$ held for a particular subset of the features used to describe objects.
 
-The feature space of objects was partitioned according to the robot behavior, $b\in B$, used to gather the data for those features, as well as the modality, $m\in M$, to which that data belonged.
-Prior work has shown this approach to be an effective method for multi-modal learning in robots ~\cite{sinapov:icra14}.
-A behavior together with a modality describe a \textit{context}.
-Table~\ref{tab:feature_space_of_contexts} gives the behaviors, modalities, and the number of features associated with each context.
-Each context classifier $C_{bm}$ is a quadratic-kernel SVM trained with the positively and negatively labelled context feature vectors derived from the \ispy game (Section~\ref{ssec:gll}).
-Given an object $o\in O$ from the set of objects, the features relevant for context classifier $C_{bm}$ are denoted $o_{bm}$.
-For each object, there were a number of \textit{observations} for each behavior.
-For example, there were 6 angles of images used to compute features in the \textbf{look} behavior, and the robot repeated other behaviors such as \textbf{drop} 6 times to gather sufficient data.
-Finally, $C_{bm}(o_{bm})\in [-1,1]$ is the average classifier output over all observations for $o$, where individual SVM decisions on observations were in $\{-1,1\}$.
-Then, for each context, $bm$, we calculated the Cohen's Kappa $\kappa_{bm}$ to measure the agreement across observations between the decisions of the $C_{bm}$ classifier and the ground truth labels from the \ispy game, in order to determine a confidence in $[0,1]$ for each context.  We ceiling negative $\kappa$ to $0$.
+The feature space of objects was partitioned according contexts, as discussed in Section~\ref{ssec:contexts}.
+Each context classifier $M_{c}, c\in\mathcal{C}$ is a quadratic-kernel SVM trained with positive- and negative-labels for context feature vectors derived from the \ispy game (Section~\ref{ssec:gll}).
+Then $M_{c}(\mathcal{X}_i^c)\in [-1,1]$, the average classifier output over all observations for object $i\in\mathcal{O}$ where individual SVM decisions on observations were in $\{-1,1\}$.
+Following previous work in multi-modal exploration~\cite{sinapov:icra14}, for each context we calculated the Cohen's Kappa $\kappa_{c}$ to measure the agreement across observations between the decisions of the $M_{c}$ classifier and the ground truth labels from the \ispy game, in order to serve as a confidence in $[0,1]$ for each context.
+We ceiling negative $\kappa$ to $0$.
 
-Given these context classifiers and associated confidences, we calculate an overall decision confidence, $D_p(o)$, for $o\in O$ for each behavior $b$ and modality $m$ as:
+Given these context classifiers and associated confidences, we calculate an overall decision confidence, $D_p(i)$, for $i\in\mathcal{O}$ for each behavior $b$ and modality $m$ as:
 \begin{equation}
-	D_p(o) = \sum_{b\in B,m\in M}{\kappa_{bm} C_{bm}(o_{bm})} \in [-1,1]
+	D_p(i) = \sum_{c\in\mathcal{C}}{\kappa_{c} M_{c}(\mathcal{X}_i^c)} \in [-1,1]
 \end{equation}
-The sign of $D_p(o)$ gives a decision on whether $p$ applies to $o$ with confidence $|D_p(o)|$.
+The sign of $D_p(i)$ gives a decision on whether $p$ applies to $i$ with confidence $|D_p(i)|$.

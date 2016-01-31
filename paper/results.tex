@@ -1,4 +1,4 @@
-To determine whether our \textbf{multi-modal} approach outperformed a traditional \textbf{vision only} approach to the language grounding problem in our \ispy task, we measured the average number of robot guesses and human guesses in games played with each fold of objects. Note that the systems were identical in fold 0, before receiving any training data.
+To determine whether our \textbf{multi-modal} approach outperformed a traditional \textbf{vision only} approach to the language grounding problem in our \ispy task, we measured the average number of robot guesses and human guesses in games played with each fold of objects. Note that the systems were identical in fold 0 since both are completely untrained.
 
 \begin{figure}
 \centering
@@ -8,11 +8,11 @@ To determine whether our \textbf{multi-modal} approach outperformed a traditiona
 \end{figure}
 
 \paragraph{Robot guess.}
-Figure~\ref{fig:robot_guesses} shows the average number of robot guesses across games in each fold. Because we had access to the order in which the robot intended to guess each object along with which objects were tied, we could calculate the expected number of guesses for each turn it took.
-For example, if all four objects were tied for first to guess, we say the number of guesses for that turn was 2.5, regardless of whether it got (un)lucky and picked the correct object (last)first.
+Figure~\ref{fig:robot_guesses} shows the average number of robot guesses for the games in each fold. Because we had access to the order in which the robot intended to guess each object along with which objects were tied, we calculated the {\it expected} number of robot guesses for each turn.
+For example, if all four objects were tied for first, the number of guesses for that turn was deemed to be 2.5, regardless of whether it got (un)lucky and picked the correct object (last)first.
 
 After training on just one fold, our \textbf{multi-modal} approach performs statistically significantly better than the expected number of turns for guessing (the only strategy for the untrained fold 0 system) for the remainder of the games.
-The \textbf{vision only} system, by contrast, is never able to differentiate itself from a random guessing appraoch, even as more training data becomes available.
+The \textbf{vision only} system, by contrast, is never able to differentiate itself from random guessing, even as more training data becomes available.
 Additionally, on folds 1 and 2, a paired Student's \textit{t}-test ($p<0.05$) reveals that the \textbf{multi-modal} system outperms the \textbf{vision only} system on a subject-by-subject basis.
 This difference could not be established for the more difficult fold 3 ($p=0.13$).
 
