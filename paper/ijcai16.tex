@@ -14,8 +14,11 @@
 \usepackage{xspace}
 \usepackage{graphicx}
 \usepackage{epsfig}
+\usepackage{array}
 
 \newcommand{\ispy}{\textit{I, Spy}\xspace}
+\newcommand{\examplepicsize}{0.075}
+\newcommand{\pictablew}{0.6in}
 
 %\title{Grounded Attribute Learning with Multi-Modal Perception}
 \title{Learning Multi-Modal Grounded Linguistic Semantics by Playing \ispy}
@@ -37,7 +40,7 @@ Our system learns to ground natural language predicates about objects using supe
 In this game, the human and robot take turns describing an object on a table, then trying to guess which object the other has described.
 All predicate labels were gathered from human subjects physically present to play this game with an embodied robot.
 We demonstrate that our multi-modal system for grounding natural language outperforms a traditional, vision-only grounding framework by comparing the two on the \ispy task.
-We also provide a qualitative analysis of the predicates learned in the game, visualizing groups of predicates that can be understood from the same kinds of robot perception and pointing out predicates for which vision alone is insufficient (e.g. `heavy').
+We also provide a qualitative analysis of the predicates learned in the game, visualizing groups of predicates that can be understood from the same kinds of robot perception and pointing out predicates for which vision alone is insufficient (e.g. `empty').
 \end{abstract}
 
 \section{Introduction}
@@ -76,20 +79,22 @@ We also provide a qualitative analysis of the predicates learned in the game, vi
 	\label{ssec:methodology}
 	\input{methodology.tex}
 
-	\subsection{Results}
+	\subsection{Quantitative Results}
 	\label{ssec:results}
 	\input{results.tex}
 
-		% average robot turns to guess human pick over folds; average human turns to guess robot pick over folds; statistical comparison to true random (0.25), maybe fold-fold tests too
-		% if enough users return, can do paired tests of fold0-fold3 for example
+	\subsection{Qualitative Results}
+	\label{ssec:qualitative}
+	\input{qualitative.tex}
 
 \section{Conclusion}
 \label{sec:conclusion}
+\input{conclusion.tex}
 
 % \section*{Acknowledgments}
 
 %% The file named.bst is a bibliography style file for BibTeX 0.99c
-\newpage
+\clearpage
 \bibliographystyle{named}
 \bibliography{/u/ml/bib/lunar,/u/jesse/local}
 

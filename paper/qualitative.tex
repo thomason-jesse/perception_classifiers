@@ -1,0 +1,69 @@
+We explored the predicates learned by our systems qualitatively, looking at the differences in individual predicate classifier agreements, the objects picked out by these classifiers in each system, and correlations between predicate decisions and objective measurements of object qualities such as weight and height.
+
+\paragraph{When multi-modal helps.}
+To determine when the \textbf{multi-modal} system's non-visual information helped make good decisions, we did a pairwise comparison of predicates built in the \textbf{multi-modal} and \textbf{vision only} systems.
+Table~\ref{tab:predicate_examples} shows the predicates for which the difference in $\kappa$ between the two systems was high and there were enough objects with labels that these confidences were nontrivial.
+
+\begin{table*}
+\centering
+\begin{tabular}[t]{| >{\centering\arraybackslash}m{\pictablew} || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} |}
+	\hline
+	\bf Predicate & $\kappa_{mm}-\kappa_{vo}$ & \multicolumn{3}{c||}{\bf High Confidence Positive} & \multicolumn{3}{c|}{\bf High Confidence Negative} \\ \hline \hline
+	\multicolumn{2}{|c|}{} & \multicolumn{6}{c|}{\bf multi-modal system} \\ \hline
+	can & 1 & \includegraphics[scale=\examplepicsize]{figures/objects/9.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/3.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/6.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/28.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/21.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/4.JPG}\\ \hline
+	tub & 1 & \includegraphics[scale=\examplepicsize]{figures/objects/30.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/10.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/11.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/14.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/2.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/18.JPG}\\ \hline
+	empty & .637 & \includegraphics[scale=\examplepicsize]{figures/objects/14.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/27.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/28.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/11.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/31.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/6.JPG}\\ \hline
+	tall & .566 & \includegraphics[scale=\examplepicsize]{figures/objects/19.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/24.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/25.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/15.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/26.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/7.JPG}\\ \hline
+	\multicolumn{2}{|c|}{} & \multicolumn{6}{c|}{\bf vision only system} \\ \hline
+	small & -.25 & \includegraphics[scale=\examplepicsize]{figures/objects/2.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/7.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/13.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/32.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/31.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/25.JPG}\\ \hline
+	red & -.663 & \includegraphics[scale=\examplepicsize]{figures/objects/8.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/10.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/14.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/12.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/5.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/3.JPG}\\ \hline
+	yellow & -1 & \includegraphics[scale=\examplepicsize]{figures/objects/12.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/20.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/25.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/1.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/4.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/17.JPG}\\ \hline
+\end{tabular}
+\caption{Predicates for which the difference $|\kappa_{mm}-\kappa_{vo}|$ between the \textbf{multi-modal} (mm) and \textbf{vision only} (vo) systems was greater than $0.5$ and both systems had at least $10$ objects with labels for that predicate on which to train.}
+\label{tab:predicate_examples}
+\end{table*}
+
+The predicates with the highest differences in which the \textbf{multi-modal} system are ``can'' and ``tub'', for which it achieves total agreement with human labels.
+The \textbf{vision only} system, on these predicates, classified all objects as not having these properties, a decision that rewards $\kappa=0$.
+The reverse happens for color predicate ``yellow,'' except \textbf{multi-modal} eagerly classified all objects as yellow and earned $\kappa=0$.
+We note that ``can'' and ``tub'' are cases of instance recognition, for which visual data is certainly helpful but the non-visual of an object could help (e.g. cans are light, tubs are heavy).
+In contrast, ``yellow'' is a color word for which only visual properties can help, and the additional noise from other contexts was enough to overwhelm the \textbf{multi-modal} approach.
+
+More interesting cases lie between, where non-trivial classifier decisions were made.
+Predicates ``empty'' and ``tall'' have clear non-visual interpretations.
+An empty object will be light, while a tall object will exert force earlier against an arm pressing down on it.
+The color predicate ``red'' follows the same reasoning as ``yellow'', where non-visual information can serve only to confuse a grounding system.
+The ``small'' predicate is a surprise, since a signal inverse to what gives \textbf{multi-modal} an advantage for ``tall'' should do the same for short, small objects.
+[[find out correlation between height and whether users labelled objects `small' in each setting]]
+A possible but uninteresting explanation is that the \textbf{vision only} system has about 1.5 times the labels \textbf{multi-modal} has for this predicate.
+
+\paragraph{Correlations to objective measures.}
+To validate whether the systems are learning non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its signed confidence in whether each object did or did not have the property and that object's measured weight, heigh, and width. Table~\ref{tab:predicate_correlations} gives the correlations discoverd with both high coefficient $r$ and high stastical confidence.
+
+\begin{table}
+\centering
+\begin{tabular}[h]{|l|r|r|}
+	\hline
+	\bf Property & \bf multi-modal & \bf vision only \\ \hline \hline
+	& \multicolumn{2}{c|}{\bf Believable} \\ \hline
+	\bf height & tall (.739) & heavy (.729) \\ \hline
+	\bf width & fat (.509) & small (-.525) \\ \hline
+	\bf weight & empty (-.771) & \\ \hline \hline
+	& \multicolumn{2}{c|}{\bf Likely spurious} \\ \hline
+	\bf width & & rattles \\ \hline
+	& water, blue & \\
+	\bf weight & silver, liquid & \\ 
+	& gray, red, yellow & \\ \hline
+
+\end{tabular}
+\caption{Predicates and associated Pearson's correlation coefficient $r$ between systems' object decisions and physical object properties.
+Shown here are predicates for which $r>0.5$ with $p<0.05$ and the system had at least $10$ objects with labels for the predicate on which to train.}
+\label{tab:predicate_correlations}
+\end{table}
+
+The \textbf{vision only} system seems able to ground ``heavy'' in height and ``small'' in width, the latter of which is a visual word-property pair (though ``heavy'' for height has counter-examples in our dataset).
+The system can represent these shape properties with the vision features associated with the pointcloud.
+
+In contrast, the \textbf{multi-modal} system learned to ground predicates which correlate well to each of the physical dimensions along which we measured objects.
+The ``tall'' predicate correlates with objects that have a high height, ``fat'' with objects that have a high width, and ``empty'' with objects that weigh less.
+This highlights the value of multi-modal grounding, since words like ``empty'' cannot be evaluated with vision alone when dealing with containers that have unseeable contents.

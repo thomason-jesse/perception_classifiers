@@ -8,12 +8,12 @@ We refer to adjectives and nouns that describe properties of objects as language
 Most work has focused on grounding language predicates through visual information. However, other sensory modalities such as haptic and auditory are also useful in allowing robots to discrimate between objects~\cite{sinapov:icra14}.
 This paper explores grounding language predicates using visual, haptic, auditory, and proprioceptive senses. 
 
-% TODO: intro paragraph briefly introducing data gathering through robot arm manipulation behaviors
-[[brief paragraph on data gathering through robot arm behaviors?]]
-
 A home or office robot can explore objects in an unsupervised way to gather perceptual data, but language labels are needed to understand predicates such as ``red''.
 Learning grounded semantics through natural human-robot dialog allows a system to acquire the relevant knowledge without the need for laborious labeling of numerous objects for every potential lexical descriptor.
 A few other groups have explored learning from interactive linguistic games such as \ispy and ``20 Questions'' \cite{parde:ijcai15,vogel:aaai10}; however, these studies have been restricted to simple objects and only employed vision (see Section \ref{sec:relatedwork}).
 
 We use a variation on the children's game \ispy, allowing both humans and the robot to generate object descriptions and guess their referents, as a learning framework for gathering human language labels for objects to learn multi-modal grounded lexical semantics.
+Figure[[insert]] shows the robot and human guessing an object the other has described.
 Our experimental results test generalization to new objects not seen during training and illustrate both that the system learns accurate word meanings and that modalities other than vision improve its performance.
+
+To our knowledge, this is the first robotic system to perform natural language grounding using multi-modal sensory perception through feedback with a human user alone.

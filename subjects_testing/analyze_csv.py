@@ -1,6 +1,7 @@
 import sys
 import math
 import scipy.stats
+import operator  # TEMP
 
 # read command line and csv data
 try:
@@ -78,15 +79,18 @@ if p_paired_header is not None:
         for batch in batch_header_values:
             batch_lists[batch] = []
             for paired_idx in header_batch_data[p_paired_header][batch]:
-                batch_lists[batch].append(header_batch_data[headers[h]][batch][paired_idx])
+                pair_present = True
                 for _batch in batch_header_values:
                     if _batch == batch:
                         continue
                     if paired_idx not in header_batch_data[p_paired_header][_batch].keys():
-                        sys.exit(paired_idx+" pair key from batch "+batch+" missing from batch "+_batch)
+                        pair_present = False
+                        print "WARNING: "+paired_idx+" pair key from batch "+batch+" missing from batch "+_batch
+                if pair_present:
+                    batch_lists[batch].append(header_batch_data[headers[h]][batch][paired_idx])
+
         for batch in batch_header_values:
             header_batch_data[headers[h]][batch] = batch_lists[batch]
-
 
 # print size of satisfying set
 print "\nsatisfying total\t" + str(sum([len(header_batch_data[batch_header][batch]) for batch in batch_header_values]))
@@ -164,3 +168,21 @@ if len(results_under_p_value) > 0:
         print "\t" + "\t".join(r)
 else:
     print "\nfailed to reject null in any test"
+
+# TEMP
+# calculate differences in paired data and order them
+header = "kappa"
+n = 10
+diffs = {}
+print header, n
+for pred in header_batch_data[p_paired_header]["con"]:
+    if (header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] < n or
+       header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)] < n):
+        continue
+    diff = header_batch_data[header]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] -\
+        header_batch_data[header]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
+    diffs[pred] = diff
+for pred, diff in sorted(diffs.items(), key=operator.itemgetter(1), reverse=True):
+    print pred, diff, \
+        header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)], \
+        header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)]

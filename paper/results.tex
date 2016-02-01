@@ -1,53 +1,57 @@
-To determine whether our \textbf{multi-modal} approach outperformed a traditional \textbf{vision only} approach to the language grounding problem in our \ispy task, we measured the average number of robot guesses and human guesses in games played with each fold of objects. Note that the systems were identical in fold 0 since both are completely untrained.
+To determine whether our \textbf{multi-modal} approach outperformed a traditional \textbf{vision only} approach to the language grounding problem in our \ispy task, we measured the average number of robot guesses and human guesses in games played with each fold of objects.
+Note that the systems were identical in fold 0 since both are completely untrained.
+When \ispy had been played with all folds, we trained the systems on all available data to calculate predicate classifer agreement metrics with human labels.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{figures/robot_guesses.png}
-\caption{Average expected number of guesses the robot made on each human turn. Numbers in \textbf{bold} are significantly lower than the average at fold 0 with $p<0.05$ (unpaired Student's \textit{t}-test)}
+\caption{Average expected number of guesses the robot made on each human turn. Numbers in \textbf{bold} are significantly lower than the average at fold 0 with $p<0.05$ (unpaired Student's $t$-test)}
 \label{fig:robot_guesses}
 \end{figure}
 
 \paragraph{Robot guess.}
 Figure~\ref{fig:robot_guesses} shows the average number of robot guesses for the games in each fold. Because we had access to the order in which the robot intended to guess each object along with which objects were tied, we calculated the {\it expected} number of robot guesses for each turn.
 For example, if all four objects were tied for first, the number of guesses for that turn was deemed to be 2.5, regardless of whether it got (un)lucky and picked the correct object (last)first.
+\footnote{2.5 is the expected number for 4 tied objects because the probability of picking in any order is equal, so the average turn `score' is $\frac{1+2+3+4}{4} = \frac{10}{4} = 2.5$}.
 
 After training on just one fold, our \textbf{multi-modal} approach performs statistically significantly better than the expected number of turns for guessing (the only strategy for the untrained fold 0 system) for the remainder of the games.
 The \textbf{vision only} system, by contrast, is never able to differentiate itself from random guessing, even as more training data becomes available.
-Additionally, on folds 1 and 2, a paired Student's \textit{t}-test ($p<0.05$) reveals that the \textbf{multi-modal} system outperms the \textbf{vision only} system on a subject-by-subject basis.
-This difference could not be established for the more difficult fold 3 ($p=0.13$).
-
-\begin{table}
-\centering
-\begin{tabular}{|l|r|r|r|r|}
-	\hline
-	\bf System & \multicolumn{4}{c|}{\bf Train Folds / Test Fold} \\ \hline \hline
-	& \bf 123 / 0 & \bf 023 / 1 & \bf 013 / 2 & \bf 012 / 3 \\ \hline
-	\bf vision only & 2.45 & 2.45 & 2.68 & 2.4 \\ \hline
-	\bf multi-modal & 2.23 & 2.7 & 2.1 & 2.1 \\ \hline
-\end{tabular}
-\caption{Average expected number of robot guesses per cross-validated fold. For testing on folds other than 3, strictly less data was available at test time, yet no statistical differences in performance arose. Thus, the objects in fold 3 may be more difficult to learn properties of.}
-\label{tab:crossval}
-\end{table}
-
-To explore the drop in performance we observe in fold 3, we cross-validated across the folds to simulate if the systems had been trained and tested on a different set of objects.
-To make the evaluation fair, labels gained for words first seen in the new held-out fold by clarification questions on the robot's turn were discarded during training unless a user introduced them again in a description of an object.
-This means these cross-validated systems each had strictly less training examples from which to learn.
-Despite this, the average number of robot guesses for user descriptions in held-out folds was not statistically significantly different between any two (performances given in Table~\ref{tab:crossval}).
-Given that the system performance on fold 3 is comparable to that on simulated, held-out folds for which there is strictly less training data, we argue that the objects in fold 3 may share fewer qualities with objects in other folds and are thus harder to learn about.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{figures/human_guesses.png}
-\caption{Average expected number of guesses human subjects made on each robot turn.}
-\label{fig:human_guesses}
-\end{figure}
+Additionally, on folds 1 and 2, a paired Student's $t$-test reveals that the \textbf{multi-modal} system outperms the \textbf{vision only} system on a subject-by-subject basis ($p<0.05$).
 
 \paragraph{Human guess.}
-Figure~\ref{fig:human_guesses} shows the average number of human guesses across games in each fold.
 Since we have no such intuition into a human's guess order, we simply counted how many times a subject picked a new object as a guess.
 We discarded guesses on the same object twice in a row, as these were often just double detections from the robot, but we counted guesses on the same object with an intervening guess after observing some users insisting to the robot that the object they had chosen before was correct.
 
-Neither the \textbf{vision only} nor \textbf{multi-modal} system's performance appears to improve on this task as more training data becomes available.
-In fact, Figure~\ref{fig:human_guesses} appears to show that human guesses hovered around 2.5 (random guessing) per robot turn throughout all levels of training and sets of objects.
-Though our scoring system attempted to rank predicates highly if they both described an object well and differentiated it from the other options, it appears that subjects always effectively resorted to guessing.
-This result highlights the difficulty of the robot's turn in an \ispy framework, and more generally of generating a salient description of an object for human understanding.
+Neither the \textbf{vision only} nor \textbf{multi-modal} system's performance improves on this task with statistical significance as more training data is seen.
+In fact, human guesses hovered around 2.5 (random guessing) per robot turn throughout all levels of training and sets of objects.
+The study coordinator who remained in the room during all trials noted that subjects tended to resort to guessing (just passing to the next closest object and trying them all this way) after not getting the correct object on their first try.
+
+This result highlights the difficulty of the robot's turn in an \ispy framework, which requires not just good coverage of grounded words (as when figuring out what object the human is describing), but also high accuracy when using classifiers on new objects.
+Many context classifiers which had few examples could achieve confidence $kappa=1$ (see Section~\ref{ssec:mmp}, making the predicates they represented more likely to be chosen to describe objects.
+It is possible that the system would have performed better on this metric if the predicate scoring function $R$ additionally favored predicates for which many labels had been gathered over sparsely labeled predicates which could carry deceptively high context $kappa$ values.
+
+\paragraph{Predicates.}
+We analyzed the predicate classifiers built by the \textbf{vision only} and \textbf{multi-modal} systems.
+After training the predicate classifiers using data gathered over all folds of objects, we calculated the precision, recall, $F_1$, and $\kappa$ scores of each against the gold human labels on which they were trained.
+Table~\ref{tab:predicate_results} gives these metrics for the 54 predicates shared between the systems.
+
+\begin{table}
+\centering
+\begin{tabular}[h]{|l|r|r|}
+	\hline
+	\bf Metric & \multicolumn{2}{c|}{\bf System} \\ \hline \hline
+	& \bf vision only & \bf multi-modal \\ \hline
+	precision & .306 & .497\textbf{*} \\
+	recall & .340 & .530\textbf{*} \\
+	\bf $F_1$ & .317 & .498\textbf{*} \\
+	\bf $\kappa$ & .105 & .212\textbf{*} \\ \hline
+\end{tabular}
+\caption{Agreement metrics of predicate classifiers shared between the \textbf{vision only} and \textbf{multi-modal} systems.
+\textbf{*} indicates a statistically significantly greater value with $p<0.05$ (Student's paired $t$-test).}
+\label{tab:predicate_results}
+\end{table}
+
+There were 129 predicates total between both systems.
+The \textbf{multi-modal} system outperforms the \textbf{vision only} system with the same statistical significance presented in Table~\ref{tab:predicate_results} when performing an unsigned $t$-test across all 129 predicates as well, with the exception of $\kappa$ differing with $p<0.1$, rather than $p<0.05$.
+
+Then across the objects our robot explored, our \textbf{multi-modal} system achieves consistently better agreement with human assignments of predicates to objects than does the \textbf{vision only} system.
