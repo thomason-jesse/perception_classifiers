@@ -6,7 +6,7 @@ Table~\ref{tab:predicate_examples} shows the predicates for which the difference
 
 \begin{table*}
 \centering
-\begin{tabular}[t]{| >{\centering\arraybackslash}m{\pictablew} || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} |}
+\begin{tabular}[t]{| c | c || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} |}
 	\hline
 	\bf Predicate & $\kappa_{mm}-\kappa_{vo}$ & \multicolumn{3}{c||}{\bf High Confidence Positive} & \multicolumn{3}{c|}{\bf High Confidence Negative} \\ \hline \hline
 	\multicolumn{2}{|c|}{} & \multicolumn{6}{c|}{\bf multi-modal system} \\ \hline
@@ -34,11 +34,10 @@ Predicates ``empty'' and ``tall'' have clear non-visual interpretations.
 An empty object will be light, while a tall object will exert force earlier against an arm pressing down on it.
 The color predicate ``red'' follows the same reasoning as ``yellow'', where non-visual information can serve only to confuse a grounding system.
 The ``small'' predicate is a surprise, since a signal inverse to what gives \textbf{multi-modal} an advantage for ``tall'' should do the same for short, small objects.
-[[find out correlation between height and whether users labelled objects `small' in each setting]]
-A possible but uninteresting explanation is that the \textbf{vision only} system has about 1.5 times the labels \textbf{multi-modal} has for this predicate.
+A possible but uninteresting explanation is that the \textbf{vision only} system has about 1.5 times the labels of \textbf{multi-modal} for this predicate.
 
 \paragraph{Correlations to objective measures.}
-To validate whether the systems are learning non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its signed confidence in whether each object did or did not have the property and that object's measured weight, heigh, and width. Table~\ref{tab:predicate_correlations} gives the correlations discoverd with both high coefficient $r$ and high stastical confidence.
+To validate whether the systems are learning non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its signed confidence in whether each object did or did not have the property and that object's measured weight, height, and width. Table~\ref{tab:predicate_correlations} gives the correlations discovered with both high coefficient $r$ and high statistical confidence.
 
 \begin{table}
 \centering
@@ -61,9 +60,9 @@ Shown here are predicates for which $r>0.5$ with $p<0.05$ and the system had at 
 \label{tab:predicate_correlations}
 \end{table}
 
-The \textbf{vision only} system seems able to ground ``heavy'' in height and ``small'' in width, the latter of which is a visual word-property pair (though ``heavy'' for height has counter-examples in our dataset).
+The \textbf{vision only} system seems able to ground ``heavy'' in height and ``small'' in width, the latter of which is a visual word-property pair (``heavy'' for height has counter-examples in our dataset).
 The system can represent these shape properties with the vision features associated with the pointcloud.
 
 In contrast, the \textbf{multi-modal} system learned to ground predicates which correlate well to each of the physical dimensions along which we measured objects.
 The ``tall'' predicate correlates with objects that have a high height, ``fat'' with objects that have a high width, and ``empty'' with objects that weigh less.
-This highlights the value of multi-modal grounding, since words like ``empty'' cannot be evaluated with vision alone when dealing with containers that have unseeable contents.
+This highlights the value of multi-modal grounding, since words like ``empty'' cannot be evaluated with vision alone when dealing with containers that have un-seeable contents.

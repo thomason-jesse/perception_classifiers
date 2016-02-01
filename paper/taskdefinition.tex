@@ -1,14 +1,15 @@
-In our \ispy task, the human and robot take turns describing objects from among four on a tabletop [[Figure picture??]].
+In our \ispy task, the human and robot take turns describing objects from among four on a tabletop (Figure~\ref{fig:ispy}).
 Subjects were asked to describe objects using attributes rather than category labels.
 As an example, we suggested subjects describe an object as ``black rectangle'' as opposed to ``whiteboard eraser.''
 Additionally, subjects were told they could handle the objects physically before offering a description, but were not explicitly asked to use non-visual predicates.
-Once subjects offered a description, the robot guessed the object it believed the subject was describing, generating candidates in order of their computed confidence (see Section~\ref{ssec:gll}) until one was confirmed correct.
+Once subjects offered a description, the robot guessed candidate objects in order of computed confidence (see Section~\ref{ssec:gll}) until one was confirmed correct.
 
 In the second half of each round, the robot picked an object and then described it with up to three predicates (see Section~\ref{ssec:gll}).
 The subject was again able to pick up and physically handle objects before guessing.
 The robot confirmed or denied each subject guess until the right object was chosen.
 
-The \ispy game admits two clear metrics.
+\ispy gameplay admits two metrics.
 The \textbf{robot guess} metric is the number of turns the robot took to guess what object the subject was describing.
-The \textbf{human guess} metric is the number of turns the human took to guess what object the robot was describing.
-Using these metrics, we compare the performance of two \ispy playing systems (multi-modal vs. vision-only) as described in Section ~\ref{sec:experiment}.
+The \textbf{human guess} metric is the complement.
+Using these metrics, we compare the performance of two \ispy playing systems (\textbf{multi-modal} and \textbf{vision-only}) as described in Section ~\ref{sec:experiment}.
+We also compare the agreement between both systems' predicate classifiers and human labels acquired during the game.

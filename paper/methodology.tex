@@ -2,12 +2,12 @@
 We divided our 32-object dataset into 8 folds.
 For each fold, at least 10 human subjects played \ispy with both the \textbf{vision only} and \textbf{multi-modal} systems (12 subjects in the final fold).
 Four games were played by each subject.
-The \textbf{vision only} system and \textbf{multi-modal} system were each used in two games (once as a the describer and once as the guesser), and their temporal order was randomized.
+The \textbf{vision only} system and \textbf{multi-modal} system were each used in two games, and these games' temporal order was randomized.
 Each system played with all 8 objects, but the split and the order of objects on the table were randomized.
 
 For fold 0, the systems were undifferentiated and so only one set of two games was played by each subject. 
 For subsequent folds, the systems were incrementally trained using labels from previous folds only, such that the systems were always being tested against novel, unseen objects.
-In the prior work using the \ispy game~\cite{parde:ijcai15}, the same objects were used during training and test, and therefore it did not test the ability of the learned predicate classifiers to actually generalize to novel objects.
+In the prior work using the \ispy game~\cite{parde:ijcai15}, the same objects were used during training and test, so it did not test the ability of the learned predicate classifiers to generalize to novel objects.
 
 \paragraph{Human Subjects.}
 
