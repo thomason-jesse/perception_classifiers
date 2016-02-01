@@ -1,6 +1,6 @@
-To determine whether our \textbf{multi-modal} approach outperformed a traditional \textbf{vision only} approach to the language grounding problem in our \ispy task, we measured the average number of robot guesses and human guesses in games played with each fold of objects.
-Note that the systems were identical in fold 0 since both are completely untrained.
-When \ispy had been played with all folds, we trained the systems on all available data to calculate predicate classifier agreement metrics with human labels.
+To determine whether our \textbf{multi-modal} approach outperformed a traditional \textbf{vision only} approach, we measured the average number of robot guesses and human guesses in games played with each fold of objects.
+Note the systems were identical in fold 0 since both are completely untrained.
+In the end, we trained the systems on all available data to calculate predicate classifier agreement metrics with human labels.
 
 \begin{figure}
 \centering
@@ -11,11 +11,11 @@ When \ispy had been played with all folds, we trained the systems on all availab
 
 \paragraph{Robot guess.}
 Figure~\ref{fig:robot_guesses} shows the average number of robot guesses for the games in each fold. Because we had access to the order in which the robot intended to guess each object along with which objects were tied, we calculated the {\it expected} number of robot guesses for each turn.
-For example, if all four objects were tied for first, the number of guesses for that turn was deemed 2.5, regardless of whether it got (un)lucky and picked the correct object (last)first
-\footnote{2.5 is the expected number for 4 tied objects because the probability of picking in any order is equal, so the average turn `score' is $\frac{1+2+3+4}{4} = \frac{10}{4} = 2.5$}.
+For example, if all four objects were tied for first, the number of guesses for that turn was deemed 2.5, regardless of whether it got (un)lucky and picked the correct object (last)first.
+\footnote{2.5 is the expected number for 4 tied objects because the probability of picking in any order is equal, so the average turn `score' is $\frac{1+2+3+4}{4} = \frac{10}{4} = 2.5$}
 
 After training on just one fold, our \textbf{multi-modal} approach performs statistically significantly better than the expected number of turns for guessing (the strategy for the untrained fold 0 system) for the remainder of the games.
-The \textbf{vision only} system, by contrast, is never able to differentiate itself from random guessing, even as more training data becomes available.
+The \textbf{vision only} system, by contrast, is never able to differentiate itself significantly from random guessing, even as more training data becomes available.
 Additionally, on folds 1 and 2, a paired Student's $t$-test reveals that the \textbf{multi-modal} system outperforms the \textbf{vision only} system on a subject-by-subject basis ($p<0.05$).
 We suspect the number of objects is too small for the \textbf{vision only} system to develop decent models of many predicates, whereas \textbf{multi-modal} exploration allows that system to extract more information per object.
 
@@ -30,9 +30,9 @@ It is possible that the system would have performed better on this metric if the
 \paragraph{Predicates.}
 We analyzed the predicate classifiers built by the \textbf{vision only} and \textbf{multi-modal} systems.
 After training the predicate classifiers using data gathered over all folds of objects, we calculated the precision, recall, $F_1$, and $\kappa$ scores of each against the gold human labels on which they were trained.
-Table~\ref{tab:predicate_results} gives these metrics for the 54 predicates shared between the systems
+Table~\ref{tab:predicate_results} gives these metrics for the 54 predicates shared between the systems.
 \footnote{There were 129 predicates total between both systems.
-The results in Table~\ref{tab:predicate_results} hold with significance for an unsigned $t$-test across all 129 predicates as well, with the exception of $\kappa$ differing with only $p<0.1$.}.
+The results in Table~\ref{tab:predicate_results} hold with significance for an unsigned $t$-test across all 129 predicates as well, with the exception of $\kappa$ differing with only $p<0.1$.}
 
 \begin{table}
 \centering

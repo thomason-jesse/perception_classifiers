@@ -18,11 +18,11 @@ To describe the object, the robot scored the set of known predicates learned fro
 Following Gricean principles~\cite{grice:bkchapter75}, the robot attempted to describe the object with predicates that applied to it but did not ambiguously refer to other objects on the table.
 We use a predicate score $R$ that rewards describing the chosen object $i^*$ and penalizes describing the other objects on the table.
 \begin{equation}
-	R(p) = |O_T|D_p(i^*) - \sum_{j\in{\mathcal{O}_T}\setminus\{i^*\}}{D_p(j)}
+	R(p) = |O_T|G_p(i^*) - \sum_{j\in{\mathcal{O}_T}\setminus\{i^*\}}{G_p(j)}
 \end{equation}
-Note that this scoring equation also rewards predicates for describing $i^*$ while clearly {\it not} describing the other objects on the table (\textit{e.g.}  $D_p(j)<0$).
-The robot choose up to three highest scoring predicates $\hat{P}$ to describe object $i^*$ to the subject, using fewer if $S<0$ for remaining predicates.
-Once ready to guess, the subject touched objects until the robot confirmed that they had guessed the right one ($i^*$).
+Note that this scoring equation also rewards predicates for describing $i^*$ while clearly {\it not} describing the other objects on the table (\textit{e.g.}  $G_p(j)<0$).
+The robot choose up to three highest scoring predicates $\hat{P}$ to describe object $i^*$ to the subject, using fewer if $S<0$ for the remaining predicates.
+Once they were ready to guess, the subject touched objects until the robot confirmed that they had guessed the right one ($i^*$).
 
 The robot then pointed to $i^*$ and engaged the user in a brief follow-up dialog in order to gather both positive and negative labels for $i^*$.
 In addition to predicates $\hat{P}$ used to describe the object, the robot selected two additional predicates $\bar{P}$.
