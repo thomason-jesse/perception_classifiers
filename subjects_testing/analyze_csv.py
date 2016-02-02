@@ -171,18 +171,18 @@ else:
 
 # TEMP
 # calculate differences in paired data and order them
-header = "kappa"
-n = 10
-diffs = {}
-print header, n
-for pred in header_batch_data[p_paired_header]["con"]:
-    if (header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] < n or
-       header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)] < n):
-        continue
-    diff = header_batch_data[header]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] -\
-        header_batch_data[header]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
-    diffs[pred] = diff
-for pred, diff in sorted(diffs.items(), key=operator.itemgetter(1), reverse=True):
-    print pred, diff, \
-        header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)], \
-        header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
+# header = "kappa"
+# n = 10
+# diffs = {}
+# print header, n
+# for pred in header_batch_data[p_paired_header]["con"]:
+#     if (header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] < n or
+#        header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)] < n):
+#        continue
+#    diff = header_batch_data[header]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] -\
+#        header_batch_data[header]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
+#    diffs[pred] = diff
+# for pred, diff in sorted(diffs.items(), key=operator.itemgetter(1), reverse=True):
+#     print pred, diff, \
+#         header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)], \
+#         header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)]

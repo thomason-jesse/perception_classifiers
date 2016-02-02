@@ -5,7 +5,7 @@
 \label{fig:objects}
 \end{figure}
 
-The robot used in this study was a Kinova MICO arm mounted on top of a custom-built mobile base.
+The robot used in this study was a Kinova MICO arm mounted on top of a custom-built mobile base (though we didn't require mobility for this study).
 The robot's sensors included joint effort sensors in each of the robot arm's motors, a microphone mounted on the mobile base, and the Xtion ASUS Pro RGBD camera.
 The set of objects used in this experiment consisted of 32 common household items including cups, bottles, cans, and other containers, shown in Figure~\ref{fig:objects}.
 Some of the objects contained liquids or other contents (e.g., coffee beans) while others were empty.
@@ -43,12 +43,11 @@ second.}
 \end{figure}
 \end{center}
 
-Prior to the experiment, the robot explored the objects using the methodology described in~\cite{sinapov:ras14}.
+Prior to the experiment, the robot explored the objects using the methodology described by Sinapov et al.~\shortcite{sinapov:ras14}, and the dimensionality of the resulting raw sensory data was reduced by a similar methodology.
 In our case, the robot used 7 distinct actions: {\it grasp}, {\it lift}, {\it hold}, {\it lower}, {\it drop}, {\it push}, and {\it press}, shown in Figure~\ref{fig:behaviors}.
 During the execution of each action, the robot recorded the sensory perceptions from the {\it haptic} (i.e., joint efforts), {\it proprioceptive} (i.e., joint angular positions), and {\it auditory} sensory modalities.
 The joint efforts and joint positions were recorded for all 6 joints at 15 Hz.
 The auditory sensory modality was represented as the Discrete Fourrier Transform computed using 65 frequency bins.
-To reduce dimensionality of the raw sensory data, we employed the feature extraction methods described in~\cite{sinapov:ras14}. 
 
 In addition to the 7 interactive behaviors, the robot also performed the {\it look} action prior to grasping the object which produced three different kinds of sensory modalities: 1) a color histogram of the object using 8 bins per channel ({\it color}); 2) Fast point feature histogram ({\it fpfh}) shape feautres~\cite{rusu:icra09} as implemented in the Point Cloud Library~\cite{aldoma:ram12}; 3) deep visual features from the 16-layer VGG network~\cite{simonyan:corr14} ({\it vgg}).
 The first two types of features were computed using the segmented point cloud of the object while the deep features were computed using the 2D image of the object. 

@@ -4,6 +4,7 @@ We explored the predicates learned by our systems qualitatively, looking at the 
 To determine when the \textbf{multi-modal} system's non-visual information helped make better decisions, we did a pairwise comparison of predicates built in the \textbf{multi-modal} and \textbf{vision only} systems.
 Table~\ref{tab:predicate_examples} shows the predicates for which the difference in $\kappa$ between the two systems was high and there were enough objects with labels that these confidences were nontrivial.
 
+TODO: think about ways to make this table cleaner because it confused Peter
 \begin{table*}
 \centering
 \begin{tabular}[t]{| c | c || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} |}
@@ -25,7 +26,7 @@ Table~\ref{tab:predicate_examples} shows the predicates for which the difference
 
 The \textbf{multi-modal} system achieves total aggrement with human labels for ``can'' and ``tub;''
 whereas the \textbf{vision only} system classified all objects as not having these properties, a decision that gives $\kappa=0$.
-The reverse happens for the color predicate ``yellow,'' where the \textbf{multi-modal} system classified all objects as yellow, giving $\kappa=0$.
+Something similar happens for the color predicate ``yellow,'' where the \textbf{multi-modal} system classified all objects as yellow, also giving $\kappa=0$.
 We note that ``can'' and ``tub'' are cases of category recognition, for which visual data is certainly helpful, but the non-visual attributes of an object can also help (e.g. cans are light, tubs are heavy).
 In contrast, ``yellow'' is a color word for which only visual properties are relevant, and the additional noise from other features were enough to confuse the \textbf{multi-modal} approach.
 
@@ -33,6 +34,7 @@ More interesting cases lie between, where non-trivial classifier decisions were 
 The predicates ``empty'' and ``tall'' have non-visual interpretations.
 An empty object will be light, while a tall object will exert force earlier against an arm pressing down on it.
 The color predicate ``red'' follows the same reasoning as ``yellow'', where non-visual information can serve only to confuse a multi-modal grounding system.
+The correlation results in Table~\ref{tab:predicate_correlations} indicate that the \textbf{visiion only} system learned to associate ``small'' with decreased object width, while the \textbf{multi-modal} system was again confused by additional non-visual information.
 
 \paragraph{Correlations to objective measures.}
 To validate whether the systems are learning non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its signed confidence and that object's measured weight, height, and width. Table~\ref{tab:predicate_correlations} gives the correlations with both high coefficient $r$ and high statistical confidence.
@@ -51,7 +53,6 @@ To validate whether the systems are learning non-visual properties of objects, f
 	& water, blue & \\
 	\bf weight & silver, liquid & \\ 
 	& gray, red, yellow & \\ \hline
-
 \end{tabular}
 \caption{Predicates and associated Pearson's correlation coefficient $r$ between systems' object decisions and physical object properties.
 Shown here are predicates for which $r>0.5$ with $p<0.05$ and the system had at least $10$ objects with labels for the predicate on which to train.}

@@ -13,3 +13,6 @@ Given these context classifiers and associated confidences, we calculate an over
 	G_p(i) = \sum_{c\in\mathcal{C}}{\kappa_{c} M_{c}(\mathcal{X}_i^c)} \in [-1,1]
 \end{equation}
 The sign of $G_p(i)$ gives a decision on whether $p$ applies to $i$ with confidence $|G_p(i)|$.
+
+TODO: update this after re-running with Ray's suggested methodology
+For example, the final classifier built for `empty'$\in P$ gives $G_{\texttt{empty}}(\texttt{pringles-tube}) = 0.031$, meaning it rightly believes the object is empty, with [[kappa example]]

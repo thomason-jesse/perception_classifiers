@@ -85,6 +85,7 @@ def extract_data_from_log(fn):
     last_guesses = []
     first_guess_worth = -1
     num_rounds = 0
+    game_started = False
     for l_idx in range(0, len(lines)):
         line = lines[l_idx]
 
@@ -94,6 +95,8 @@ def extract_data_from_log(fn):
 
         # zero everything if the game started over
         if p[0] == "object_IDs":
+            if game_started:
+                print "Likely mechanical failure in '"+fn+"'"
             human_guesses = 0
             human_first_guess = 0
             robot_guesses = 0
@@ -103,10 +106,14 @@ def extract_data_from_log(fn):
             last_guesses = []
             first_guess_worth = -1
             num_rounds = 0
+            game_started = False
 
         # record number of rounds
         elif p[0] == "num_rounds":
             num_rounds = int(p[1])
+
+        elif p[0] == "get":
+            game_started = True
 
         # count robot guesses
         elif p[0] == "say" and p[1] == "Is this the object you have in mind?":
