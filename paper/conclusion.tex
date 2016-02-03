@@ -3,9 +3,9 @@ We compare a vision only grounding system to one that uses these additional sens
 To our knowledge, ours is the first robotic system to perform natural language grounding using multi-modal sensory perception through natural interaction with human users.
 
 We demonstrate quantitatively, through the number of turns the robot needs to guess objects described by humans, as well as through agreement with humans on language predicate labels for objects, that our multi-modal framework learns more effective lexical groundings than one using vision alone.
-We also explore the learned groundings qualitatively, showing words for which non-visual information helps most as well as when non-visual properties of objects correlate with learned meanings (e.g. ``empty'' inverse to object weight).
+We also explore the learned groundings qualitatively, showing words for which non-visual information helps most as well as when non-visual properties of objects correlate with learned meanings (e.g. ``empty'' correlate negatively with object weight).
 
 In the future, we would like to use one-class classification methods to remove the need for a follow-up dialog asking about particular predicates applied to an object to gather negative labels.
-Additionally, we would like to detect polysemy for predicates whose meaning varies across sensory modalities.
+Additionally, we would like to detect polysemy for predicates whose meanings vary across sensory modalities.
 For example, the word ``light'' can refer to weight or color.
-Our current system fails to distinguish these senses, while human subjects intermix them.
+Our current system fails to distinguish these senses, while human participants intermix them.

@@ -5,7 +5,7 @@
 \label{fig:objects}
 \end{figure}
 
-The robot used in this study was a Kinova MICO arm mounted on top of a custom-built mobile base (though we didn't require mobility for this study).
+The robot used in this study was a Kinova MICO arm mounted on top of a custom-built mobile base, which remained stationary during our experiment.
 The robot's sensors included joint effort sensors in each of the robot arm's motors, a microphone mounted on the mobile base, and the Xtion ASUS Pro RGBD camera.
 The set of objects used in this experiment consisted of 32 common household items including cups, bottles, cans, and other containers, shown in Figure~\ref{fig:objects}.
 Some of the objects contained liquids or other contents (e.g., coffee beans) while others were empty.
@@ -38,14 +38,16 @@ In addition, the {\it hold} behavior (not shown) was performed after the {\it li
 \label{fig:behaviors}
 \end{figure}
 \end{center}
+\vspace {-5mm}
 
-Prior to the experiment, the robot explored the objects using the methodology described by Sinapov et al.~\shortcite{sinapov:ras14}, and the dimensionality of the resulting raw sensory data was reduced comparably.
+Prior to the experiment, the robot explored the objects using the methodology described by Sinapov et al.~\shortcite{sinapov:ras14}, and the dimensionality of the raw auditory, haptic, and proprioceptive data were reduced comparably (final dimensionality given in Table~\ref{tab:feature_space_of_contexts}.
 In our case, the robot used 7 distinct actions: {\it grasp}, {\it lift}, {\it hold}, {\it lower}, {\it drop}, {\it push}, and {\it press}, shown in Figure~\ref{fig:behaviors}.
-During the execution of each action, the robot recorded the sensory perceptions from {\it haptic} (i.e., joint efforts), {\it proprioceptive} (i.e., joint angular positions), and {\it auditory} sensory modalities.
+During the execution of each action, the robot recorded the sensory perceptions from {\it haptic} (i.e., joint efforts) and {\it auditory} sensory modalities.
+During the {\it grasp} action, the robot recorded {\it proprioceptive} (i.e., joint angular positions) sensory information from its fingers.
 The joint efforts and joint positions were recorded for all 6 joints at 15 Hz.
 The auditory sensory modality was represented as the Discrete Fourier Transform computed using 65 frequency bins.
 
-In addition to the 7 interactive behaviors, the robot also performed the {\it look} action prior to grasping the object which produced three different kinds of sensory modalities: 1) a color histogram of the object using 8 bins per channel; 2) Fast point feature histogram ({\it fpfh}) shape features~\cite{rusu:icra09} as implemented in the Point Cloud Library~\cite{aldoma:ram12}; and 3) deep visual features from the 16-layer VGG network~\cite{simonyan:corr14}.
+In addition to the 7 interactive behaviors, the robot also performed the {\it look} action prior to grasping the object which produced three different kinds of sensory modalities: 1) an RGB color histogram of the object using 8 bins per channel; 2) Fast point feature histogram ({\it fpfh}) shape features~\cite{rusu:icra09} as implemented in the Point Cloud Library~\cite{aldoma:ram12}; and 3) deep visual features from the 16-layer VGG network~\cite{simonyan:corr14}.
 The first two types of features were computed using the segmented point cloud of the object while the deep features were computed using the 2D image of the object. 
 
 \begin{table}
@@ -57,16 +59,16 @@ The first two types of features were computed using the segmented point cloud of
 	\bf look & 64 & 308 & 4096 \\ \hline \hline
 	& \bf audio & \bf haptics & \bf proprioception \\ \hline
 	\bf grasp & 100 & 60 & 20 \\ \hline
-	\bf drop, hold & & & \\
-	\bf lift, lower & 100 & 60 & \\
+	\bf drop, hold, & & & \\
+	\bf lift, lower, & 100 & 60 & \\
 	\bf press, push & & & \\ \hline
 \end{tabular}
 \caption{The number of features extracted from each \textit{context}, or combination of robot behavior and perceptual modality.}
 \label{tab:feature_space_of_contexts}
 \end{table}
 
-Thus, each of the robot's 8 actions produced three different kinds of sensory signals.
+Thus, each of the robot's 8 actions produced two to three different kinds of sensory signals.
 Each viable combination of an action and a sensory modality is a unique sensorimotor context.
-In our experiment, the set of contexts $\mathcal{C}$, was of size  $8 \times 3 = 24$.
+In our experiment, the set of contexts $\mathcal{C}$ was of size  $2 \times 3 + 6 \times 2 = 18$.
 The robot performed its full sequence of exploratory actions on each object 5 different times (for the {\it look} behavior, the object was rotated to a new angle each time). Given a context $c \in \mathcal{C}$ and an object $i \in \mathcal{O}$, let the set $\mathcal{X}_i^c$ contain all five feature vectors observed with object $i$ in context $c$.
 Table~\ref{tab:feature_space_of_contexts} gives the size of the feature vectors extracted for each context.
