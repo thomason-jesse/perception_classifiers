@@ -1,0 +1,18 @@
+paired test over shared predicates (n=54)
+			con		exp
+precision	.306	.497*
+recall		.34		.53*
+f1			.317	.498*
+kappa		.105	.212*
+
+* significantly different across experimental conditions 'con' and 'exp' (p<0.05)
+
+unpaired test over all predicates (n=129)
+			con		exp
+precision	.277	.514*
+recall		.304	.558*
+f1			.285	.521*
+kappa		.114	.212+
+
+* significantly different across experimental conditions 'con' and 'exp' (p<0.05)
++ trending different across experimental conditions 'con' and 'exp' (p<0.1)
