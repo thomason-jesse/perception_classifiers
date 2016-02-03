@@ -1,10 +1,9 @@
-We explored the predicates learned by our systems qualitatively, looking at the differences in individual predicate classifier agreements, the objects picked out by these classifiers in each system, and correlations between predicate decisions and objective measurements of object qualities such as weight and height.
+We explored the predicates learned by our systems qualitatively by looking at the differences in individual predicate classifier agreements, the objects picked out by these classifiers in each system, and correlations between predicate decisions and physical properties of objects.
 
 \paragraph{When multi-modal helps.}
-To determine when the \textbf{multi-modal} system's non-visual information helped make better decisions, we did a pairwise comparison of predicates built in the \textbf{multi-modal} and \textbf{vision only} systems.
-Table~\ref{tab:predicate_examples} shows the predicates for which the difference in $\kappa$ between the two systems was high and there were enough objects with labels that these confidences were nontrivial.
+We performed a pairwise comparison of predicates built in the \textbf{multi-modal} and \textbf{vision only} systems.
+Table~\ref{tab:predicate_examples} shows the predicates for which the difference in $\kappa$ between the two systems was high.
 
-TODO: think about ways to make this table cleaner because it confused Peter
 \begin{table*}
 \centering
 \begin{tabular}[t]{| c | c || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} || >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} | >{\centering\arraybackslash}m{\pictablew} |}
@@ -20,13 +19,12 @@ TODO: think about ways to make this table cleaner because it confused Peter
 	red & -.663 & \includegraphics[scale=\examplepicsize]{figures/objects/8.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/10.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/14.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/12.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/5.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/3.JPG}\\ \hline
 	yellow & -1 & \includegraphics[scale=\examplepicsize]{figures/objects/12.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/20.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/25.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/1.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/4.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/17.JPG}\\ \hline
 \end{tabular}
-\caption{Predicates for which the difference $|\kappa_{mm}-\kappa_{vo}|$ between the \textbf{multi-modal} (mm) and \textbf{vision only} (vo) systems was greater than $0.5$ and both systems had at least $10$ objects with labels for that predicate on which to train.}
+\caption{Predicates for which the difference $|\kappa_{mm}-\kappa_{vo}|$ between the \textbf{multi-modal} (mm) and \textbf{vision only} (vo) systems was greater than $0.5$ and both systems had at least $10$ objects with labels for that predicate on which to train. The highest- and lowest-confidence objects for each predicate are shown. The top rows ($\kappa_{mm}-\kappa_{vo}>0$) are decisions from the \textbf{multi-modal} system, the bottom rows the \textbf{vision only} system.}
 \label{tab:predicate_examples}
 \end{table*}
 
-The \textbf{multi-modal} system achieves total aggrement with human labels for ``can'' and ``tub;''
-whereas the \textbf{vision only} system classified all objects as not having these properties, a decision that gives $\kappa=0$.
-Something similar happens for the color predicate ``yellow,'' where the \textbf{multi-modal} system classified all objects as yellow, also giving $\kappa=0$.
+The \textbf{multi-modal} system achieves total agreement with human labels for ``can'' and ``tub;''
+whereas the \textbf{vision only} system classified all objects as not having these properties, giving $\kappa=0$ (the \textbf{multi-modal} system did something comparable for ``yellow'').
 We note that ``can'' and ``tub'' are cases of category recognition, for which visual data is certainly helpful, but the non-visual attributes of an object can also help (e.g. cans are light, tubs are heavy).
 In contrast, ``yellow'' is a color word for which only visual properties are relevant, and the additional noise from other features were enough to confuse the \textbf{multi-modal} approach.
 
@@ -34,10 +32,10 @@ More interesting cases lie between, where non-trivial classifier decisions were 
 The predicates ``empty'' and ``tall'' have non-visual interpretations.
 An empty object will be light, while a tall object will exert force earlier against an arm pressing down on it.
 The color predicate ``red'' follows the same reasoning as ``yellow'', where non-visual information can serve only to confuse a multi-modal grounding system.
-The correlation results in Table~\ref{tab:predicate_correlations} indicate that the \textbf{visiion only} system learned to associate ``small'' with decreased object width, while the \textbf{multi-modal} system was again confused by additional non-visual information.
+The correlation results in Table~\ref{tab:predicate_correlations} indicate that the \textbf{vision only} system learned to associate ``small'' with decreased object width, while the \textbf{multi-modal} system was again confused by additional non-visual information.
 
 \paragraph{Correlations to objective measures.}
-To validate whether the systems are learning non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its signed confidence and that object's measured weight, height, and width. Table~\ref{tab:predicate_correlations} gives the correlations with both high coefficient $r$ and high statistical confidence.
+To validate whether the systems are learning non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its decision on each object and that object's measured weight, height, and width. Table~\ref{tab:predicate_correlations} gives the correlations with both high coefficient $r$ and high statistical confidence.
 
 \begin{table}
 \centering
@@ -50,8 +48,8 @@ To validate whether the systems are learning non-visual properties of objects, f
 	\bf weight & empty (-.771) & \\ \hline \hline
 	& \multicolumn{2}{c|}{\bf Likely spurious} \\ \hline
 	\bf width & & rattles \\ \hline
-	& water, blue & \\
-	\bf weight & silver, liquid & \\ 
+	& water, blue, & \\
+	\bf weight & silver, liquid, & \\ 
 	& gray, red, yellow & \\ \hline
 \end{tabular}
 \caption{Predicates and associated Pearson's correlation coefficient $r$ between systems' object decisions and physical object properties.
@@ -59,9 +57,9 @@ Shown here are predicates for which $r>0.5$ with $p<0.05$ and the system had at 
 \label{tab:predicate_correlations}
 \end{table}
 
-The \textbf{vision only} system seems able to ground ``heavy'' in height and ``small'' in width. the latter of which is a visual word-property pair (``heavy'' for height has counter-examples in our dataset).
-The system can represent these shape properties with the vision features associated with the pointcloud.
+The \textbf{vision only} system seems able to ground ``heavy'' in height and ``small'' in width.
+The system can sense these physical properties with the vision features associated with the pointcloud.
 
-In contrast, the \textbf{multi-modal} system learned to ground predicates which correlate well to each of the physical dimensions along which we measured objects.
+The \textbf{multi-modal} system learned to ground predicates which correlate well to each of the physical dimensions along which we measured objects.
 The ``tall'' predicate correlates with objects that are higher, ``fat'' with objects that are wider, and ``empty'' with objects that are lighter.
 This highlights the value of multi-modal grounding, since words like ``empty'' cannot be evaluated with vision alone when dealing with closed containers that have unobservable contents.

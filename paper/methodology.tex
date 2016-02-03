@@ -1,19 +1,19 @@
 \paragraph{Data Folds.}
-We divided our 32-object dataset into 8 folds.
+We divided our 32-object dataset into 4 folds.
 For each fold, at least 10 human subjects played \ispy with both the \textbf{vision only} and \textbf{multi-modal} systems (12 subjects in the final fold).
 Four games were played by each subject.
-The \textbf{vision only} system and \textbf{multi-modal} system were each used in two games, and these games' temporal order was randomized.
-Each system played with all 8 objects, but the split into two groups of 4 and the order of objects on the table were randomized.
+The \textbf{vision only} system and \textbf{multi-modal} system were each used in 2 games, and these games' temporal order was randomized.
+Each system played with all 8 objects per fold, but the split into 2 groups of 4 and the order of objects on the table were randomized.
 
-For fold 0, the systems were undifferentiated and so only one set of two games was played by each subject. 
+For fold 0, the systems were undifferentiated and so only one set of 2 games was played by each subject. 
 For subsequent folds, the systems were incrementally trained using labels from previous folds only, such that the systems were always being tested against novel, unseen objects.
-In the prior work using the \ispy game~\cite{parde:ijcai15}, the same objects were used during training and testing, so it did not test the ability of the learned predicate classifiers to generalize to novel objects.
+This contrasts prior work using the \ispy game~\cite{parde:ijcai15}, where the same objects were used during training and testing.
 
 \paragraph{Human Subjects.}
 
 Our 42 subjects were undergraduate and graduate students as well as some staff at our university.
 
-At the beginning of each trial, subjects were shown an instructional video of one of the authors playing a single game of \ispy with the robot, then given a sheet of instructions about the task's turn-taking and how to communicate with the robot. 
+At the beginning of each trial, subjects were shown an instructional video of one of the authors playing a single game of \ispy with the robot, then given a sheet of instructions about the game and how to communicate with the robot. 
 In every game, subjects took one turn and the robot took one turn.
 
-To avoid noise from automatic speech recognition, a study coordinator remained in the room and transcribed the subject's speech to the system from a remote computer, but this was done discretely and not revealed to the subject until debriefing when the games were over.
+To avoid noise from automatic speech recognition, a study coordinator remained in the room and transcribed the subject's speech to the robot from a remote computer, but this was done discretely and not revealed to the subject until debriefing when the games were over.

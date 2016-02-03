@@ -1,18 +1,16 @@
 For each language predicate $p$, a classifier $G_p$ was learned to decide whether objects possessed the attribute denoted by $p$.
-This classifier was informed by sub-classifiers that determined whether $p$ held for a particular subset of the features used to describe objects.
+This classifier was informed by context sub-classifiers that determined whether $p$ held for subsets of an object's features.
 
 The feature space of objects was partitioned by context, as discussed in Section~\ref{ssec:contexts}.
 Each context classifier $M_{c}, c\in\mathcal{C}$ is a quadratic-kernel SVM trained with positive- and negative-labels for context feature vectors derived from the \ispy game (Section~\ref{ssec:gll}).
 We defined $M_{c}(\mathcal{X}_i^c)\in [-1,1]$ as the average classifier output over all observations for object $i\in\mathcal{O}$ (individual SVM decisions on observations were in $\{-1,1\}$).
 
-Following previous work in multi-modal exploration~\cite{sinapov:icra14}, for each context we calculated Cohen's Kappa $\kappa_{c}$ to measure the agreement across observations between the decisions of the $M_{c}$ classifier and the ground truth labels from the \ispy game. This metric serves as a confidence for each context in interval $[0,1]$ 
-\footnote{We use $\kappa$ instead of accuracy because we can expect most objects to be negative examples of a given predicate. $\kappa$ better handles such skewed-class data than accuracy, which could be deceptively high for a classifier that always returns false.}.
+Following previous work in multi-modal exploration~\cite{sinapov:icra14}, for each context we calculated Cohen's Kappa $\kappa_{c}\in[0,1]$ to measure the agreement across observations between the decisions of the $M_{c}$ classifier and the ground truth labels from the \ispy game\footnote{We use $\kappa$ instead of accuracy because it better handles skewed-class data than accuracy, which could be deceptively high for a classifier that always returns false for a low-frequency predicate.}.
 We ceiling negative $\kappa$ to $0$.
-Given these context classifiers and associated confidences, we calculate an overall decision, $G_p(i)$, for $i\in\mathcal{O}$ for each behavior $b$ and modality $m$ as:
+Given these context classifiers and associated $\kappa$ confidences, we calculate an overall decision, $G_p(i)$, for $i\in\mathcal{O}$ for each behavior $b$ and modality $m$ as:
 \begin{equation}
 	G_p(i) = \sum_{c\in\mathcal{C}}{\kappa_{c} M_{c}(\mathcal{X}_i^c)} \in [-1,1]
 \end{equation}
 The sign of $G_p(i)$ gives a decision on whether $p$ applies to $i$ with confidence $|G_p(i)|$.
 
-TODO: update this after re-running with Ray's suggested methodology
-For example, the final classifier built for `empty'$\in P$ gives $G_{\texttt{empty}}(\texttt{pringles-tube}) = 0.031$, meaning it rightly believes the object is empty, with [[kappa example]]
+For example, the final classifier built for `fat'$\in P$ gives $G_{\texttt{fat}}(\texttt{wide-yellow-cylinder}) = 0.137$, a positive classification, with $\kappa_{gr,au}=0.515$ for the \textit{gr}asp behavior's \textit{au}ditory modality the most confident context. This context may be hearing that the finger motors stop moving earlier for wider (`fat') objects than skinnier ones when grasping.

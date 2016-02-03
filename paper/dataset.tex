@@ -32,34 +32,30 @@ Some of the objects contained liquids or other contents (e.g., coffee beans) whi
 \put(2.8,-0.05){push}
 \end{picture}
 }
-\caption{The behaviors the robot used to explored the objects. From
-left to right and top to bottom: {\it grasp}, {\it lift}, {\it lower},
-{\it drop}, {\it press}, and {\it push}. The arrows indicate the
-direction of motion of the end-effector for each behavior. In
-addition, the {\it hold} behavior (not shown) was performed after the
-{\it lift} behavior by simply holding the object in place for half a
-second.}
+\caption{The behaviors the robot used to explore the objects.
+The arrows indicate the direction of motion of the end-effector for each behavior.
+In addition, the {\it hold} behavior (not shown) was performed after the {\it lift} behavior by simply holding the object in place for half a second.}
 \label{fig:behaviors}
 \end{figure}
 \end{center}
 
-Prior to the experiment, the robot explored the objects using the methodology described by Sinapov et al.~\shortcite{sinapov:ras14}, and the dimensionality of the resulting raw sensory data was reduced by a similar methodology.
+Prior to the experiment, the robot explored the objects using the methodology described by Sinapov et al.~\shortcite{sinapov:ras14}, and the dimensionality of the resulting raw sensory data was reduced comparably.
 In our case, the robot used 7 distinct actions: {\it grasp}, {\it lift}, {\it hold}, {\it lower}, {\it drop}, {\it push}, and {\it press}, shown in Figure~\ref{fig:behaviors}.
-During the execution of each action, the robot recorded the sensory perceptions from the {\it haptic} (i.e., joint efforts), {\it proprioceptive} (i.e., joint angular positions), and {\it auditory} sensory modalities.
+During the execution of each action, the robot recorded the sensory perceptions from {\it haptic} (i.e., joint efforts), {\it proprioceptive} (i.e., joint angular positions), and {\it auditory} sensory modalities.
 The joint efforts and joint positions were recorded for all 6 joints at 15 Hz.
-The auditory sensory modality was represented as the Discrete Fourrier Transform computed using 65 frequency bins.
+The auditory sensory modality was represented as the Discrete Fourier Transform computed using 65 frequency bins.
 
-In addition to the 7 interactive behaviors, the robot also performed the {\it look} action prior to grasping the object which produced three different kinds of sensory modalities: 1) a color histogram of the object using 8 bins per channel ({\it color}); 2) Fast point feature histogram ({\it fpfh}) shape feautres~\cite{rusu:icra09} as implemented in the Point Cloud Library~\cite{aldoma:ram12}; 3) deep visual features from the 16-layer VGG network~\cite{simonyan:corr14} ({\it vgg}).
+In addition to the 7 interactive behaviors, the robot also performed the {\it look} action prior to grasping the object which produced three different kinds of sensory modalities: 1) a color histogram of the object using 8 bins per channel; 2) Fast point feature histogram ({\it fpfh}) shape features~\cite{rusu:icra09} as implemented in the Point Cloud Library~\cite{aldoma:ram12}; and 3) deep visual features from the 16-layer VGG network~\cite{simonyan:corr14}.
 The first two types of features were computed using the segmented point cloud of the object while the deep features were computed using the 2D image of the object. 
 
 \begin{table}
 \centering
-\begin{tabular}[h]{|l|r|r|r|}
+\begin{tabular}[h]{|l|c|c|c|}
 	\hline
 	\bf Behavior & \multicolumn{3}{c|}{\bf Modality} \\ \hline \hline
 	& \bf color & \bf fpfh & \bf vgg \\ \hline
 	\bf look & 64 & 308 & 4096 \\ \hline \hline
-	& \bf audio & \bf haptics & \bf finger \\ \hline
+	& \bf audio & \bf haptics & \bf proprioception \\ \hline
 	\bf grasp & 100 & 60 & 20 \\ \hline
 	\bf drop, hold & & & \\
 	\bf lift, lower & 100 & 60 & \\
