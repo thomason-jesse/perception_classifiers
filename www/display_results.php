@@ -22,7 +22,7 @@ function render_table($d)
 }
 function read_data_from_file($cond)
 {
-	$input_fn = $cond.'_preds_results.txt';
+	$input_fn = $cond.'_xval_preds_results.txt';
 	$f = fopen($input_fn, 'r');
 	$d = array();
 	if (!$f)

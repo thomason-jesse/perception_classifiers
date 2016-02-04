@@ -51,7 +51,7 @@ def main():
 
         print "...... getting classifier results for all predicates on object"
         r_oidx = b.get_classifier_results(b.predicates, [oidx])
-        r[oidx] = r_oidx
+        r[oidx] = r_oidx[oidx]
 
     # write decisions and confidences out to file in sorted order
     f = open(obj_fn, 'w')

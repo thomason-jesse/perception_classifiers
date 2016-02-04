@@ -10,7 +10,7 @@ try:
     cond = sys.argv[4]
 except:
     sys.exit("$python correlations.py " +
-             "[object_results_file] [measurements_file] [predicates_csv] [cond] [sort by]")
+             "[object_results_file] [measurements_file] [predicates_csv] [cond]")
 
 # read in pred object scores
 f = open(objs_fn, 'r')
@@ -68,7 +68,7 @@ for h in ["height", "width", "weight"]:
         correlations[h] = {}
         significance[h] = {}
     for pred in d:
-        if pred in uniform or n[pred] < n_limit:
+        if pred in uniform or pred not in n or n[pred] < n_limit:
             continue
         r, p = pearsonr(d[pred], m[h])
         correlations[h][pred] = r

@@ -1,0 +1,38 @@
+xval results
+
+---
+
+predicate metrics
+
+unpaired tests
+n = 66 con, n = 61 exp
+		exp		con
+prec	.378+	.250
+rec		.348*	.179
+f1		.354*	.196
+kappa	-.041	-.023
+
+
+paired tests
+n=53
+		exp		con
+prec	.380	.311
+rec		.361+	.222
+f1		.364+	.244
+kappa	-.046	-.014
+
+
+* significantly greater than competing system at p < 0.05
++ trending greater than competing system at p < 0.1
+
+---
+
+correlations
+|r| > 0.5, p < 0.05
+
+		exp				con
+height	tall (.521)
+width
+weight	small (-.665)
+		water (.841)
+		blue (.549)
