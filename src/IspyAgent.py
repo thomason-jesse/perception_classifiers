@@ -728,6 +728,18 @@ class IspyAgent:
             m[oidx] = om
         return m
 
+    # given vectors of predicates and object idxs, return a map of results
+    def get_sub_classifier_results(self, preds, oidxs):
+        m = {}
+        for oidx in oidxs:
+            om = {}
+            for pred in preds:
+                cidx = self.predicate_to_classifier_map[pred]
+                _, _, sub_results = self.run_classifier_client(cidx, oidx)
+                om[pred] = sub_results
+            m[oidx] = om
+        return m
+
     # given predicate and object idxs, return a vector of behavior/modality decision*conf vectors
     def get_predicate_classifier_decision_conf_matrices(self, pred, oidxs):
         ov = []
