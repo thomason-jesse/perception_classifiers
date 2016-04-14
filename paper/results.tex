@@ -22,7 +22,7 @@ We suspect the number of objects is too small for the \textbf{vision only} syste
 Human guesses hovered around 2.5 throughout all levels of training and sets of objects.
 
 This result highlights the difficulty of the robot's turn in an \ispy framework, which requires not just good coverage of grounded words (as when figuring out what object the human is describing), but also high accuracy when using classifiers on new objects.
-Context classifiers which had few examples could achieve confidence $\kappa=1$, making the predicates they represented more likely to be chosen to describe objects.
+Context classifiers with few examples could achieve confidence $\kappa=1$, making the predicates they represented more likely to be chosen to describe objects.
 It is possible that the system would have performed better on this metric if the predicate scoring function $R$ additionally favored predicates with many examples.
 
 \textbf{Predicate Agreement.} Training the predicate classifiers using leave-one-out cross validation over objects, we calculated the average precision, recall, and $F_1$ scores of each against human predicate labels on the held-out object.

@@ -16,17 +16,17 @@ Table~\ref{tab:predicate_examples} shows the predicates for which the difference
 	\multicolumn{2}{|c|}{} & \multicolumn{6}{c|}{\bf vision only system} \\ \hline
 	pink & -.3 & \includegraphics[scale=\examplepicsize]{figures/objects/11.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/23.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/10.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/8.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/2.JPG} & \includegraphics[scale=\examplepicsize]{figures/objects/27.JPG}\\ \hline
 \end{tabular}
-\caption{Predicates for which the difference $|f_1^{mm}-f_1^{vo}|$ between the \textbf{multi-modal} (mm) and \textbf{vision only} (vo) systems was greater than or equal to $0.3$, both systems had at least $10$ objects with labels for that predicate on which to train, and the system with the worse $f_1$ had at most 5 fewer objects with labels on which to train (to avoid rewarding a system just for having more training labels). The highest- and lowest-confidence objects for each predicate are shown. The top rows ($f_1^{mm}-f_1^{vo}>0$) are decisions from the \textbf{multi-modal} system, the bottom rows the \textbf{vision only} system.}
+\caption{Predicates for which the difference $|f_1^{mm}-f_1^{vo}|$ between the \textbf{multi-modal} (mm) and \textbf{vision only} (vo) systems was greater than or equal to $0.3$, both systems had at least $10$ objects with labels for that predicate on which to train, and the system with the worse $f_1$ had at most 5 fewer objects with labels on which to train (to avoid rewarding a system just for having more training labels). The highest- and lowest-confidence objects for each predicate are shown. The top rows ($f_1^{mm}-f_1^{vo}>0$) are decisions from the \textbf{multi-modal} system, the bottom row from the \textbf{vision only} system.}
 \label{tab:predicate_examples}
 \end{table*}
 
 The \textbf{multi-modal} system does well on the predicates ``tall'' and ``half-full'' which have non-visual interpretations.
-A a tall object will exert force earlier against an arm pressing down on it, while half-full object will be lighter than a full one and heavier than an empty one.
+A tall object will exert force earlier against the robot arm pressing down on it, while a half-full object will be lighter than a full one and heavier than an empty one.
 The color predicate ``pink'' seems to confuse the multi-modal grounding system using non-visual information for this purely visual predicate.
 This doesn't hold for ``yellow'', though the classifiers for ``yellow'' never became particularly good for either system.
-For example, two of the three most confident objects in the multi-modal setting are in fact not yellow.
+For example, two of the three most confident objects in the multi-modal setting are false positives.
 
-\textbf{Correlations to physical properties.} To validate whether the systems are learning non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its decision on each object and that object's measured weight, height, and width. 
+\textbf{Correlations to physical properties.} To validate whether the systems learned non-visual properties of objects, for every predicate we calculated the Pearson's correlation $r$ between its decision on each object and that object's measured weight, height, and width. 
 As before, the decisions were made on held-out objects in leave-one-out cross validation.
 We found predicates for which $r>0.5$ with $p<0.05$ when the system had at least $10$ objects with labels for the predicate on which to train.
 
