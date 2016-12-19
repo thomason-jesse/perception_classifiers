@@ -1,0 +1,39 @@
+object_IDs:[28, 20, 10, 17]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[28, 20, 10, 17]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a round orange sphere
+cnf_clauses:[['round'], ['orange'], ['sphere']]
+match_scores:{0: 0.0443803071975708, 1: 0.05328710377216339, 2: -0.06522130221128464, 3: 0.043626803904771805}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.05290985107421875, 'cylinder': 1.0, 'can': 0.26897041499614716, 'thin': -0.2848309576511383, 'neon': 0.0, 'yellow': -0.004178868606686592, 'hollow': 0.0, 'sphere': 0.0, 'bright': -0.3171996660530567, 'pink': 2.200000047683716, 'crayon': 1.0, 'paper': 0.0, 'squishy': 0.0, 'rough': -1.800000011920929, 'red': 0.0, 'blue': -0.10638388711959124, 'curvy': 0.0, 'inside': 0.0, 'container': 1.0, 'thinking': 1.0, 'top': -1.0, 'spiky': -0.1783490777015686, 'prism': -1.2222221493721008, 'tiny': 0.0, 'metallic': -1.0, 'half-full': 1.0, 'black': -0.27507808804512024, 'orange': 0.14206110686063766, 'white': 0.08504662476480007, 'pointed': 0.0, 'empty': 0.0, 'circular': 0.0, 'circles': 0.04953281581401825, 'brown': 0.0, 'coffee': -1.5777780413627625, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.1094054076820612, 'water': -0.39074454456567764, 'cylindrical': 0.0, 'someting': 0.0, 'pointy': 0.0, 'tub': -2.0, 'lid': -1.0, 'styrofoam': -0.4571429193019867, 'rattles': 0.0, 'colored': 0.0, 'gray': 0.16094317939132452, 'short': -1.0, 'liquid': 0.6399999856948853, 'aluminum': 0.0, 'tube': 0.0, 'roll': 0.0, 'light': -0.036240904591977596, 'clear': 1.399999976158142, 'cap': 0.0, 'metal': -2.4999999701976776, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.012915870174765587, 'pineapple': -1.0, 'small': -0.06763613736256957, 'tall': 0.019000276224687696, 'skinny': 0.0, 'narrow': 0.0, 'shiny': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['pink', 'clear', 'cylinder']
+lcps:['purple', 'can']
+say:I am thinking of an object I would describe as pink, and clear, and cylinder.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'pink' when describing this object?
+get:no
+say:Would you use the word 'purple' when describing this object?
+get:no
+say:Would you use the word 'clear' when describing this object?
+get:no
+say:Would you use the word 'can' when describing this object?
+get:yes
+say:Would you use the word 'cylinder' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

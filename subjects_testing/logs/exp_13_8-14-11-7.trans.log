@@ -1,0 +1,46 @@
+object_IDs:[8, 14, 11, 7]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a large pink can
+cnf_clauses:[['large'], ['pink'], ['can']]
+match_scores:{0: -0.03030303120613098, 1: -0.03030303120613098, 2: 0.03030303120613098, 3: 0.03030303120613098}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': 0.1515151560306549, 'thin': 0.0, 'yellow': 0.0881870910525322, 'bright': 0.0, 'pink': 0.0, 'rough': 0.0, 'red': -0.7180776372551918, 'blue': -0.0666666030883789, 'container': 1.0, 'top': 0.0, 'spiky': 0.0, 'prism': 0.8666665852069855, 'metallic': 0.0, 'half-full': -1.1999999694526196, 'black': 0.0, 'orange': 0.39999985694885254, 'white': -0.13789276778697968, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': -2.533333331346512, 'gray': 1.2571429014205933, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 0.7610962688922882, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.03788848593831062, 'narrow': 0.0, 'round': -1.1999999694526196, 'silver': 2.199999988079071}
+predicates_chosen:['silver', 'gray', 'heavy']
+lcps:['large', 'fat']
+say:I am thinking of an object I would describe as silver, and gray, and heavy.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'fat' when describing this object?
+get:no
+say:Would you use the word 'large' when describing this object?
+get:no
+say:Would you use the word 'heavy' when describing this object?
+get:yes
+say:Would you use the word 'gray' when describing this object?
+get:no
+say:Would you use the word 'silver' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

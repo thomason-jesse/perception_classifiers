@@ -1,0 +1,83 @@
+object_IDs:[32, 29, 27, 19]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:water bottle blue colored heavy
+cnf_clauses:[['water'], ['bottle'], ['blue'], ['colored'], ['heavy']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'water': 0.0, 'blue': 0.0, 'heavy': 0.0, 'colored': 0.0, 'bottle': 0.0}
+predicates_chosen:['colored', 'blue', 'bottle']
+lcps:['heavy', 'water']
+say:I am thinking of an object I would describe as colored, and blue, and bottle.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'bottle' when describing this object?
+get:no
+say:Would you use the word 'colored' when describing this object?
+get:no
+say:Would you use the word 'blue' when describing this object?
+get:no
+say:Would you use the word 'water' when describing this object?
+get:no
+say:Would you use the word 'heavy' when describing this object?
+get:no
+point:-1
+say:Please pick an object that you see and describe it to me in one phrase.
+get:red can
+cnf_clauses:[['red'], ['can']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'blue': 0.0, 'heavy': 0.0, 'colored': 0.0, 'water': 0.0, 'can': 0.0, 'bottle': 0.0, 'red': 0.0}
+predicates_chosen:['colored', 'bottle', 'blue']
+lcps:['water', 'can']
+say:I am thinking of an object I would describe as colored, and bottle, and blue.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'blue' when describing this object?
+get:no
+say:Would you use the word 'can' when describing this object?
+get:no
+say:Would you use the word 'water' when describing this object?
+get:no
+say:Would you use the word 'colored' when describing this object?
+get:no
+say:Would you use the word 'bottle' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

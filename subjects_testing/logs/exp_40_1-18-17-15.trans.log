@@ -1,0 +1,42 @@
+object_IDs:[1, 18, 17, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:this object is a short and small green and white container
+cnf_clauses:[['object'], ['short'], ['small'], ['green'], ['white'], ['container']]
+match_scores:{0: 0.9417150635272264, 1: 1.0088688414543867, 2: 1.045475348830223, 3: 1.031053550541401}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.1378098726272583, 'cylinder': 1.0, 'can': -0.14128601551055908, 'thin': -0.15446025133132935, 'neon': 0.0, 'yellow': -0.038018008694052696, 'hollow': 0.0, 'bright': -0.034361179918050766, 'pink': -3.0, 'crayon': 1.0, 'paper': 0.0, 'squishy': 0.0, 'rough': -1.0, 'red': 0.0, 'blue': -0.08358077332377434, 'curvy': 0.0, 'inside': 0.0, 'container': 1.0, 'thinking': 1.0, 'top': -1.0, 'spiky': -0.1393955871462822, 'prism': -0.644444465637207, 'tiny': 0.0, 'metallic': -1.0, 'half-full': 1.0, 'black': -0.06455180794000626, 'orange': -0.0010656279846443795, 'white': 0.2541933190077543, 'pointed': 0.0, 'empty': 0.0, 'circular': 0.0, 'circles': -0.06624295562505722, 'brown': 0.0, 'coffee': -0.7333332300186157, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -0.0043400004506111145, 'water': -1.0077028162777424, 'cylindrical': 0.0, 'someting': 0.0, 'pointy': 0.0, 'tub': -2.0, 'lid': -1.0, 'styrofoam': 0.800000011920929, 'rattles': 0.0, 'colored': 0.0, 'gray': 0.21650239825248718, 'short': -1.0, 'liquid': 0.6399999856948853, 'aluminum': 0.0, 'tube': 0.0, 'roll': 0.0, 'light': -0.13288327306509018, 'clear': 1.0, 'cap': 0.0, 'metal': -0.3999999463558197, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': -0.2726155538111925, 'pineapple': -1.0, 'small': -0.12603837065398693, 'tall': -0.17575906682759523, 'skinny': 0.0, 'narrow': 0.0, 'shiny': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['cylinder', 'crayon', 'container']
+lcps:['red', 'shiny']
+say:I am thinking of an object I would describe as cylinder, and crayon, and container.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'container' when describing this object?
+get:yes
+say:Would you use the word 'red' when describing this object?
+get:no
+say:Would you use the word 'crayon' when describing this object?
+get:no
+say:Would you use the word 'shiny' when describing this object?
+get:no
+say:Would you use the word 'cylinder' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

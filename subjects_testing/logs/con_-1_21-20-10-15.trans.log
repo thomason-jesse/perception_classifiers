@@ -1,0 +1,3 @@
+object_IDs:[21, 20, 10, 15]
+num_rounds:1
+agent_fn:con.local.agent

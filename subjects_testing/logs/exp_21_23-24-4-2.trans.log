@@ -1,0 +1,37 @@
+object_IDs:[23, 24, 4, 2]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a yellow pointy squishy bottle
+cnf_clauses:[['yellow'], ['pointy'], ['squishy'], ['bottle']]
+match_scores:{0: 0.04814397543668747, 1: 0.17426403053104877, 2: -0.17204513773322105, 3: 0.09933578968048096}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.23129981942474842, 'cylinder': 0.0, 'can': -0.1536996066570282, 'thin': -2.199999988079071, 'neon': 0.0, 'yellow': 0.34004042111337185, 'bright': -3.73333340883255, 'pink': 0.0, 'crayon': 0.0, 'squishy': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': -0.46723615378141403, 'container': 1.0, 'thinking': 0.0, 'top': 0.27272725105285645, 'spiky': -0.034393779933452606, 'prism': 1.7142857313156128, 'tiny': 0.0, 'metallic': 1.5333331227302551, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': 0.7503908798098564, 'pointed': 0.0, 'empty': 0.10084522649412975, 'circular': 0.0, 'circles': 2.0, 'brown': 0.0, 'coffee': -1.0444443821907043, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -2.2999999821186066, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'pointy': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 1.3428570628166199, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.09150105528533459, 'short': -1.0, 'liquid': -1.4399999976158142, 'aluminum': 0.0, 'light': 0.18071326054632664, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': -1.3499647676944733, 'pineapple': -1.0, 'small': 0.0, 'tall': 1.100393632426858, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['circles', 'prism', 'metallic']
+lcps:['circular', 'lid']
+say:I am thinking of an object I would describe as circles, and prism, and metallic.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'lid' when describing this object?
+get:no
+say:Would you use the word 'metallic' when describing this object?
+get:no
+say:Would you use the word 'circular' when describing this object?
+get:sure
+say:Would you use the word 'circles' when describing this object?
+get:uh no
+say:Would you use the word 'prism' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

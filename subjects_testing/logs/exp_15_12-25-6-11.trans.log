@@ -1,0 +1,47 @@
+object_IDs:[12, 25, 6, 11]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[12, 25, 6, 11]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[12, 25, 6, 11]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:something green and purple
+cnf_clauses:[['green'], ['purple']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': -0.12727273255586624, 'thin': 0.0, 'yellow': 0.0892519149929285, 'bright': 0.0, 'rough': 0.0, 'red': 0.03771215118467808, 'blue': 1.3333333134651184, 'container': 1.0, 'purple': 0.0, 'top': 0.0, 'spiky': 0.0, 'prism': -1.1333333849906921, 'metallic': 0.0, 'half-full': 1.2285715341567993, 'black': 0.0, 'orange': 0.2399999499320984, 'white': -0.4138036295771599, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': 3.6000001430511475, 'gray': -1.9428570866584778, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': -1.879080057144165, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.0696688313037157, 'narrow': 0.0, 'round': 1.2285715341567993, 'silver': -4.200000107288361}
+predicates_chosen:['colored', 'blue', 'half-full']
+lcps:['rectangle', 'green']
+say:I am thinking of an object I would describe as colored, and blue, and half-full.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'rectangle' when describing this object?
+get:no
+say:Would you use the word 'half-full' when describing this object?
+get:yes
+say:Would you use the word 'blue' when describing this object?
+get:no
+say:Would you use the word 'green' when describing this object?
+get:yes
+say:Would you use the word 'colored' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

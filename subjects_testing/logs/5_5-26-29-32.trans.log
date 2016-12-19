@@ -1,0 +1,77 @@
+object_IDs:[5, 26, 29, 32]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a yellow pineapple
+cnf_clauses:[['yellow'], ['pineapple']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'yellow': 0.0, 'pineapple': 0.0}
+predicates_chosen:['yellow', 'pineapple']
+lcps:[]
+say:I am thinking of an object I would describe as yellow and pineapple.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'yellow' when describing this object?
+get:no
+say:Would you use the word 'pineapple' when describing this object?
+get:no
+point:-1
+say:Please pick an object that you see and describe it to me in one phrase.
+get:tall white styrofoam rectangle
+cnf_clauses:[['tall'], ['white'], ['styrofoam'], ['rectangle']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'yellow': 0.0, 'pineapple': 0.0, 'tall': 0.0, 'white': 0.0, 'styrofoam': 0.0, 'rectangle': 0.0}
+predicates_chosen:['pineapple', 'white', 'yellow']
+lcps:['styrofoam', 'rectangle']
+say:I am thinking of an object I would describe as pineapple, and white, and yellow.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'white' when describing this object?
+get:no
+say:Would you use the word 'pineapple' when describing this object?
+get:no
+say:Would you use the word 'rectangle' when describing this object?
+get:no
+say:Would you use the word 'styrofoam' when describing this object?
+get:no
+say:Would you use the word 'yellow' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

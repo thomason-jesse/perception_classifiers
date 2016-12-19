@@ -1,0 +1,40 @@
+object_IDs:[20, 17, 28, 10]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:something round and orange
+cnf_clauses:[['round'], ['orange']]
+match_scores:{0: 0.05328710377216339, 1: 0.043626803904771805, 2: 0.0443803071975708, 3: -0.06522130221128464}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.11572547256946564, 'cylinder': 1.0, 'can': -0.07290994375944138, 'thin': -0.29435473680496216, 'neon': 0.0, 'yellow': -0.41730942763388157, 'hollow': 0.0, 'bright': 0.21160732209682465, 'pink': 2.200000047683716, 'crayon': 1.0, 'paper': 0.0, 'squishy': 0.0, 'rough': -0.3714286684989929, 'red': 0.0, 'blue': 0.285768779926002, 'curvy': 0.0, 'inside': 0.0, 'container': 1.0, 'thinking': 1.0, 'top': -1.0, 'spiky': -0.027624428272247314, 'prism': -1.2222221493721008, 'tiny': 0.0, 'metallic': -1.0, 'half-full': 1.0, 'black': 0.2512376867234707, 'orange': -0.40217942371964455, 'white': -0.16905721463263035, 'pointed': 0.0, 'empty': 0.0, 'circular': 0.0, 'circles': -0.18449588119983673, 'brown': 0.0, 'coffee': -0.022222280502319336, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.451859163120389, 'water': 0.8946589380502701, 'cylindrical': 0.0, 'someting': 0.0, 'pointy': 0.0, 'tub': -1.0000000596046448, 'lid': -1.0, 'styrofoam': -1.8857142627239227, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.23111576866358519, 'short': -1.0, 'liquid': 1.4400001168251038, 'aluminum': 0.0, 'tube': 0.0, 'roll': 0.0, 'light': 0.08456209674477577, 'clear': 1.399999976158142, 'cap': 0.0, 'metal': 0.5, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.316863264888525, 'pineapple': -1.0, 'small': -0.08624078892171383, 'tall': 0.13453562860377133, 'skinny': 0.0, 'narrow': 0.0, 'shiny': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['pink', 'liquid', 'clear']
+lcps:['water', 'red']
+say:I am thinking of an object I would describe as pink, and liquid, and clear.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'red' when describing this object?
+get:yes
+say:Would you use the word 'liquid' when describing this object?
+get:no
+say:Would you use the word 'pink' when describing this object?
+get:yes
+say:Would you use the word 'water' when describing this object?
+get:no
+say:Would you use the word 'clear' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

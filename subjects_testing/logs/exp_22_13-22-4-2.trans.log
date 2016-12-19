@@ -1,0 +1,44 @@
+object_IDs:[13, 22, 4, 2]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 22, 4, 2]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 22, 4, 2]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:the tall thin brown cylinder
+cnf_clauses:[['tall'], ['thin'], ['brown'], ['cylinder']]
+match_scores:{0: -0.9206549748778343, 1: 0.45279135182499886, 2: -0.7367037534713745, 3: -1.01312854886055}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.09625682234764099, 'cylinder': 0.0, 'can': 0.3005772605538368, 'thin': -2.5, 'neon': 0.0, 'yellow': -0.3584987707436085, 'bright': 1.8000001013278961, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.037688709795475006, 'container': 1.0, 'thinking': 0.0, 'top': 1.2545454502105713, 'spiky': 0.10170115530490875, 'prism': -1.9142856299877167, 'tiny': 0.0, 'metallic': -0.46666663885116577, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': 0.27301931381225586, 'pointed': 0.0, 'empty': 0.0003373644176463131, 'circular': 0.0, 'circles': 1.0, 'brown': 0.0, 'coffee': -0.8666666150093079, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -1.4666666314005852, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -1.2571426331996918, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.1540091261267662, 'short': -1.0, 'liquid': 0.6000001281499863, 'aluminum': 0.0, 'light': -0.19728230498731136, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.7426076931878924, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.34794681891798973, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['bright', 'top', 'container']
+lcps:['white', 'can']
+say:I am thinking of an object I would describe as bright, and top, and container.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'bright' when describing this object?
+get:yes
+say:Would you use the word 'top' when describing this object?
+get:no
+say:Would you use the word 'can' when describing this object?
+get:yes
+say:Would you use the word 'container' when describing this object?
+get:yes
+say:Would you use the word 'white' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

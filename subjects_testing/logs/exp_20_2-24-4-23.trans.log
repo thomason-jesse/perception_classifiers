@@ -1,0 +1,47 @@
+object_IDs:[2, 24, 4, 23]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a light tall hollow paper roll
+cnf_clauses:[['light'], ['tall'], ['hollow'], ['paper'], ['roll']]
+match_scores:{0: -0.03574531711637974, 1: -0.023499689996242523, 2: 0.32487794011831284, 3: 0.07764987461268902}
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.14955177903175354, 'cylinder': 0.0, 'can': 0.29059214890003204, 'thin': -2.199999988079071, 'neon': 0.0, 'yellow': -0.27214728109538555, 'hollow': 0.0, 'bright': 1.6000000536441803, 'pink': 0.0, 'crayon': 0.0, 'paper': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.21447118371725082, 'container': 1.0, 'thinking': 0.0, 'top': 1.1818181872367859, 'spiky': 0.10818764567375183, 'prism': -1.8571427762508392, 'tiny': 0.0, 'metallic': -0.4666666090488434, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': 0.4547956883907318, 'pointed': 0.0, 'empty': 0.029554793087299913, 'circular': 0.0, 'circles': 2.0, 'brown': 0.0, 'coffee': -1.0444443821907043, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -2.2999999821186066, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -0.9428569376468658, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.15183712355792522, 'short': -1.0, 'liquid': 0.5600001066923141, 'aluminum': 0.0, 'roll': 0.0, 'light': -0.24027904868125916, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.6191275715827942, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.2817303445190191, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['circles', 'bright', 'top']
+lcps:['tiny', 'gray']
+say:I am thinking of an object I would describe as circles, and bright, and top.
+say:When you're ready to guess, say 'okay'.
+get:could you repeat
+say:I am thinking of an object I would describe as circles, and bright, and top. When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'circles' when describing this object?
+get:yes
+say:Would you use the word 'gray' when describing this object?
+get:no
+say:Would you use the word 'tiny' when describing this object?
+get:no
+say:Would you use the word 'bright' when describing this object?
+get:no
+say:Would you use the word 'top' when describing this object?
+get:could you repeat
+say:Would you use the word 'top' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

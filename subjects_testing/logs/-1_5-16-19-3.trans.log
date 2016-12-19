@@ -1,0 +1,5 @@
+object_IDs:[5, 16, 19, 3]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:kill

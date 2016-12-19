@@ -1,0 +1,39 @@
+object_IDs:[6, 14, 7, 8]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a tall pointed empty object
+cnf_clauses:[['tall'], ['pointed'], ['empty'], ['object']]
+match_scores:{0: 1.0900133475661278, 1: 1.0965229868888855, 2: 1.0554121062159538, 3: 1.120745874941349}
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': -0.12727273255586624, 'thin': 0.0, 'yellow': 0.1449355874210596, 'bright': 0.0, 'rough': 0.0, 'red': 0.3464403301477432, 'blue': 0.5333333611488342, 'container': 1.0, 'top': 0.0, 'spiky': 0.0, 'prism': 0.9999999701976776, 'metallic': 0.0, 'half-full': 1.5428569968789816, 'black': 0.0, 'orange': 1.1600000262260437, 'white': 0.5924012959003448, 'pointed': 0.0, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': -0.06666681170463562, 'gray': 1.0, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 0.5140265822410583, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.24103505909442902, 'narrow': 0.0, 'round': 1.5428569968789816, 'silver': 1.0}
+predicates_chosen:['half-full', 'round', 'orange']
+lcps:['liquid', 'styrofoam']
+say:I am thinking of an object I would describe as half-full, and round, and orange.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'styrofoam' when describing this object?
+get:no
+say:Would you use the word 'orange' when describing this object?
+get:no
+say:Would you use the word 'half-full' when describing this object?
+get:no
+say:Would you use the word 'round' when describing this object?
+get:no
+say:Would you use the word 'liquid' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

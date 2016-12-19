@@ -1,0 +1,46 @@
+object_IDs:[1, 17, 21, 20]
+num_rounds:1
+agent_fn:con.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:something cylindrical yellow and plastic
+cnf_clauses:[['cylindrical'], ['yellow'], ['plastic']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.3279503174126148, 'soft': 0.0, 'cylinder': 0.0, 'can': 0.0, 'color': 0.0, 'thin': -0.8734176978468895, 'yellow': 0.0, 'hollow': 0.0, 'bright': 0.0, 'pink': 0.0, 'crayon': 0.0, 'paper': 0.0, 'rough': 0.0, 'plastic': 0.0, 'open': 4.600000023841858, 'transparent': 0.0, 'red': 0.0, 'blue': 0.0, 'inside': 0.0, 'container': 1.0, 'silent': 0.0, 'soup': 0.0, 'thinking': 0.0, 'chips': 0.0, 'top': 0.0, 'spiky': 0.0, 'prism': -1.0, 'metallic': -1.0, 'half-full': 1.0, 'black': -0.333333358168602, 'orange-topped': 0.0, 'orange': 0.0, 'aerosol': 0.0, 'white': 0.0, 'spraycan': 0.0, 'roll': 0.0, 'empty': 0.0, 'circular': 1.0, 'circles': 1.0, 'brown': 0.0, 'coffee': 0.0, 'full': 0.0, 'shiny': 0.0, 'wide': 1.0, 'cup': 0.0, 'object': 1.0, 'cannister': 1.0, 'fat': 0.0, 'medium-sized': 0.0, 'water': 0.0, 'cylindrical': 0.0, 'beans': 0.0, 'drink': 0.0, 'pencil-shaped': 0.0, 'tub': 0.0, 'cardboard': 0.0, 'lid': 1.0, 'styrofoam': -1.0, 'rattles': 1.6666666269302368, 'colored': -0.4300341196358204, 'gray': -0.317241370677948, 'short': 1.0, 'liquid': 1.0, 'aluminum': 0.0, 'tube': 0.0, 'light': -0.8923339173197746, 'clear': 0.0, 'cap': 1.0, 'metal': 1.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.991999976336956, 'tall': 0.0, 'narrow': 0.0, 'shaking': 0.0, 'round': 0.0, 'silver': 0.0}
+predicates_chosen:['open', 'rattles', 'container']
+lcps:['narrow', 'bright']
+say:I am thinking of an object I would describe as open, and rattles, and container.
+say:When you're ready to guess, say 'okay'.
+get:can you repeat that
+say:I am thinking of an object I would describe as open, and rattles, and container. When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'narrow' when describing this object?
+get:no
+say:Would you use the word 'open' when describing this object?
+get:no
+say:Would you use the word 'bright' when describing this object?
+get:can you repeat that
+say:Would you use the word 'bright' when describing this object?
+get:yes
+say:Would you use the word 'rattles' when describing this object?
+get:no
+say:Would you use the word 'container' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

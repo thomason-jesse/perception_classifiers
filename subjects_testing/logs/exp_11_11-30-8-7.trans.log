@@ -1,0 +1,38 @@
+object_IDs:[11, 30, 8, 7]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a small full white bottle
+cnf_clauses:[['small'], ['full'], ['white'], ['bottle']]
+match_scores:{0: -0.20940937101840973, 1: -0.14045077562332153, 2: 0.07340560853481293, 3: -0.09342967718839645}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': 0.10303030535578728, 'thin': 0.0, 'yellow': -0.43728006072342396, 'bright': 0.0, 'rough': 0.0, 'red': 0.29417592100799084, 'blue': 1.2666666507720947, 'container': 1.0, 'top': 0.0, 'spiky': 0.0, 'prism': -1.933333158493042, 'metallic': 0.0, 'half-full': 0.5714284870773554, 'black': 0.0, 'orange': 1.2800002098083496, 'white': -0.6771626397967339, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': 0.19999998807907104, 'gray': 0.6285712420940399, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 0.17113222181797028, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.03737606480717659, 'narrow': 0.0, 'round': 0.5714284870773554, 'silver': -2.599999964237213}
+predicates_chosen:['orange', 'blue', 'heavy']
+lcps:['rectangle', 'top']
+say:I am thinking of an object I would describe as orange, and blue, and heavy.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'blue' when describing this object?
+get:yes
+say:Would you use the word 'orange' when describing this object?
+get:no
+say:Would you use the word 'heavy' when describing this object?
+get:yes
+say:Would you use the word 'top' when describing this object?
+get:yes
+say:Would you use the word 'rectangle' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

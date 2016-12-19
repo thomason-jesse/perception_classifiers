@@ -1,0 +1,65 @@
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[31, 4, 22, 2]
+num_rounds:1
+agent_fn:con.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a small aerosol container with an orange lid
+cnf_clauses:[['small'], ['aerosol'], ['container'], ['orange'], ['lid']]
+match_scores:{0: 0.8925632834434509, 1: 0.8925632834434509, 2: 0.8925632834434509, 3: 1.086622692644596}
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.42748091742396355, 'cylinder': 0.0, 'can': 0.0, 'thin': -5.0, 'yellow': -0.5979381203651428, 'hollow': 0.0, 'bright': 1.0, 'pink': 1.0, 'crayon': 0.0, 'rough': 0.0, 'plastic': 0.0, 'open': 0.0, 'red': 0.0, 'blue': 0.0, 'container': 1.0, 'silent': 0.0, 'soup': 0.0, 'thinking': 0.0, 'chips': 0.0, 'top': 0.0, 'spiky': 0.0, 'prism': 0.8666665852069855, 'metallic': -1.0, 'half-full': 1.0, 'black': 0.0, 'orange': -0.30149612575769424, 'aerosol': 0.0, 'white': -1.3688312061131, 'spraycan': 0.0, 'empty': -0.12096773833036423, 'circular': 0.0, 'circles': 1.0, 'brown': 0.0, 'coffee': 0.0, 'full': 0.0, 'wide': 1.0, 'cup': 0.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 0.0, 'cylindrical': 0.0, 'drink': 0.0, 'pencil-shaped': 0.0, 'tub': 0.07329843007028103, 'lid': 0.0, 'styrofoam': -1.0, 'rattles': 0.0, 'colored': 0.0, 'gray': 1.0, 'short': 0.0, 'liquid': -1.6666666269302368, 'aluminum': 0.0, 'light': -0.009963468415662646, 'clear': 0.0, 'cap': 1.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.0, 'narrow': 0.0, 'shaking': 0.0, 'round': 3.200000047683716, 'silver': 0.0}
+predicates_chosen:['round', 'bright', 'pink']
+lcps:['empty', 'heavy']
+say:I am thinking of an object I would describe as round, and bright, and pink.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'bright' when describing this object?
+get:sure
+say:Would you use the word 'heavy' when describing this object?
+get:yes
+say:Would you use the word 'round' when describing this object?
+get:yes
+say:Would you use the word 'empty' when describing this object?
+get:no
+say:Would you use the word 'pink' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

@@ -1,0 +1,44 @@
+object_IDs:[6, 14, 11, 8]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:the object i am thinking of is light tall and blue
+cnf_clauses:[['object'], ['thinking'], ['light'], ['tall'], ['blue']]
+match_scores:{0: 2.527712754905224, 1: 2.489736557006836, 2: 2.201497983187437, 3: 2.371410198509693}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': -0.12727273255586624, 'thin': 0.0, 'yellow': 0.2524507101625204, 'bright': 0.0, 'rough': 0.0, 'red': 0.1620238497853279, 'blue': 0.2666667103767395, 'container': 1.0, 'thinking': 0.0, 'top': 0.0, 'spiky': 0.0, 'prism': 1.5333332419395447, 'metallic': 0.0, 'half-full': 0.9999998770654202, 'black': 0.0, 'orange': 1.0399999618530273, 'white': 0.7083809897303581, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': -0.7333334684371948, 'gray': 1.2571429014205933, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 0.7458476722240448, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.25417911633849144, 'narrow': 0.0, 'round': 0.9999998770654202, 'silver': 2.199999988079071}
+predicates_chosen:['silver', 'prism', 'gray']
+lcps:['coffee', 'top']
+say:I am thinking of an object I would describe as silver, and prism, and gray.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'top' when describing this object?
+get:can you repeat what you said
+say:Would you use the word 'top' when describing this object?
+get:can you repeat what you said
+say:Would you use the word 'top' when describing this object?
+get:no
+say:Would you use the word 'silver' when describing this object?
+get:no
+say:Would you use the word 'prism' when describing this object?
+get:no
+say:Would you use the word 'gray' when describing this object?
+get:no
+say:Would you use the word 'coffee' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

@@ -1,0 +1,37 @@
+object_IDs:[30, 12, 11, 25]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:an empty yellow can
+cnf_clauses:[['empty'], ['yellow'], ['can']]
+match_scores:{0: -0.022565722465515137, 1: 0.0557624027132988, 2: -0.08674422651529312, 3: -0.023055894766002893}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': -0.13939394429326057, 'thin': 0.0, 'yellow': 0.10071791149675846, 'bright': 0.0, 'rough': 0.0, 'red': 0.1280747577548027, 'blue': 1.3333333134651184, 'container': 1.0, 'top': 0.0, 'spiky': 0.0, 'prism': -1.2666667699813843, 'metallic': 0.0, 'half-full': 0.8857144117355347, 'black': 0.0, 'orange': 0.5199999809265137, 'white': -0.3788798600435257, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': 3.1333334743976593, 'gray': -1.2857142388820648, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': -1.265452817082405, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.12939189933240414, 'narrow': 0.0, 'round': 0.8857144117355347, 'silver': -3.0000001192092896}
+predicates_chosen:['colored', 'blue', 'heavy']
+lcps:['cylinder', 'gray']
+say:I am thinking of an object I would describe as colored, and blue, and heavy.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'cylinder' when describing this object?
+get:yes
+say:Would you use the word 'heavy' when describing this object?
+get:yes
+say:Would you use the word 'colored' when describing this object?
+get:yes
+say:Would you use the word 'blue' when describing this object?
+get:no
+say:Would you use the word 'gray' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

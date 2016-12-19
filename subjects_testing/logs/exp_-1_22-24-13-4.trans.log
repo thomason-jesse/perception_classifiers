@@ -1,0 +1,22 @@
+object_IDs:[22, 24, 13, 4]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a half-full yelow bottle
+cnf_clauses:[['half-full'], ['yelow'], ['bottle']]
+match_scores:{0: 1.1998980045318604, 1: 1.182960718870163, 2: 1.008662079460919, 3: 0.7919646352529526}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.35688307136297226, 'cylinder': 0.0, 'can': 0.2104364112019539, 'thin': 1.5, 'neon': 0.0, 'yellow': -0.04749627038836479, 'bright': 1.8000001013278961, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.037688709795475006, 'container': 1.0, 'thinking': 0.0, 'top': 1.2545454502105713, 'spiky': -0.19348420202732086, 'prism': -1.7999999225139618, 'tiny': 0.0, 'metallic': -0.46666663885116577, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': -0.5653010606765747, 'pointed': 0.0, 'empty': -0.059278706405166304, 'circular': 0.0, 'circles': 1.0, 'brown': 0.0, 'coffee': -0.15555554628372192, 'full': 0.0, 'yelow': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 2.666666693985462, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -1.4857142865657806, 'rattles': 0.0, 'colored': 0.0, 'gray': 0.20734670758247375, 'short': -1.0, 'liquid': 2.0400001853704453, 'aluminum': 0.0, 'light': -0.00022087804973125458, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.73131815623492, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.496025737375021, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['fat', 'liquid', 'bright']
+lcps:['yellow', 'can']
+say:I am thinking of an object I would describe as fat, and liquid, and bright.
+say:When you're ready to guess, say 'okay'.
+say:I am thinking of an object I would describe as fat, and liquid, and bright. When you're ready to guess, say 'okay'.
+get:kill
+say:Okay, go on

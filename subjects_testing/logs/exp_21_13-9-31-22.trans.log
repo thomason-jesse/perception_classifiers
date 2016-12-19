@@ -1,0 +1,45 @@
+object_IDs:[13, 9, 31, 22]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a hollow metallic cylinder
+cnf_clauses:[['hollow'], ['metallic'], ['cylinder']]
+match_scores:{0: 1.0, 1: 0.6000000238418579, 2: 1.0, 3: 0.46666669845581055}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.21815701946616173, 'cylinder': 0.0, 'can': 0.1934891641139984, 'thin': -3.899999976158142, 'neon': 0.0, 'yellow': 0.46403346210718155, 'hollow': 0.0, 'bright': -2.0666666626930237, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': -0.5594128593802452, 'container': 1.0, 'thinking': 0.0, 'top': 0.38181811571121216, 'spiky': -0.08791428804397583, 'prism': -0.17142850160598755, 'tiny': 0.0, 'metallic': -0.0666666030883789, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': 0.02415245771408081, 'pointed': 0.0, 'empty': 0.14476719525191584, 'circular': 0.0, 'circles': -3.0, 'brown': 0.0, 'coffee': -1.4444444179534912, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -0.9999999776482582, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -1.7999999523162842, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.40253810957074165, 'short': -1.0, 'liquid': -2.6799998581409454, 'aluminum': 0.0, 'light': -0.22594680078327656, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': -1.0901452647522092, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.5978570319712162, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['container', 'half-full', 'orange']
+lcps:['lid', 'cap']
+say:I am thinking of an object I would describe as container, and half-full, and orange.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'half-full' when describing this object?
+get:no
+say:Would you use the word 'lid' when describing this object?
+get:no
+say:Would you use the word 'cap' when describing this object?
+get:no
+say:Would you use the word 'orange' when describing this object?
+get:no
+say:Would you use the word 'container' when describing this object?
+get:sure
+point:-1
+say:Thanks for playing!

@@ -1,0 +1,85 @@
+object_IDs:[27, 26, 3, 5]
+num_rounds:2
+agent_fn:None
+object_IDs:[27, 26, 3, 5]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a light red cylinder
+cnf_clauses:[['light'], ['red'], ['cylinder']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:3
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'light': 0.0, 'cylinder': 0.0, 'red': 0.0}
+predicates_chosen:['red', 'cylinder', 'light']
+lcps:[]
+say:I am thinking of an object I would describe as red, and cylinder, and light.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'light' when describing this object?
+get:yes
+say:Would you use the word 'cylinder' when describing this object?
+get:yes
+say:Would you use the word 'red' when describing this object?
+get:yes
+point:-1
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a bright yellow pineapple
+cnf_clauses:[['bright'], ['yellow'], ['pineapple']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:nope
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'cylinder': 0.0, 'light': 0.0, 'yellow': 0.0, 'bright': 0.0, 'pineapple': 0.0, 'red': 0.0}
+predicates_chosen:['yellow', 'light', 'bright']
+lcps:['pineapple', 'cylinder']
+say:I am thinking of an object I would describe as yellow, and light, and bright.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'bright' when describing this object?
+get:no
+say:Would you use the word 'pineapple' when describing this object?
+get:no
+say:Would you use the word 'light' when describing this object?
+get:no
+say:Would you use the word 'cylinder' when describing this object?
+get:yes
+say:Would you use the word 'yellow' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

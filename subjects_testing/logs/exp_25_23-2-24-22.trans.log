@@ -1,0 +1,49 @@
+object_IDs:[23, 2, 24, 22]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[23, 2, 24, 22]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[23, 2, 24, 22]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:tall black and white water bottle
+cnf_clauses:[['tall'], ['black'], ['white'], ['water'], ['bottle']]
+match_scores:{0: 0.06655844859778881, 1: 0.275527261197567, 2: 0.02610505372285843, 3: 0.061655934900045395}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.23985367268323898, 'cylinder': 0.0, 'can': 0.2342541217803955, 'thin': -3.699999988079071, 'neon': 0.0, 'yellow': -0.17295643128454685, 'bright': 0.5333333611488342, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': -0.09865275770425797, 'container': 1.0, 'thinking': 0.0, 'top': 1.0727272629737854, 'spiky': 0.15346769988536835, 'prism': -1.1428570747375488, 'tiny': 0.0, 'metallic': -0.06666669249534607, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': 0.7078208550810814, 'pointed': 0.0, 'empty': 0.058444646860152716, 'circular': 0.0, 'circles': 2.0, 'brown': 0.0, 'coffee': -1.0444443821907043, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -3.2666666507720947, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -0.5142855048179626, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.14641783945262432, 'short': -1.0, 'liquid': -0.07999986410140991, 'aluminum': 0.0, 'light': -0.18295005522668362, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.2111942023038864, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.028774550184607506, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['circles', 'top', 'container']
+lcps:['tub', 'blue']
+say:I am thinking of an object I would describe as circles, and top, and container.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'container' when describing this object?
+get:yes
+say:Would you use the word 'top' when describing this object?
+get:could you repeat that
+say:Would you use the word 'top' when describing this object?
+get:no
+say:Would you use the word 'blue' when describing this object?
+get:no
+say:Would you use the word 'circles' when describing this object?
+get:no
+say:Would you use the word 'tub' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

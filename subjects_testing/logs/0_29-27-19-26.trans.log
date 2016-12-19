@@ -1,0 +1,68 @@
+object_IDs:[29, 27, 19, 26]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:something light and tall and white
+cnf_clauses:[['light'], ['tall'], ['white']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'light': 0.0, 'white': 0.0, 'tall': 0.0}
+predicates_chosen:['white', 'light', 'tall']
+lcps:[]
+say:I am thinking of an object I would describe as white, and light, and tall.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'white' when describing this object?
+get:no
+say:Would you use the word 'tall' when describing this object?
+get:no
+say:Would you use the word 'light' when describing this object?
+get:yes
+point:-1
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a clear container with a gray cap containing black circles
+cnf_clauses:[['clear'], ['container'], ['gray'], ['cap'], ['black'], ['circles']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'circles': 0.0, 'gray': 0.0, 'container': 0.0, 'light': 0.0, 'clear': 0.0, 'cap': 0.0, 'black': 0.0, 'tall': 0.0, 'white': 0.0}
+predicates_chosen:['light', 'gray', 'black']
+lcps:['circles', 'tall']
+say:I am thinking of an object I would describe as light, and gray, and black.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'gray' when describing this object?
+get:no
+say:Would you use the word 'black' when describing this object?
+get:no
+say:Would you use the word 'tall' when describing this object?
+get:yes
+say:Would you use the word 'light' when describing this object?
+get:no
+say:Would you use the word 'circles' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

@@ -1,0 +1,42 @@
+object_IDs:[4, 31, 13, 2]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:small orange and gray
+cnf_clauses:[['small'], ['orange'], ['gray']]
+match_scores:{0: 0.9137331023812294, 1: 0.9982281662523746, 2: 0.9386257603764534, 3: 0.9016658887267113}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.32865055464208126, 'cylinder': 0.0, 'can': 0.1328456774353981, 'thin': 4.599999904632568, 'neon': 0.0, 'yellow': -0.2654750384390354, 'bright': 2.3333334028720856, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.8627147898077965, 'container': 1.0, 'thinking': 0.0, 'top': 1.0363637804985046, 'spiky': -0.26728054136037827, 'prism': -1.4571430385112762, 'tiny': 0.0, 'metallic': 1.666666716337204, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': -0.7140412926673889, 'pointed': 0.0, 'empty': -0.12187365628778934, 'circular': 0.0, 'circles': 1.0, 'brown': 0.0, 'coffee': 0.022222459316253662, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 2.966666616499424, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -1.3428572118282318, 'rattles': 0.0, 'colored': 0.0, 'gray': 0.23888791352510452, 'short': -1.0, 'liquid': 2.119999811053276, 'aluminum': 0.0, 'light': 0.05172302760183811, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.9425788773223758, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.5418644025921822, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['thin', 'fat', 'bright']
+lcps:['thinking', 'narrow']
+say:I am thinking of an object I would describe as thin, and fat, and bright.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'thin' when describing this object?
+get:yes
+say:Would you use the word 'narrow' when describing this object?
+get:yes
+say:Would you use the word 'fat' when describing this object?
+get:yes
+say:Would you use the word 'bright' when describing this object?
+get:yes
+say:Would you use the word 'thinking' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

@@ -1,0 +1,50 @@
+object_IDs:[8, 12, 30, 7]
+num_rounds:1
+agent_fn:con.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:uh something that is empty yellow uh open container
+cnf_clauses:[['empty'], ['yellow'], ['open'], ['container']]
+match_scores:{0: 0.1677161157131195, 1: -0.2684425115585327, 2: 0.07544808089733124, 3: -0.016819961369037628}
+point:0
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.0, 'cylinder': 0.0, 'can': 0.0, 'thin': 0.0, 'yellow': 0.0, 'bright': 0.0, 'rough': 0.0, 'open': 0.0, 'red': 0.0, 'blue': 0.0, 'container': 0.0, 'top': 0.0, 'spiky': 2.9384459257125854, 'prism': 0.0, 'metallic': 0.0, 'half-full': 0.0, 'black': 0.0, 'orange': 1.0, 'white': 1.0, 'empty': -1.300114281475544, 'circular': -1.0, 'circles': 0.0, 'brown': -1.0, 'coffee': 1.0, 'wide': 0.0, 'object': 0.0, 'cannister': 0.0, 'fat': 0.0, 'water': -1.0, 'cylindrical': 0.0, 'tub': 1.0, 'lid': 0.0, 'styrofoam': -0.13939394429326057, 'rattles': 0.0, 'colored': -1.399999976158142, 'gray': 0.0, 'short': 0.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 3.0, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': -1.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 1.0, 'pineapple': 0.0, 'small': 0.0, 'tall': 3.0, 'narrow': 1.0, 'round': 1.0, 'silver': 1.0}
+predicates_chosen:['light', 'tall', 'spiky']
+lcps:['pineapple', 'top']
+say:I am thinking of an object I would describe as light, and tall, and spiky.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'tall' when describing this object?
+get:no
+say:Would you use the word 'top' when describing this object?
+get:can you repeat that
+say:Would you use the word 'top' when describing this object?
+get:don't know
+say:I didn't catch that.
+get:uh no
+say:Would you use the word 'light' when describing this object?
+get:yes
+say:Would you use the word 'spiky' when describing this object?
+get:no
+say:Would you use the word 'pineapple' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

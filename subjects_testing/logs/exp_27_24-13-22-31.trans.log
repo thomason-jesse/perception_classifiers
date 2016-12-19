@@ -1,0 +1,44 @@
+object_IDs:[24, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[24, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:tall red bottle
+cnf_clauses:[['tall'], ['red'], ['bottle']]
+match_scores:{0: 0.13281244039535522, 1: 0.08800710458308458, 2: 0.1526893563568592, 3: 0.1791592538356781}
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.25279469043016434, 'cylinder': 0.0, 'can': 0.15538087487220764, 'thin': 0.10000002384185791, 'neon': 0.0, 'yellow': 0.05749700963497162, 'bright': 0.6000000834465027, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': -0.2607136592268944, 'container': 1.0, 'thinking': 0.0, 'top': 1.1090908646583557, 'spiky': -0.14820414781570435, 'prism': -1.1999998688697815, 'tiny': 0.0, 'metallic': -0.6000000238418579, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': -0.30789340287446976, 'pointed': 0.0, 'empty': -0.01812580632031313, 'circular': 0.0, 'circles': 1.0, 'brown': 0.0, 'coffee': -0.3777778148651123, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 1.800000049173832, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -1.0, 'rattles': 0.0, 'colored': 0.0, 'gray': 0.1228516437113285, 'short': -1.0, 'liquid': 1.3200002312660217, 'aluminum': 0.0, 'light': 0.02844361774623394, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.29103561770170927, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.17964157089591026, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['fat', 'liquid', 'top']
+lcps:['red', 'rough']
+say:I am thinking of an object I would describe as fat, and liquid, and top.
+say:When you're ready to guess, say 'okay'.
+get:can you repeat that
+say:I am thinking of an object I would describe as fat, and liquid, and top. When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'rough' when describing this object?
+get:no
+say:Would you use the word 'top' when describing this object?
+get:no
+say:Would you use the word 'liquid' when describing this object?
+get:yes
+say:Would you use the word 'red' when describing this object?
+get:no
+say:Would you use the word 'fat' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

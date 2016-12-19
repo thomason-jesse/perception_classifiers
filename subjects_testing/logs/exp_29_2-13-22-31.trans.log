@@ -1,0 +1,72 @@
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[2, 13, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:i spy a tall red bottle
+cnf_clauses:[['tall'], ['red'], ['bottle']]
+match_scores:{0: 0.17265455424785614, 1: 0.08800710458308458, 2: 0.1526893563568592, 3: 0.1791592538356781}
+point:3
+say:Is this the object you have in mind?
+get:yes it is
+point:-1
+pred_scores:{'heavy': -0.2003452032804489, 'cylinder': 0.0, 'can': 0.24552172422409058, 'thin': -3.899999976158142, 'neon': 0.0, 'yellow': -0.25350549072027206, 'bright': 0.6000000834465027, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': -0.2607136592268944, 'container': 1.0, 'thinking': 0.0, 'top': 1.1090908646583557, 'spiky': 0.14698120951652527, 'prism': -1.3142855763435364, 'tiny': 0.0, 'metallic': -0.6000000238418579, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': 0.5304269716143608, 'pointed': 0.0, 'empty': 0.041490264502499485, 'circular': 0.0, 'circles': 1.0, 'brown': 0.0, 'coffee': -1.0888888835906982, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -2.3333332762122154, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -0.7714283466339111, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.23850418999791145, 'short': -1.0, 'liquid': -0.11999982595443726, 'aluminum': 0.0, 'light': -0.16861780919134617, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.3023251546546817, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.03156265243887901, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['top', 'container', 'half-full']
+lcps:['empty', 'cylinder']
+say:I am thinking of an object I would describe as top, and container, and half-full.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'empty' when describing this object?
+get:no
+say:Would you use the word 'top' when describing this object?
+get:can you repeat
+say:Would you use the word 'top' when describing this object?
+get:no
+say:Would you use the word 'container' when describing this object?
+get:yes
+say:Would you use the word 'half-full' when describing this object?
+get:yes
+say:Would you use the word 'cylinder' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

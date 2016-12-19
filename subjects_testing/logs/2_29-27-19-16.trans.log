@@ -1,0 +1,79 @@
+object_IDs:[29, 27, 19, 16]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a light tall white object
+cnf_clauses:[['light'], ['tall'], ['white'], ['object']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:3
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'light': 0.0, 'white': 0.0, 'object': 0.0, 'tall': 0.0}
+predicates_chosen:['light', 'object', 'white']
+lcps:['tall']
+say:I am thinking of an object I would describe as light, and object, and white.
+say:When you're ready to guess, say okay, then pick up the object.
+get:what was that
+say:I am thinking of an object I would describe as light, and object, and white. When you're ready to guess, say okay, then pick up the object.
+get:what was that
+say:I am thinking of an object I would describe as light, and object, and white. When you're ready to guess, say okay, then pick up the object. I am thinking of an object I would describe as light, and object, and white. When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'tall' when describing this object?
+get:no
+say:Would you use the word 'white' when describing this object?
+get:no
+say:Would you use the word 'light' when describing this object?
+get:yes
+say:Would you use the word 'object' when describing this object?
+get:no
+point:-1
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a narrow white and orange container
+cnf_clauses:[['narrow'], ['white'], ['orange'], ['container']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'container': 0.0, 'light': 0.0, 'object': 0.0, 'orange': 0.0, 'tall': 0.0, 'white': 0.0, 'narrow': 0.0}
+predicates_chosen:['container', 'white', 'narrow']
+lcps:['light', 'tall']
+say:I am thinking of an object I would describe as container, and white, and narrow.
+say:When you're ready to guess, say okay, then pick up the object.
+get:what was that
+say:I am thinking of an object I would describe as container, and white, and narrow. When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'light' when describing this object?
+get:yes
+say:Would you use the word 'white' when describing this object?
+get:no
+say:Would you use the word 'narrow' when describing this object?
+get:yes
+say:Would you use the word 'container' when describing this object?
+get:no
+say:Would you use the word 'tall' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

@@ -1,0 +1,38 @@
+object_IDs:[18, 1, 10, 28]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[18, 1, 10, 28]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a closed metal container
+cnf_clauses:[['closed'], ['metal'], ['container']]
+match_scores:{0: 0.0, 1: 0.5999999940395355, 2: 0.5999999940395355, 3: 0.3999999761581421}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.0038009509444236755, 'cylinder': 1.0, 'can': -0.07290994375944138, 'thin': -0.2934962511062622, 'neon': 0.0, 'yellow': -0.22853694297373295, 'hollow': 0.0, 'bright': -0.015278574079275131, 'pink': 1.0000000596046448, 'crayon': 1.0, 'paper': 0.0, 'squishy': 0.0, 'rough': 0.08571422100067139, 'red': 0.0, 'blue': 0.1856317175552249, 'curvy': 0.0, 'inside': 0.0, 'container': 1.0, 'thinking': 1.0, 'top': -1.0, 'spiky': -0.0728418156504631, 'prism': -1.1777777671813965, 'tiny': 0.0, 'metallic': -1.0, 'half-full': 1.0, 'black': 0.16702715680003166, 'closed': 0.0, 'orange': -0.2627963498234749, 'white': -0.02610268071293831, 'pointed': 0.0, 'empty': 0.0, 'circular': 0.0, 'circles': -0.1348218247294426, 'brown': 0.0, 'coffee': 0.2888888716697693, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.31860038451850414, 'water': 0.4422125779092312, 'cylindrical': 0.0, 'someting': 0.0, 'pointy': 0.0, 'tub': -1.2000000476837158, 'lid': -1.0, 'styrofoam': -2.057142823934555, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.021589361131191254, 'short': -1.0, 'liquid': 1.28000009059906, 'aluminum': 0.0, 'tube': 0.0, 'roll': 0.0, 'light': 0.08456209674477577, 'clear': 1.399999976158142, 'cap': 0.0, 'metal': 0.4000000059604645, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.20612123981118202, 'pineapple': -1.0, 'small': -0.04446833208203316, 'tall': 0.14821819425560534, 'skinny': 0.0, 'narrow': 0.0, 'shiny': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['clear', 'liquid', 'pink']
+lcps:['neon', 'inside']
+say:I am thinking of an object I would describe as clear, and liquid, and pink.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'neon' when describing this object?
+get:no
+say:Would you use the word 'clear' when describing this object?
+get:no
+say:Would you use the word 'liquid' when describing this object?
+get:no
+say:Would you use the word 'pink' when describing this object?
+get:no
+say:Would you use the word 'inside' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

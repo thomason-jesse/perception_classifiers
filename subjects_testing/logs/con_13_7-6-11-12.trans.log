@@ -1,0 +1,54 @@
+object_IDs:[7, 6, 11, 12]
+num_rounds:1
+agent_fn:con.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a soup cup
+cnf_clauses:[['soup'], ['cup']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:3
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.0, 'cylinder': 0.0, 'can': 0.0, 'thin': 0.0, 'yellow': 0.0, 'bright': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.0, 'container': 0.0, 'soup': 0.0, 'top': 0.0, 'spiky': 2.7705347537994385, 'prism': 0.0, 'metallic': 0.0, 'half-full': 0.0, 'black': 0.0, 'orange': 1.0, 'white': 1.0, 'empty': -0.95622368901968, 'circular': -1.0, 'circles': 0.0, 'brown': -1.0, 'coffee': 1.0, 'wide': 0.0, 'cup': 0.0, 'object': 0.0, 'cannister': 0.0, 'fat': 0.0, 'water': -1.0, 'cylindrical': 0.0, 'tub': 1.0, 'lid': 0.0, 'styrofoam': -0.1878787949681282, 'rattles': 0.0, 'colored': -2.600000023841858, 'gray': 0.0, 'short': 0.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 3.199999988079071, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': -1.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 1.0, 'pineapple': 0.0, 'small': 0.0, 'tall': 3.199999988079071, 'narrow': 1.0, 'round': 1.0, 'silver': 1.0}
+predicates_chosen:['light', 'tall', 'spiky']
+lcps:['rectangle', 'yellow']
+say:I am thinking of an object I would describe as light, and tall, and spiky.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'tall' when describing this object?
+get:no
+say:Would you use the word 'yellow' when describing this object?
+get:yes
+say:Would you use the word 'light' when describing this object?
+get:yes
+say:Would you use the word 'spiky' when describing this object?
+get:no
+say:Would you use the word 'rectangle' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

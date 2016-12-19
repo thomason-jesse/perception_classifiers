@@ -1,0 +1,33 @@
+object_IDs:[21, 20, 10, 15]
+num_rounds:1
+agent_fn:con.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:this objct is a tall red foam cylinder
+cnf_clauses:[['objct'], ['tall'], ['red'], ['foam'], ['cylinder']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.2881987662985921, 'soft': 0.0, 'cylinder': 0.0, 'can': 0.0, 'color': 0.0, 'thin': 0.6455696001648903, 'yellow': 0.0, 'hollow': 0.0, 'bright': 0.0, 'pink': 0.0, 'crayon': 0.0, 'paper': 0.0, 'rough': 0.0, 'plastic': 0.0, 'open': 4.600000023841858, 'transparent': 0.0, 'red': 0.0, 'blue': 0.0, 'inside': 0.0, 'container': 1.0, 'silent': 0.0, 'soup': 0.0, 'thinking': 0.0, 'chips': 0.0, 'top': 0.0, 'spiky': 0.0, 'prism': -1.0, 'metallic': -1.0, 'half-full': 1.0, 'objct': 0.0, 'black': -0.3333333283662796, 'orange-topped': 0.0, 'orange': 0.0, 'aerosol': 0.0, 'white': 0.0, 'spraycan': 0.0, 'roll': 0.0, 'empty': 0.0, 'circular': 1.0, 'circles': 1.0, 'brown': 0.0, 'coffee': 0.0, 'full': 0.0, 'shiny': 0.0, 'wide': 1.0, 'cup': 0.0, 'object': 1.0, 'cannister': 1.0, 'fat': 0.0, 'medium-sized': 0.0, 'water': 0.0, 'cylindrical': 0.0, 'beans': 0.0, 'drink': 0.0, 'pencil-shaped': 0.0, 'tub': 0.0, 'cardboard': 0.0, 'lid': 1.0, 'styrofoam': -1.0, 'rattles': -1.0, 'colored': 0.061433445662260056, 'gray': -0.317241370677948, 'short': 1.0, 'liquid': 1.0, 'aluminum': 0.0, 'tube': 0.0, 'light': -0.8262351155281067, 'clear': 0.0, 'cap': 1.0, 'metal': 1.0, 'foam': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 1.1199999749660492, 'tall': 0.0, 'narrow': 0.0, 'shaking': 0.0, 'round': 0.0, 'silver': 0.0}
+predicates_chosen:['open', 'small', 'container']
+lcps:['coffee', 'medium-sized']
+say:I am thinking of an object I would describe as open, and small, and container.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'coffee' when describing this object?
+get:no
+say:Would you use the word 'open' when describing this object?
+get:no
+say:Would you use the word 'container' when describing this object?
+get:yes
+say:Would you use the word 'small' when describing this object?
+get:yes
+say:Would you use the word 'medium-sized' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

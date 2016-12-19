@@ -1,0 +1,35 @@
+object_IDs:[13, 31, 23, 2]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a curvy red water bottle
+cnf_clauses:[['curvy'], ['red'], ['water'], ['bottle']]
+match_scores:{0: 0.008662079460918903, 1: 0.23224717378616333, 2: 0.14907948672771454, 3: 0.18578310310840607}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.11899826489388943, 'cylinder': 0.0, 'can': -0.012350738048553467, 'thin': -1.600000023841858, 'neon': 0.0, 'yellow': -0.2882115915417671, 'bright': 1.1333333849906921, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': -0.3566141203045845, 'curvy': 0.0, 'container': 1.0, 'thinking': 0.0, 'top': 1.0363636016845703, 'spiky': -0.22200048714876175, 'prism': -0.857142984867096, 'tiny': 0.0, 'metallic': 1.5333333313465118, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': -0.4693268612027168, 'pointed': 0.0, 'empty': -0.030342740123160183, 'circular': 0.0, 'circles': -3.0, 'brown': 0.0, 'coffee': -1.2666668891906738, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 2.5000000670552254, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -1.5428571701049805, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.4274688996374607, 'short': -1.0, 'liquid': 0.4399998188018799, 'aluminum': 0.0, 'light': 0.19504550658166409, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.16962559055536985, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.05114416778087616, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['fat', 'metallic', 'bright']
+lcps:['tall', 'neon']
+say:I am thinking of an object I would describe as fat, and metallic, and bright.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'fat' when describing this object?
+get:no
+say:Would you use the word 'bright' when describing this object?
+get:no
+say:Would you use the word 'metallic' when describing this object?
+get:no
+say:Would you use the word 'tall' when describing this object?
+get:yes
+say:Would you use the word 'neon' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

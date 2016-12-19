@@ -1,0 +1,52 @@
+object_IDs:[11, 25, 6, 14]
+num_rounds:1
+agent_fn:con.local.agent
+object_IDs:[11, 25, 6, 14]
+num_rounds:1
+agent_fn:con.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:uh something that is a tall empty blue can
+cnf_clauses:[['tall'], ['empty'], ['blue'], ['can']]
+match_scores:{0: -0.20135606825351715, 1: 0.7063758969306946, 2: 0.9006296843290329, 3: 0.7063758969306946}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.0, 'cylinder': 0.0, 'can': 0.0, 'thin': 0.0, 'yellow': 0.0, 'bright': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.0, 'container': 0.0, 'top': 0.0, 'spiky': -1.9309787452220917, 'prism': 0.0, 'metallic': 0.0, 'half-full': 0.0, 'black': 0.0, 'orange': 1.0, 'white': 1.0, 'empty': -0.3188057392835617, 'circular': -1.0, 'circles': 0.0, 'brown': -1.0, 'coffee': 1.0, 'wide': 0.0, 'object': 0.0, 'cannister': 0.0, 'fat': 0.0, 'water': -1.0, 'cylindrical': 0.0, 'tub': 1.6666666567325592, 'lid': 0.0, 'styrofoam': 0.17575757950544357, 'rattles': 0.0, 'colored': 1.199999988079071, 'gray': 0.0, 'short': 0.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': -2.800000011920929, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': -1.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 1.0, 'pineapple': 0.0, 'small': 0.0, 'tall': -2.800000011920929, 'narrow': 1.0, 'round': 1.0, 'silver': 1.0}
+predicates_chosen:['tub', 'colored', 'orange']
+lcps:['rattles', 'styrofoam']
+say:I am thinking of an object I would describe as tub, and colored, and orange.
+say:When you're ready to guess, say 'okay'.
+get:can you repeat that
+say:I am thinking of an object I would describe as tub, and colored, and orange. When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'styrofoam' when describing this object?
+get:no
+say:Would you use the word 'rattles' when describing this object?
+get:no
+say:Would you use the word 'tub' when describing this object?
+get:can you repeat that
+say:Would you use the word 'tub' when describing this object?
+get:no
+say:Would you use the word 'colored' when describing this object?
+get:sure
+say:Would you use the word 'orange' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

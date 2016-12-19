@@ -1,0 +1,51 @@
+object_IDs:[4, 22, 24, 9]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[4, 22, 24, 9]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[4, 22, 24, 9]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[4, 22, 24, 9]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[4, 22, 24, 9]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a heavy yellow tube
+cnf_clauses:[['heavy'], ['yellow'], ['tube']]
+match_scores:{0: 0.02837200090289116, 1: 0.019483044743537903, 2: 0.11331966705620289, 3: 0.09721585270017385}
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.23945135530084372, 'cylinder': 0.0, 'can': -0.16450917720794678, 'thin': -3.5, 'neon': 0.0, 'yellow': 0.1229207944124937, 'bright': -2.933333396911621, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': -0.6375145614147186, 'container': 1.0, 'thinking': 0.0, 'top': 0.5272727012634277, 'spiky': 0.02433009445667267, 'prism': 1.5428571105003357, 'tiny': 0.0, 'metallic': 1.9333330690860748, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': 0.8694037105888128, 'pointed': 0.0, 'empty': 0.07535745151471929, 'circular': 0.0, 'circles': 2.0, 'brown': 0.0, 'coffee': -1.0, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -2.633333306759596, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 1.3714285492897034, 'rattles': 0.0, 'colored': 0.0, 'gray': -0.10604366473853588, 'short': -1.0, 'liquid': -0.9600000157952309, 'aluminum': 0.0, 'tube': 0.0, 'light': 0.2523745018988848, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': -1.0526656806468964, 'pineapple': -1.0, 'small': 0.0, 'tall': 1.006315540522337, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['circles', 'metallic', 'prism']
+lcps:['metal', 'water']
+say:I am thinking of an object I would describe as circles, and metallic, and prism.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:3
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'water' when describing this object?
+get:no
+say:Would you use the word 'metal' when describing this object?
+get:can you repeat that
+say:Would you use the word 'metal' when describing this object?
+get:no
+say:Would you use the word 'metallic' when describing this object?
+get:no
+say:Would you use the word 'circles' when describing this object?
+get:no
+say:Would you use the word 'prism' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

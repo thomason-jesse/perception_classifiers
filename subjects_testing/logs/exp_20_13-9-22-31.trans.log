@@ -1,0 +1,57 @@
+object_IDs:[13, 9, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 9, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 9, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 9, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 9, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 9, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[13, 9, 22, 31]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a red bottle full with liquid inside
+cnf_clauses:[['red'], ['bottle'], ['full'], ['liquid'], ['inside']]
+match_scores:{0: 0.7686620699241757, 1: -0.20233448594808578, 2: 1.0398979783058167, 3: 1.152247130870819}
+point:3
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.24280161503702402, 'cylinder': 0.0, 'can': 0.0895157903432846, 'thin': 3.0999999046325684, 'neon': 0.0, 'yellow': -0.3456689268350601, 'bright': 1.933333396911621, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.6242656484246254, 'inside': 0.0, 'container': 1.0, 'thinking': 0.0, 'top': 1.10909104347229, 'spiky': -0.16327661275863647, 'prism': -1.028571605682373, 'tiny': 0.0, 'metallic': 1.9333332777023315, 'half-full': 1.0, 'black': 0.0, 'orange': 1.0, 'white': -0.33444749750196934, 'pointed': 0.0, 'empty': -0.11880303520229063, 'circular': 0.0, 'circles': 2.0, 'brown': 0.0, 'coffee': 0.1111113429069519, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 1.6666666232049465, 'water': 0.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': -0.6571428775787354, 'rattles': 0.0, 'colored': 0.0, 'gray': 0.285315677523613, 'short': -1.0, 'liquid': 2.119999848306179, 'aluminum': 0.0, 'light': 0.12338426895439625, 'clear': 0.0, 'cap': 0.0, 'metal': 0.0, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': 0.8827631128951907, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.38871442899107933, 'narrow': 0.0, 'round': 0.0, 'silver': -1.0800000429153442}
+predicates_chosen:['thin', 'liquid', 'circles']
+lcps:['rattles', 'full']
+say:I am thinking of an object I would describe as thin, and liquid, and circles.
+say:When you're ready to guess, say 'okay'.
+get:could you repeat
+say:I am thinking of an object I would describe as thin, and liquid, and circles. When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'circles' when describing this object?
+get:no
+say:Would you use the word 'full' when describing this object?
+get:yes
+say:Would you use the word 'rattles' when describing this object?
+get:could you repeat
+say:Would you use the word 'rattles' when describing this object?
+get:no
+say:Would you use the word 'thin' when describing this object?
+get:no
+say:Would you use the word 'liquid' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

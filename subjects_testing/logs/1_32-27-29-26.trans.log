@@ -1,0 +1,80 @@
+object_IDs:[32, 27, 29, 26]
+num_rounds:2
+agent_fn:None
+object_IDs:[32, 27, 29, 26]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a half-full round container
+cnf_clauses:[['half-full'], ['round'], ['container']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:3
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'half-full': 0.0, 'container': 0.0, 'round': 0.0}
+predicates_chosen:['half-full', 'round', 'container']
+lcps:[]
+say:I am thinking of an object I would describe as half-full, and round, and container.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'container' when describing this object?
+get:no
+say:Would you use the word 'round' when describing this object?
+get:no
+say:Would you use the word 'half-full' when describing this object?
+get:no
+point:-1
+say:Please pick an object that you see and describe it to me in one phrase.
+get:an empty metallic aluminum container
+cnf_clauses:[['empty'], ['metallic'], ['aluminum'], ['container']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'container': 0.0, 'aluminum': 0.0, 'metallic': 0.0, 'half-full': 0.0, 'round': 0.0, 'empty': 0.0}
+predicates_chosen:['aluminum', 'half-full', 'metallic']
+lcps:['round', 'container']
+say:I am thinking of an object I would describe as aluminum, and half-full, and metallic.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'half-full' when describing this object?
+get:yes
+say:Would you use the word 'container' when describing this object?
+get:yes
+say:Would you use the word 'metallic' when describing this object?
+get:no
+say:Would you use the word 'aluminum' when describing this object?
+get:no
+say:Would you use the word 'round' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

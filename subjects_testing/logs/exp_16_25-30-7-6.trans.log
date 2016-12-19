@@ -1,0 +1,36 @@
+object_IDs:[25, 30, 7, 6]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a green water bottle uh that's heavy
+cnf_clauses:[['green'], ['water'], ['bottle'], ['heavy']]
+match_scores:{0: 2.0, 1: 2.0, 2: 2.0, 3: 2.0}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': 0.12727272883057594, 'thin': 0.0, 'yellow': 0.024653411004692316, 'bright': 0.0, 'rough': 0.0, 'red': -0.596127400174737, 'blue': -0.33333325386047363, 'container': 1.0, 'top': 0.0, 'spiky': 0.0, 'prism': 1.5333332419395447, 'metallic': 0.0, 'half-full': -2.40000007301569, 'black': 0.0, 'orange': 0.8799999356269836, 'white': 0.09359735995531082, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': -4.066666692495346, 'gray': 2.4571428447961807, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 1.7600274980068207, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.048661742359399796, 'narrow': 0.0, 'round': -2.40000007301569, 'silver': 3.800000011920929}
+predicates_chosen:['silver', 'gray', 'light']
+lcps:['coffee', 'white']
+say:I am thinking of an object I would describe as silver, and gray, and light.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'coffee' when describing this object?
+get:no
+say:Would you use the word 'silver' when describing this object?
+get:no
+say:Would you use the word 'light' when describing this object?
+get:um yes
+say:Would you use the word 'gray' when describing this object?
+get:yes
+say:Would you use the word 'white' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

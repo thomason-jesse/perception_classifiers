@@ -1,0 +1,75 @@
+object_IDs:[3, 5, 16, 32]
+num_rounds:2
+agent_fn:None
+say:Please pick an object that you see and describe it to me in one phrase.
+get:something yellow and light and spiky
+cnf_clauses:[['yellow'], ['light'], ['spiky']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'light': 0.0, 'spiky': 0.0, 'yellow': 0.0}
+predicates_chosen:['light', 'spiky', 'yellow']
+lcps:[]
+say:I am thinking of an object I would describe as light, and spiky, and yellow.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:1
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:0
+say:That's the one!
+point:0
+say:Would you use the word 'spiky' when describing this object?
+get:no
+say:Would you use the word 'light' when describing this object?
+get:no
+say:Would you use the word 'yellow' when describing this object?
+get:no
+point:-1
+say:Please pick an object that you see and describe it to me in one phrase.
+get:thing orange and gray and tall
+cnf_clauses:[['thing'], ['orange'], ['gray'], ['tall']]
+match_scores:{0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+point:3
+say:Is this the object you have in mind?
+get:no
+point:1
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'gray': 0.0, 'light': 0.0, 'spiky': 0.0, 'yellow': 0.0, 'thing': 0.0, 'orange': 0.0, 'tall': 0.0}
+predicates_chosen:['gray', 'orange', 'spiky']
+lcps:['tall', 'yellow']
+say:I am thinking of an object I would describe as gray, and orange, and spiky.
+say:When you're ready to guess, say okay, then pick up the object.
+get:okay
+say:Okay, go on
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'yellow' when describing this object?
+get:no
+say:Would you use the word 'orange' when describing this object?
+get:yes
+say:Would you use the word 'spiky' when describing this object?
+get:no
+say:Would you use the word 'gray' when describing this object?
+get:yes
+say:Would you use the word 'tall' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

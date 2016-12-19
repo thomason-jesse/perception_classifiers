@@ -1,0 +1,69 @@
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[1, 21, 18, 15]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:the heavy silver container
+cnf_clauses:[['heavy'], ['silver'], ['container']]
+match_scores:{0: 0.09106765687465668, 1: 0.05576145648956299, 2: 0.12566103041172028, 3: 0.03321859985589981}
+point:2
+say:Is this the object you have in mind?
+get:no
+point:0
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': -0.02690146118402481, 'cylinder': 1.0, 'can': -0.07290994375944138, 'thin': -0.17535743117332458, 'neon': 0.0, 'yellow': -0.035988662857562304, 'hollow': 0.0, 'bright': -0.3653614819049835, 'pink': -2.199999988079071, 'crayon': 1.0, 'paper': 0.0, 'squishy': 0.0, 'rough': -1.0, 'red': 0.0, 'blue': -0.0782188605517149, 'curvy': 0.0, 'inside': 0.0, 'container': 1.0, 'thinking': 1.0, 'top': -1.0, 'spiky': -0.20692802220582962, 'prism': -0.9111113548278809, 'tiny': 0.0, 'metallic': -1.0, 'half-full': 1.0, 'black': -0.16981493309140205, 'orange': -0.03408018002846802, 'white': 0.3955086711794138, 'pointed': 0.0, 'empty': 0.0, 'circular': 0.0, 'circles': -0.0425141379237175, 'brown': 0.0, 'coffee': -0.9555557370185852, 'full': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': -0.2162412628531456, 'water': -0.6509799472987652, 'cylindrical': 0.0, 'someting': 0.0, 'pointy': 0.0, 'tub': -2.0, 'lid': -1.0, 'styrofoam': 0.6857142746448517, 'rattles': 0.0, 'colored': 0.0, 'gray': 0.16063782200217247, 'short': -1.0, 'liquid': 0.6399999856948853, 'aluminum': 0.0, 'tube': 0.0, 'roll': 0.0, 'light': 0.3744892552495003, 'clear': 1.0, 'cap': 0.0, 'metal': -1.9000000059604645, 'rectangular': 0.0, 'large': 0.0, 'thing': 0.0, 'purple': 0.0, 'green': 0.0, 'rectangle': -1.0, 'bottle': -0.27575448900461197, 'pineapple': -1.0, 'small': 0.18089729361236095, 'tall': 0.07919142860919237, 'skinny': 0.0, 'narrow': 0.0, 'shiny': 0.0, 'round': 0.0, 'silver': -1.0}
+predicates_chosen:['cylinder', 'crayon', 'container']
+lcps:['someting', 'gray']
+say:I am thinking of an object I would describe as cylinder, and crayon, and container.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'gray' when describing this object?
+get:no
+say:Would you use the word 'someting' when describing this object?
+get:yes
+say:Would you use the word 'crayon' when describing this object?
+get:no
+say:Would you use the word 'container' when describing this object?
+get:no
+say:Would you use the word 'cylinder' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

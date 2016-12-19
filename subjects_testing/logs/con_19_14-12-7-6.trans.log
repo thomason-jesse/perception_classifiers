@@ -1,0 +1,35 @@
+object_IDs:[14, 12, 7, 6]
+num_rounds:1
+agent_fn:con.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a hollow cylindrical yellow light can
+cnf_clauses:[['hollow'], ['cylindrical'], ['yellow'], ['light'], ['can']]
+match_scores:{0: 1.0, 1: 1.0, 2: 0.0, 3: 0.800000011920929}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 0.0, 'cylinder': 0.0, 'can': 0.0, 'thin': 0.0, 'yellow': 0.0, 'hollow': 0.0, 'bright': 0.0, 'rough': 0.0, 'red': 0.0, 'blue': 0.0, 'container': 0.0, 'top': 0.0, 'spiky': -1.0914228856563568, 'prism': 0.0, 'metallic': 0.0, 'half-full': 0.0, 'black': 0.0, 'orange': 1.0, 'white': 1.0, 'empty': 0.9814052656292915, 'circular': -1.0, 'circles': 0.0, 'brown': -1.0, 'coffee': 1.0, 'wide': 0.0, 'object': 0.0, 'cannister': 0.0, 'fat': 0.0, 'water': -1.0, 'cylindrical': 0.0, 'tub': 1.0, 'lid': 0.0, 'styrofoam': 0.054545462131500244, 'rattles': 0.0, 'colored': 1.2000001072883606, 'gray': 0.0, 'short': 0.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 1.2000000476837158, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': -1.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 1.0, 'pineapple': 0.0, 'small': 0.0, 'tall': 1.2000000476837158, 'narrow': 1.0, 'round': 1.0, 'silver': 1.0}
+predicates_chosen:['colored', 'light', 'tall']
+lcps:['yellow', 'empty']
+say:I am thinking of an object I would describe as colored, and light, and tall.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'light' when describing this object?
+get:no
+say:Would you use the word 'yellow' when describing this object?
+get:yes
+say:Would you use the word 'colored' when describing this object?
+get:yes
+say:Would you use the word 'tall' when describing this object?
+get:yes
+say:Would you use the word 'empty' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

@@ -1,0 +1,39 @@
+object_IDs:[30, 11, 25, 7]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a heavy red and white container
+cnf_clauses:[['heavy'], ['red'], ['white'], ['container']]
+match_scores:{0: 1.842909561470151, 1: 1.8525685742497444, 2: 1.827951692044735, 3: 1.7841317877173424}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': -0.20000000670552254, 'thin': 0.0, 'yellow': 0.19631548039615154, 'bright': 0.0, 'rough': 0.0, 'red': 0.2742601688951254, 'blue': 1.399999976158142, 'container': 1.0, 'top': 0.0, 'spiky': 0.0, 'prism': -1.9333334267139435, 'metallic': 0.0, 'half-full': 1.2857143972069025, 'black': 0.0, 'orange': 0.5199999809265137, 'white': -0.4420633241534233, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': 3.4666667878627777, 'gray': -1.2857142388820648, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': -1.2713997513055801, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.08276178687810898, 'narrow': 0.0, 'round': 1.2857143972069025, 'silver': -3.0000001192092896}
+predicates_chosen:['colored', 'blue', 'half-full']
+lcps:['small', 'top']
+say:I am thinking of an object I would describe as colored, and blue, and half-full.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:2
+say:That's the one!
+point:2
+say:Would you use the word 'half-full' when describing this object?
+get:yes
+say:Would you use the word 'blue' when describing this object?
+get:no
+say:Would you use the word 'small' when describing this object?
+get:no
+say:Would you use the word 'colored' when describing this object?
+get:yes
+say:Would you use the word 'top' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!

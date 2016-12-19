@@ -1,0 +1,39 @@
+object_IDs:[12, 8, 14, 11]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a tall pink crayon
+cnf_clauses:[['tall'], ['pink'], ['crayon']]
+match_scores:{0: 0.008781993761658669, 1: 0.12074587494134903, 2: 0.0965229868888855, 3: 0.0422680489718914}
+point:1
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': 0.21212121844291687, 'thin': 0.0, 'yellow': -0.5449860915541649, 'bright': 0.0, 'pink': 0.0, 'crayon': 0.0, 'rough': 0.0, 'red': 0.05781935341656208, 'blue': 1.199999988079071, 'container': 1.0, 'top': 0.0, 'spiky': 0.0, 'prism': -1.1333331167697906, 'metallic': 0.0, 'half-full': 1.1142856441438198, 'black': 0.0, 'orange': 1.0000001788139343, 'white': -0.6546077728271484, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': 0.46666663885116577, 'gray': -0.028571605682373047, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': -0.392062246799469, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': -0.05697865970432758, 'narrow': 0.0, 'round': 1.1142856441438198, 'silver': -3.799999952316284}
+predicates_chosen:['blue', 'half-full', 'round']
+lcps:['clear', 'narrow']
+say:I am thinking of an object I would describe as blue, and half-full, and round.
+say:When you're ready to guess, say 'okay'.
+get:can you repeat that
+say:I am thinking of an object I would describe as blue, and half-full, and round. When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's the one!
+point:3
+say:Would you use the word 'blue' when describing this object?
+get:no
+say:Would you use the word 'clear' when describing this object?
+get:could you repeat that
+say:Would you use the word 'clear' when describing this object?
+get:no
+say:Would you use the word 'half-full' when describing this object?
+get:no
+say:Would you use the word 'round' when describing this object?
+get:no
+say:Would you use the word 'narrow' when describing this object?
+get:yes
+point:-1
+say:Thanks for playing!

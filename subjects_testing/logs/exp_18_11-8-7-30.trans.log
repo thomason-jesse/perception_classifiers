@@ -1,0 +1,51 @@
+object_IDs:[11, 8, 7, 30]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[11, 8, 7, 30]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[11, 8, 7, 30]
+num_rounds:1
+agent_fn:exp.local.agent
+object_IDs:[11, 8, 7, 30]
+num_rounds:1
+agent_fn:exp.local.agent
+say:Please pick an object that you see and describe it to me in one phrase.
+get:i am thinking of someting tiny and white
+cnf_clauses:[['thinking'], ['someting'], ['tiny'], ['white']]
+match_scores:{0: -0.20940937101840973, 1: 0.07340560853481293, 2: -0.09342967718839645, 3: -0.14045077562332153}
+point:1
+say:Is this the object you have in mind?
+get:no
+point:2
+say:Is this the object you have in mind?
+get:yes
+point:-1
+pred_scores:{'heavy': 1.0, 'cylinder': 0.0, 'can': -0.20000000670552254, 'thin': 0.0, 'yellow': 0.24480976164340973, 'bright': 0.0, 'rough': 0.0, 'red': 0.44835648499429226, 'blue': 0.6000000238418579, 'container': 1.0, 'thinking': 0.0, 'top': 0.0, 'spiky': 0.0, 'prism': 0.7333332002162933, 'tiny': 0.0, 'metallic': 0.0, 'half-full': 0.714285621419549, 'black': 0.0, 'orange': 1.4800000190734863, 'white': 0.7369122579693794, 'empty': 0.0, 'circular': 0.0, 'circles': 0.0, 'brown': 0.0, 'coffee': 0.0, 'wide': 1.0, 'object': 1.0, 'cannister': 0.0, 'fat': 0.0, 'water': 1.0, 'cylindrical': 0.0, 'someting': 0.0, 'tub': 0.0, 'lid': 0.0, 'styrofoam': 0.0, 'rattles': -1.0, 'colored': -0.8000001013278961, 'gray': 1.9142857491970062, 'short': -1.0, 'liquid': 0.0, 'aluminum': 0.0, 'light': 1.2949707955121994, 'clear': 0.0, 'cap': 0.0, 'rectangular': 0.0, 'thing': 0.0, 'green': 0.0, 'rectangle': 0.0, 'bottle': 0.0, 'pineapple': -1.0, 'small': 0.0, 'tall': 0.35501306504011154, 'narrow': 0.0, 'round': 0.714285621419549, 'silver': 3.399999976158142}
+predicates_chosen:['silver', 'gray', 'orange']
+lcps:['metallic', 'prism']
+say:I am thinking of an object I would describe as silver, and gray, and orange.
+say:When you're ready to guess, say 'okay'.
+get:okay
+say:Okay, go on
+guess:2
+say:That's not the object I am thinking of.
+guess:3
+say:That's not the object I am thinking of.
+guess:0
+say:That's not the object I am thinking of.
+guess:1
+say:That's the one!
+point:1
+say:Would you use the word 'metallic' when describing this object?
+get:yes
+say:Would you use the word 'prism' when describing this object?
+get:no
+say:Would you use the word 'silver' when describing this object?
+get:no
+say:Would you use the word 'orange' when describing this object?
+get:no
+say:Would you use the word 'gray' when describing this object?
+get:no
+point:-1
+say:Thanks for playing!
