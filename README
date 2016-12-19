@@ -1,3 +1,10 @@
+---
+
+Feature-level data for each object can be found in the data/ directory.
+The logs of user and robot utterances and guesses (pointing) can be found in subjects/testing
+
+---
+
 run with
 
 $ rosrun perception_classifiers fetch_features
@@ -11,3 +18,5 @@ $ rosrun sound_play soundplay_node.py
 then start the game by calling ispy.py
 $ rosrun perception_classifiers ispy.py [object_IDs] [num_rounds] \
   src/perception_classifiers/src/stopwords_en.txt [user_id/None] robot
+
+---
