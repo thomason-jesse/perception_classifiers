@@ -47,6 +47,10 @@ class IOStd:
         append_to_file("point:"+str(idx)+"\n", self.trans_fn)
         print "SYSTEM POINTS TO SLOT "+str(idx)
 
+    def face_table(self, tidx):
+        append_to_file("face:" + str(tidx) + "\n", self.trans_fn)
+        print "SYSTEM TURNS TO TABLE " + str(tidx)
+
 
 class IOFile:
     def __init__(self, get_fn, guess_fn, say_fn, point_fn, trans_fn):
@@ -126,21 +130,12 @@ class IORobot:
         self.object_IDs = object_IDs
         self.last_say = None
 
-        # get the point cloud objects on the table for pointing / recognizing touches
-        tries = 10
-        while tries > 0:
-            self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.get_pointCloud2_objects()
-            if len(self.pointCloud2_objects) == len(self.object_IDs):
-                break
-            tries -= 1
-        if tries == 0:
-            sys.exit("ERROR: "+str(len(self.pointCloud2_objects))+" PointCloud2 objects detected " +
-                     "while "+str(len(self.object_IDs))+" objects were expected")
-
         # initialize a sound client instance for TTS
         self.sound_client = SoundClient()
         rospy.sleep(1)
         self.sound_client.stopAll()
+
+        self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
 
         # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
         op_resp = None
@@ -253,6 +248,30 @@ class IORobot:
             append_to_file("point:"+str(idx)+"\n", self.trans_fn)
         self.touch_client(idx)
 
+    # Rotate the chassis and establish new objects in line of sight.
+    def face_table(self, tidx, new_oidxs, log=True):
+        if log:
+            append_to_file("face:" + str(tidx) + "\n", self.trans_fn)
+        self.face_table_client(tidx)
+        self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
+        self.say("Found " + str(len(self.pointCloud2_objects)) + " objects on table.")
+        self.object_IDs = new_oidxs
+
+    # get the point cloud objects on the table for pointing / recognizing touches
+    def obtain_table_objects(self):
+        pointCloud2_plane = cloud_plane_coef = pointCloud2_objects = None
+        # TODO: instead of bailing, try adjusting rotation by a few degrees and retrying.
+        tries = 10
+        while tries > 0:
+            pointCloud2_plane, cloud_plane_coef, pointCloud2_objects = self.get_pointCloud2_objects()
+            if len(self.pointCloud2_objects) == len(self.object_IDs):
+                break
+            tries -= 1
+        if tries == 0:
+            sys.exit("ERROR: "+str(len(self.pointCloud2_objects))+" PointCloud2 objects detected " +
+                     "while "+str(len(self.object_IDs))+" objects were expected")
+        return pointCloud2_plane, cloud_plane_coef, pointCloud2_objects
+
     # get PointCloud2 objects from service
     def get_pointCloud2_objects(self):
 
@@ -273,6 +292,11 @@ class IORobot:
             return res.cloud_plane, res.cloud_plane_coef, ordered_cloud_clusters
         except rospy.ServiceException, e:
             sys.exit("Service call failed: %s " % e)
+
+    # Turn in place to face a new table.
+    def face_table_client(self, tidx):
+        # TODO: get a service that allows us to rotate the robot by degrees and do that
+        pass
 
     # reorder PointCloud2 objects returned in arbitrary order from table detection
     def reorder_client(self, coord, forward):
