@@ -3,6 +3,16 @@ import math
 import scipy.stats
 import operator  # TEMP
 
+
+def sign(a):
+    if a < 0:
+        return -1
+    elif a > 0:
+        return 1
+    else:
+        return 0
+
+
 # read command line and csv data
 try:
     p_paired_header = None if sys.argv[4] == "None" else sys.argv[4]
@@ -171,18 +181,24 @@ else:
 
 # TEMP
 # calculate differences in paired data and order them
-# header = "kappa"
-# n = 10
-# diffs = {}
-# print header, n
-# for pred in header_batch_data[p_paired_header]["con"]:
-#     if (header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] < n or
-#        header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)] < n):
-#        continue
-#    diff = header_batch_data[header]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] -\
-#        header_batch_data[header]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
-#    diffs[pred] = diff
-# for pred, diff in sorted(diffs.items(), key=operator.itemgetter(1), reverse=True):
-#     print pred, diff, \
-#         header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)], \
-#         header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
+header = "f1"
+n = 10
+n_diff_max = 5
+diffs = {}
+print header, n
+print "pred, exp - con, |exp|, |con|"
+for pred in header_batch_data[p_paired_header]["con"]:
+    if (header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] < n or
+            header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)] < n):
+        continue
+    diff = header_batch_data[header]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] - \
+        header_batch_data[header]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
+    n_diff = header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)] - \
+        header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)]
+    if abs(n_diff) > n_diff_max and sign(n_diff) == sign(diff):
+        continue
+    diffs[pred] = diff
+for pred, diff in sorted(diffs.items(), key=operator.itemgetter(1), reverse=True):
+    print pred, diff, \
+        header_batch_data["n"]["exp"][header_batch_data[p_paired_header]["exp"].index(pred)], \
+        header_batch_data["n"]["con"][header_batch_data[p_paired_header]["con"].index(pred)]

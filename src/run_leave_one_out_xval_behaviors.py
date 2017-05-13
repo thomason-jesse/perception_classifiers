@@ -3,6 +3,7 @@ __author__ = 'jesse'
 
 import pickle
 import copy
+import IspyAgent
 from agent_io import *
 from perception_classifiers.srv import *
 
@@ -36,8 +37,15 @@ def main():
 
     print "loading training agent"
     f = open(agent_fn, 'rb')
-    a = pickle.load(f)
+    fa = pickle.load(f)
     f.close()
+
+    print "unifying loaded agent with newly created"
+    a = IspyAgent.IspyAgent(None, None, None)
+    a.unify_with_agent(fa)
+    a.io = fa.io
+    a.object_IDs = fa.object_IDs
+    a.stopwords = fa.stopwords
 
     print "setting all agent predicates to be retrained"
     for pred in a.predicates:
@@ -90,7 +98,8 @@ def main():
         f.close()
         c[oidx] = conf
 
-    # calculate decisions for each (pred, behavior) combination
+    # calculate decisions for each (pred, behavior)
+    print "calculating decisions across each predicate, behavior tuple"
     r = {}
     for oidx in obj_interval:
         r_oidx = {}

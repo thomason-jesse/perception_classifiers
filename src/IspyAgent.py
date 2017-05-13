@@ -93,11 +93,12 @@ class IspyAgent:
         self.classifier_data_modified = {}
 
         # get stopwords
-        fin = open(stopwords_fn, 'r')
         self.stopwords = []
-        for line in fin.readlines():
-            self.stopwords.append(line.strip())
-        fin.close()
+        if stopwords_fn is not None:
+            fin = open(stopwords_fn, 'r')
+            for line in fin.readlines():
+                self.stopwords.append(line.strip())
+            fin.close()
 
     # invite the human to describe an object, parse the description, and start formulating response strategy
     def human_take_turn(self):
@@ -810,14 +811,15 @@ class IspyAgent:
                 r_labels = []
                 for oidx in self.predicate_examples[pred]:
                     # include all system - slower, more accurate confidence values
-                    for l in self.predicate_examples[pred][oidx]:
-                        r_oidxs.append(oidx)
-                        r_labels.append(l)
+                    # for l in self.predicate_examples[pred][oidx]:
+                    #     r_oidxs.append(oidx)
+                    #     r_labels.append(l)
                     # voting system - faster, potentially noiser confidence values
-                    # r_oidxs.append(oidx)
-                    # t = sum([1 if l else -1 for l in self.predicate_examples[pred][oidx]])
-                    # if t != 0:
-                    #     r_labels.append(True if t > 0 else False)
+                    t = sum([1 if l else -1 for l in self.predicate_examples[pred][oidx]])
+                    if t != 0:
+                        r_oidxs.append(oidx)
+                        r_labels.append(True if t > 0 else False)
+                print r_oidxs, r_labels  # DEBUG
                 self.train_classifier_client(cidx, r_oidxs, r_labels)
                 self.classifier_data_modified[cidx] = False
 
