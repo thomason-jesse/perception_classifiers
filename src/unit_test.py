@@ -19,7 +19,7 @@ def main():
     node_name = 'obj_id_unit_test'
     rospy.init_node(node_name)
 
-    print "instantiating ORAgent"
+    print "instantiating UnitTestAgent"
     a = UnitTestAgent.UnitTestAgent(None, 1, table_oidxs)
 
     io = None
@@ -32,8 +32,11 @@ def main():
     a.io = io
 
     # Identify objects on main table, then side tables.
+    print "facing table 0..."
     a.face_table(0)
+    print "facing table 2..."
     a.face_table(2)
+    print "facing table 1..."
     a.face_table(1)
 
     # TODO: when speech is available, make this an event-based system that awaits speech commands

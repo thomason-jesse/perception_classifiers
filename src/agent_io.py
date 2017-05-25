@@ -130,12 +130,16 @@ class IORobot:
         self.last_say = None
 
         # initialize a sound client instance for TTS
+        print "IORobot: initializing SoundClient..."
         self.sound_client = SoundClient()
         rospy.sleep(1)
         self.sound_client.stopAll()
+        print "IORobot: ... done"
 
+        print "IORobot: getting initial pointclouds..."
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
-
+        print "IORobot: ... done"
+		
         # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
         op_resp = None
         while op_resp != "Y" and op_resp != "N":
@@ -262,7 +266,7 @@ class IORobot:
         tries = 10
         while tries > 0:
             pointCloud2_plane, cloud_plane_coef, pointCloud2_objects = self.get_pointCloud2_objects()
-            if len(self.pointCloud2_objects) == len(self.oidxs):
+            if len(pointCloud2_objects) == len(self.oidxs):
                 break
             tries -= 1
         if tries == 0:
