@@ -4,7 +4,6 @@ __author__ = 'jesse'
 import os
 import sys
 import time
-import math
 import rospy
 from segbot_arm_perception.srv import *
 from segbot_arm_manipulation.srv import *
@@ -124,10 +123,10 @@ class IOFile:
 
 class IORobot:
 
-    def __init__(self, get_fn, trans_fn, object_IDs):
+    def __init__(self, get_fn, trans_fn, oidxs):
         self.get_fn = get_fn
         self.trans_fn = trans_fn
-        self.object_IDs = object_IDs
+        self.oidxs = oidxs
         self.last_say = None
 
         # initialize a sound client instance for TTS
@@ -144,7 +143,7 @@ class IORobot:
             op_resp = raw_input()
             if op_resp == "Y":
                 print "touching objects from left-most to right-most... please watch and confirm detection and order"
-                for i in range(0, len(object_IDs)):
+                for i in range(0, len(oidxs)):
                     print "... touching object in position "+str(i)
                     self.point(i, log=False)
                     rospy.sleep(2)
@@ -252,24 +251,23 @@ class IORobot:
     def face_table(self, tidx, new_oidxs, log=True):
         if log:
             append_to_file("face:" + str(tidx) + "\n", self.trans_fn)
-        self.face_table_client(tidx)
+        s = self.face_table_client(tidx)
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
-        self.say("Found " + str(len(self.pointCloud2_objects)) + " objects on table.")
-        self.object_IDs = new_oidxs
+        self.oidxs = new_oidxs
+        return s
 
     # get the point cloud objects on the table for pointing / recognizing touches
     def obtain_table_objects(self):
         pointCloud2_plane = cloud_plane_coef = pointCloud2_objects = None
-        # TODO: instead of bailing, try adjusting rotation by a few degrees and retrying.
         tries = 10
         while tries > 0:
             pointCloud2_plane, cloud_plane_coef, pointCloud2_objects = self.get_pointCloud2_objects()
-            if len(self.pointCloud2_objects) == len(self.object_IDs):
+            if len(self.pointCloud2_objects) == len(self.oidxs):
                 break
             tries -= 1
         if tries == 0:
             sys.exit("ERROR: "+str(len(self.pointCloud2_objects))+" PointCloud2 objects detected " +
-                     "while "+str(len(self.object_IDs))+" objects were expected")
+                     "while "+str(len(self.oidxs))+" objects were expected")
         return pointCloud2_plane, cloud_plane_coef, pointCloud2_objects
 
     # get PointCloud2 objects from service
@@ -295,8 +293,15 @@ class IORobot:
 
     # Turn in place to face a new table.
     def face_table_client(self, tidx):
-        # TODO: get a service that allows us to rotate the robot by degrees and do that
-        pass
+        req = iSpyFaceTableRequest()
+        req.table_index = tidx
+        rospy.wait_for_service('ispy/face_table')
+        try:
+            face = rospy.ServiceProxy('ispy/face_table', iSpyFaceTable)
+            res = face(req)
+            return res.success
+        except rospy.ServiceException, e:
+            sys.exit("Service call failed: %s" % e)
 
     # reorder PointCloud2 objects returned in arbitrary order from table detection
     def reorder_client(self, coord, forward):
