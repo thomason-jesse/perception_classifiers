@@ -31,7 +31,7 @@ def main():
         io = IORobot(None, logfn, table_oidxs[1])  # start facing center table.
     a.io = io
 
-    # Identify objects on main table, then side tables.
+    # Visually confirm objects on main table, then side tables.
     print "facing table 0..."
     a.face_table(0)
     print "facing table 2..."
@@ -39,8 +39,20 @@ def main():
     print "facing table 1..."
     a.face_table(1)
 
+    # Play with predicate classifiers.
+    print "running a predicate classifier..."
+    req = PythonRunClassifierRequest()
+    req.pidx = 2  # yellow in ispy base
+    req.oidx = 4  # pineapple object
+    rospy.wait_for_service('python_run_classifier')
+    try:
+        rc = rospy.ServiceProxy('python_run_classifier', PythonRunClassifier)
+        res = rc(req)
+        print "... done; dec=" + str(res.dec) + ", conf=" + str(res.conf)
+    except rospy.ServiceException, e:
+        print "Service call failed: %s" % e
+
     # TODO: when speech is available, make this an event-based system that awaits speech commands
-    # TODO: add perceptual classifiers, either using existing C++ framework or with fresh python services
 
 
 if __name__ == '__main__':

@@ -49,6 +49,7 @@ class IOStd:
     def face_table(self, tidx):
         append_to_file("face:" + str(tidx) + "\n", self.trans_fn)
         print "SYSTEM TURNS TO TABLE " + str(tidx)
+        return True
 
 
 class IOFile:
@@ -139,7 +140,7 @@ class IORobot:
         print "IORobot: getting initial pointclouds..."
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
         print "IORobot: ... done"
-		
+
         # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
         op_resp = None
         while op_resp != "Y" and op_resp != "N":

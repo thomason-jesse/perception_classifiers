@@ -26,6 +26,9 @@ add_service_files(
     startDialog.srv
     getSay.srv
     getPoint.srv
+    PythonRunClassifier.srv
+    PythonUpdateClassifiers.srv
+    PythonCommitChanges.srv
 )
 
 add_message_files(
