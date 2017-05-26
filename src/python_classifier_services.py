@@ -69,8 +69,8 @@ class ClassifierServices:
                                              [(oidx, None)], self.features, None)
             ds.append(np.mean(z))
             ks.append(self.kappas[pidx][b][m])
-        dec = [ds[idx] * ks[idx] for idx in range(len(self.contexts))]
-        res = PythonRunClassiferResponse()
+        dec = sum([ds[idx] * ks[idx] for idx in range(len(self.contexts))])
+        res = PythonRunClassifierResponse()
         res.dec = True if dec > 0 else False
         res.conf = abs(dec)
         return res
