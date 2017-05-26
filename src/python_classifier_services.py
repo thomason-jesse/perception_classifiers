@@ -72,7 +72,7 @@ class ClassifierServices:
         dec = sum([ds[idx] * ks[idx] for idx in range(len(self.contexts))])
         res = PythonRunClassifierResponse()
         res.dec = True if dec > 0 else False
-        res.conf = abs(dec)
+        res.conf = abs(dec) / float(len(self.contexts))
         return res
 
     # Updates the in-memory classifiers given new labels in the request.

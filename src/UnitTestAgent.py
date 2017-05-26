@@ -17,7 +17,7 @@ class UnitTestAgent:
     def face_table(self, tidx):
         assert 0 <= tidx <= 2
 
-        if self.io.face_table(tidx):
+        if self.io.face_table(tidx, self.table_oidxs[tidx]):
             self.tidx = tidx
         else:
             sys.exit("ERROR: failed to face table " + str(tidx))
