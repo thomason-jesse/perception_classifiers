@@ -280,6 +280,9 @@ class IORobot:
 
         # query to get the blobs on the table
         req = TabletopPerceptionRequest()
+        req.apply_x_box_filter = True  # limit field of view to table in front of robot
+        req.x_min = -0.3
+        req.x_max = 0.8
         rospy.wait_for_service('tabletop_object_detection_service')
         try:
             tabletop_object_detection_service = rospy.ServiceProxy(
