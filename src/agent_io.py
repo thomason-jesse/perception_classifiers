@@ -46,9 +46,9 @@ class IOStd:
         append_to_file("point:"+str(idx)+"\n", self.trans_fn)
         print "SYSTEM POINTS TO SLOT "+str(idx)
 
-    def face_table(self, tidx, _):
-        append_to_file("face:" + str(tidx) + "\n", self.trans_fn)
-        print "SYSTEM TURNS TO TABLE " + str(tidx)
+    def face_table(self, tid, _):
+        append_to_file("face:" + str(tid) + "\n", self.trans_fn)
+        print "SYSTEM TURNS TO TABLE " + str(tid)
         return True
 
 
@@ -253,10 +253,10 @@ class IORobot:
         self.touch_client(idx)
 
     # Rotate the chassis and establish new objects in line of sight.
-    def face_table(self, tidx, new_oidxs, log=True):
+    def face_table(self, tid, new_oidxs, log=True):
         if log:
-            append_to_file("face:" + str(tidx) + "\n", self.trans_fn)
-        s = self.face_table_client(tidx)
+            append_to_file("face:" + str(tid) + "\n", self.trans_fn)
+        s = self.face_table_client(tid)
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
         self.oidxs = new_oidxs
         return s
@@ -281,7 +281,7 @@ class IORobot:
         # query to get the blobs on the table
         req = TabletopPerceptionRequest()
         req.apply_x_box_filter = True  # limit field of view to table in front of robot
-        req.x_min = -0.3
+        req.x_min = -0.25
         req.x_max = 0.8
         rospy.wait_for_service('tabletop_object_detection_service')
         try:
@@ -300,9 +300,9 @@ class IORobot:
             sys.exit("Service call failed: %s " % e)
 
     # Turn in place to face a new table.
-    def face_table_client(self, tidx):
+    def face_table_client(self, tid):
         req = iSpyFaceTableRequest()
-        req.table_index = tidx
+        req.table_index = tid
         rospy.wait_for_service('ispy/face_table')
         try:
             face = rospy.ServiceProxy('ispy/face_table', iSpyFaceTable)
