@@ -1,0 +1,5 @@
+int32 pidx
+int32 oidx
+---
+bool dec
+float64 conf
