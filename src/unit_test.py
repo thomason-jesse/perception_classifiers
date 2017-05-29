@@ -35,13 +35,13 @@ def main():
     while True:
         print "enter command: "
         c = a.io.get()
-        if "face table" in c:
+        if "face table" in c:  # face table [tid]
             tid = int(c.split()[-1])
             a.face_table(tid)
-        elif "run classifier" in c:
+        elif "run classifier" in c:  # run classifier [cidx] on [oidx]
             cp = c.split()
             req = PythonRunClassifierRequest()
-            req.pidx = int(cp[-2])
+            req.pidx = int(cp[-3])
             req.oidx = int(cp[-1])
             try:
                 rc = rospy.ServiceProxy('python_run_classifier', PythonRunClassifier)
@@ -49,12 +49,14 @@ def main():
                 print "... done; dec=" + str(res.dec) + ", conf=" + str(res.conf)
             except rospy.ServiceException, e:
                 print "Service call failed: %s" % e
-        elif "point to " in c:
+        elif "point to " in c:  # point to [pidx]
             pos = int(c.split()[-1])
             a.io.point(pos)
-        elif "detect touch" == c:
+        elif "detect touch" == c:  # detect touch and return pidx
             pos = a.io.get_guess()
             print "saw touch at position " + str(pos)
+        elif "stop" == c or "exit" == c:
+			break
 
     # TODO: replace robot implementation of 'get' with speech listening
 

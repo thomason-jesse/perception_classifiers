@@ -136,6 +136,10 @@ class IORobot:
         rospy.sleep(1)
         self.sound_client.stopAll()
         print "IORobot: ... done"
+        
+        rospy.wait_for_service('tabletop_object_detection_service')
+        self.tabletop_object_detection_service = rospy.ServiceProxy('tabletop_object_detection_service', TabletopPerception, persistent=True)
+
 
         print "IORobot: getting initial pointclouds..."
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
@@ -160,7 +164,7 @@ class IORobot:
                     op_resp = raw_input()
                     if op_resp == "N":
                         sys.exit("Try to fix my detection and try again.")
-
+                        
         # have open-ended operator interaction to confirm detection of touches is working
         print "testing touch detection..."
         op_resp = None
@@ -178,47 +182,11 @@ class IORobot:
                 op_resp = None
             self.point(-1, log=False)
 
-    # for now, default to IOFile behavior, but might eventually do ASR instead
-    def get(self, log=True, repeat_timeout=None):
-
-        # spin until input get exists, then read
-        print "waiting for "+self.get_fn
-        t = 0
-        while not os.path.isfile(self.get_fn):
-            time.sleep(1)
-            t += 1
-            if repeat_timeout is not None and t % repeat_timeout == 0:  # say previous but don't double them up in cache
-                prev = self.last_say
-                self.say(self.last_say)
-                self.last_say = prev
-            if t == 60*60:
-                print "... FATAL: timed out waiting for "+self.get_fn
-                sys.exit()
-        f = open(self.get_fn, 'r')
-        c = f.read()
-        f.close()
-        os.system("rm -f "+self.get_fn)
-        c = c.strip()
-
-        # log gotten get
-        if log:
-            append_to_file("get:"+str(c)+"\n", self.trans_fn)
-
-        # catch 'get' if it is a repeat command
-        parts = c.split()
-        if self.last_say is not None and ("repeat" in parts or "what" in parts):
-            prev = self.last_say
-            self.say(self.last_say, voice='voice_cmu_us_bdl_arctic_clunits')
-            self.last_say = prev
-            return self.get(log=log)
-        self.last_say = None
-
-        # catch 'get' if part of it was not understood
-        if '?' in parts:
-            self.say("I didn't catch that.")
-            return self.get(log=log)
-
-        return c
+    # for now use STD; replace with speech when available
+    def get(self):
+        uin = raw_input().lower()
+        append_to_file("get:"+str(uin)+"\n", self.trans_fn)
+        return uin
 
     # get guesses by detecting human touches on top of objects
     def get_guess(self, log=True, block_until_prompted=False):
@@ -270,9 +238,9 @@ class IORobot:
             if len(pointCloud2_objects) == len(self.oidxs):
                 break
             tries -= 1
+            rospy.sleep(1)
         if tries == 0:
-            sys.exit("ERROR: "+str(len(self.pointCloud2_objects))+" PointCloud2 objects detected " +
-                     "while "+str(len(self.oidxs))+" objects were expected")
+            sys.exit("ERROR: ran out of tries to detect pointCloud2 objects")
         return pointCloud2_plane, cloud_plane_coef, pointCloud2_objects
 
     # get PointCloud2 objects from service
@@ -283,11 +251,8 @@ class IORobot:
         req.apply_x_box_filter = True  # limit field of view to table in front of robot
         req.x_min = -0.25
         req.x_max = 0.8
-        rospy.wait_for_service('tabletop_object_detection_service')
         try:
-            tabletop_object_detection_service = rospy.ServiceProxy(
-                'tabletop_object_detection_service', TabletopPerception)
-            res = tabletop_object_detection_service(req)
+            res = self.tabletop_object_detection_service(req)
 
             if len(res.cloud_clusters) == 0:
                 sys.exit("ERROR: no objects detected")
