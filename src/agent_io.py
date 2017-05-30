@@ -31,11 +31,11 @@ class IOStd:
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin
 
-    def get_guess(self, block_until_prompted=False):
+    def get_touch(self, block_until_prompted=False):
         if block_until_prompted:
             _ = self.get()
         uin = int(raw_input())
-        append_to_file("guess:"+str(uin)+"\n", self.trans_fn)
+        append_to_file("touch:"+str(uin)+"\n", self.trans_fn)
         return uin
 
     def say(self, s):
@@ -140,62 +140,21 @@ class IORobot:
         rospy.wait_for_service('tabletop_object_detection_service')
         self.tabletop_object_detection_service = rospy.ServiceProxy('tabletop_object_detection_service', TabletopPerception, persistent=True)
 
-
         print "IORobot: getting initial pointclouds..."
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
         print "IORobot: ... done"
 
-        # have operator interaction to confirm ordering of objects is correct, terminate if it isn't
-        op_resp = None
-        while op_resp != "Y" and op_resp != "N":
-            print "perform detection and ordering check?[Y/N]:"
-            op_resp = raw_input()
-            if op_resp == "Y":
-                print "touching objects from left-most to right-most... please watch and confirm detection and order"
-                for i in range(0, len(oidxs)):
-                    print "... touching object in position "+str(i)
-                    self.point(i, log=False)
-                    rospy.sleep(2)
-                    self.point(-1, log=False)
-                    rospy.sleep(2)
-                op_resp = None
-                while op_resp != "Y" and op_resp != "N":
-                    print "confirm detection and ordering[Y/N]:"
-                    op_resp = raw_input()
-                    if op_resp == "N":
-                        sys.exit("Try to fix my detection and try again.")
-                        
-        # have open-ended operator interaction to confirm detection of touches is working
-        print "testing touch detection..."
-        op_resp = None
-        while op_resp != "Y" and op_resp != "N":
-            print "detect a new touch?[Y/N]:"
-            op_resp = raw_input()
-            if op_resp == "Y":
-                print "...waiting to see what you point to"
-                t_idx = self.get_guess(log=False, block_until_prompted=False)
-                if t_idx == -1:
-                    print "...no touch detected"
-                else:
-                    print "...touching at detected position "+str(t_idx)
-                    self.point(t_idx, log=False)
-                op_resp = None
-            self.point(-1, log=False)
-
-    # for now use STD; replace with speech when available
+    # TODO: replace robot implementation of 'get' with speech listening
     def get(self):
         uin = raw_input().lower()
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin
 
-    # get guesses by detecting human touches on top of objects
-    def get_guess(self, log=True, block_until_prompted=False):
-        if block_until_prompted:
-            _ = self.get(repeat_timeout=20)
-            self.say("Okay, go on")
+    # get touches by detecting human touches on top of objects
+    def get_touch(self, log=True):
         idx = self.detect_touch_client()
         if log:
-            append_to_file("guess:"+str(idx)+"\n", self.trans_fn)
+            append_to_file("touch:"+str(idx)+"\n", self.trans_fn)
         return int(idx)
 
     # use built-in ROS sound client to do TTS
@@ -221,12 +180,18 @@ class IORobot:
         self.touch_client(idx)
 
     # Rotate the chassis and establish new objects in line of sight.
-    def face_table(self, tid, new_oidxs, log=True):
+    def face_table(self, tid, new_oidxs, log=True, report=False):
         if log:
             append_to_file("face:" + str(tid) + "\n", self.trans_fn)
+        if report:
+            self.say("I am turning to face table " + str(tid) + ".")
         s = self.face_table_client(tid)
+        if report:
+            self.say("I am getting the objects on the table into focus.")
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
         self.oidxs = new_oidxs
+        if report:
+            self.say("Okay, I see them.")
         return s
 
     # get the point cloud objects on the table for pointing / recognizing touches
