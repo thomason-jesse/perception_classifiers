@@ -7,11 +7,7 @@ import rospy
 import operator
 import numpy as np
 import traceback
-from IspyAgent import IspyAgent
-from HISBeliefState import HISBeliefState
-from SummaryState import SummaryState
-from SystemAction import SystemAction
-from Utterance import Utterance
+from UnitTestAgent import UnitTestAgent
 
 # TODO: Functionality for choosing next best question
 class PomdpIspyAgent(UnitTestAgent):
@@ -22,7 +18,6 @@ class PomdpIspyAgent(UnitTestAgent):
         self.log_fn = log_fn
 
         self.policy = policy
-        self.knowledge = self.policy.knowledge
         
         # Read stopwords
         self.stopwords = []
@@ -45,19 +40,15 @@ class PomdpIspyAgent(UnitTestAgent):
             # Key: predicate; Value: (obj_idx, confidence)
         self.current_classifier_results = None
         
-        # State and previous system action to track dialog progress
-        self.knowledge = Knowledge()    # Provides info for initial state
-        self.state = None  
-        self.previous_system_action = SystemAction('repeat_goal')
-        
         self.print_debug_messages = True 
         
         self.objects_for_guessing = self.table_oidxs[1]
         self.objects_for_questions = self.table_oidxs[0] + self.table_oidxs[2]
         
-        # Some dummy vars to use in dialog state
-        self.goal = 'point' 
-        self.param_name = 'patient'
+        # Some additional state info
+        self.num_dialog_turns = 0
+        self.cur_dialog_predicates = None
+        self.cur_match_scores = None
         
 
     def debug_print(self, message):
@@ -70,6 +61,16 @@ class PomdpIspyAgent(UnitTestAgent):
             f = open(self.log_fn, 'a')
             f.write(log_str)
             f.close()
+
+
+    def get_dialog_state(self):
+        dialog_state = dict()
+        dialog_state['num_dialog_turns'] = self.num_dialog_turns
+        dialog_state['match_scores'] = self.cur_match_scores
+        dialog_state['unknown_predicates'] = self.unknown_predicates
+        dialog_state['cur_dialog_predicates'] = self.cur_dialog_predicates
+        dialog_state['min_confidence_objects'] = self.min_confidence_objects
+        return dialog_state
 
 
     def make_guess(self, match_scores):
@@ -176,24 +177,24 @@ class PomdpIspyAgent(UnitTestAgent):
         understood = False
         guess_idx = None
         utterance = None
-        cnf_clauses = None
+        predicates = None
         
         while not understood:
             user_response = self.io.get().strip()
             self.log('Get : ' + user_response + '\n')
-            cnf_clauses = self.get_predicate_cnf_clauses(user_response)
-            self.log("CNF clauses : " + str(cnf_clauses) + "\n")
+            predicates = self.get_predicates(user_response)
+            self.log("Predicates : " + str(predicates) + "\n")
 
-            if len(cnf_clauses) > 0:
+            if len(predicates) > 0:
                 understood = True
             # Failed to parse user response, so get a new one
             else:
                 self.io.say("Sorry; I didn't catch that. Could you re-word your description?")
 
-        return user_response, cnf_clauses
+        self.cur_dialog_predicates = predicates
 
     
-    def get_predicate_cnf_clauses(self, user_response):
+    def get_predicates(self, user_response):
         response_parts = user_response.split()
         predicates = [w for w in response_parts if w not in self.stopwords]
         unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
@@ -243,29 +244,12 @@ class PomdpIspyAgent(UnitTestAgent):
             match_scores[obj_idx] = sum(predicate_scores)
             sum_match_scores += match_scores[obj_idx]
         
-        # Account for prob that none are correct
-        sum_match_scores += self.knowledge.non_n_best_prob
-            
         # We need match scores that work like probabilities so normalize these
         for obj_idx in self.objects_for_guessing:
             match_scores[obj_idx] /= sum_match_scores
 
         return match_scores
     
-    
-    # Convert predicate match scores to utterances for updating state
-    def get_utterances_from_match_scores(self, match_scores):
-        utterances = list()
-        for (obj_idx, score) in match_scores.items():
-            params = {self.param_name : obj_idx}
-            utterance = Utterance('inform_param', self.goal, params)   
-            utterance.parse_prob = np.log(score)
-            utterances.append(utterance)
-            
-        other_utterance = Utterance('-OTHER-', parse_prob=np.log(self.knowledge.non_n_best_prob))
-        utterances.append(other_utterance)
-        return utterances
-
     
     def update_min_confidence_objects(self):
         for predicate in self.known_predicates:
@@ -282,30 +266,24 @@ class PomdpIspyAgent(UnitTestAgent):
         
         self.current_classifier_results = None
         self.classifiers_changed = list()
-        self.state = HISBeliefState(self.knowledge)
-        self.state.domain_of_discourse = self.objects_for_guessing
-        
-        self.debug_print('Initial state')
-        self.debug_print('Belief state: ' + str(self.state))
+        self.num_dialog_turns = 0
         
         # Get initial user description and update state
         self.log('Action : get_initial_description')
-        self.previous_system_action = SystemAction('get_initial_description')
-        user_response, cnf_clauses = self.get_initial_description()
+        self.cur_dialog_predicates = None
+        self.get_initial_description()  # Sets self.cur_dialog_predicates
 
-        match_scores = self.get_match_scores(cnf_clauses)
-        self.log("Match scores :" + str(match_scores) + "\n\n")
+        self.cur_match_scores = self.get_match_scores(predicates)
+        self.log("Match scores :" + str(self.cur_match_scores) + "\n\n")
         
-        utterances = self.get_utterances_from_match_scores(match_scores)
-        self.state.update(self.previous_system_action, utterances)
-        summary_state = SummaryState(self.state)
-        dialog_action = self.policy.get_next_action(summary_state)
-        self.previous_system_action = SystemAction(dialog_action)
+        dialog_state = self.get_dialog_state()
+        dialog_action = self.policy.get_next_action(dialog_state)
         
         object_guessed = False
         try:
             while not object_guessed:
                 self.log('\n\nAction : ' + dialog_action)
+                self.num_dialog_turns += 1
                 
                 if dialog_action == 'make_guess':
                     self.make_guess(match_scores)
@@ -320,14 +298,11 @@ class PomdpIspyAgent(UnitTestAgent):
                 if not object_guessed:
                     # Recompute match scores because relevant classifiers may
                     # have changed
-                    match_scores = self.get_match_scores(cnf_clauses)
-                    self.log("Match scores : " + str(match_scores) + "\n")
-                        
-                    # Update state based on new match scores
-                    utterances = self.get_utterances_from_match_scores(match_scores)
-                    self.state.update(self.previous_system_action, utterances)
-                    summary_state = SummaryState(self.state)
-                    dialog_action = self.policy.get_next_action(summary_state)
+                    self.cur_match_scores = self.get_match_scores(self.cur_dialog_predicates)
+                    self.log("Match scores : " + str(self.cur_match_scores) + "\n")
+
+                    dialog_state = self.get_dialog_state()
+                    dialog_action = self.policy.get_next_action(dialog_state)
                     
                     # Update cached data for questions
                     self.update_min_confidence_objects()
