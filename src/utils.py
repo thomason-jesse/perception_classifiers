@@ -4,39 +4,19 @@ import os
 import pickle
 import numpy
 
-# For typechecking
-from SemanticNode import SemanticNode
 
-
-#models_path = '/v/filer4b/v20q001/aish/Documents/Research/Code/catkin_ws/src/nlu_pipeline/src/models/'
-models_path = '/v/filer4b/v20q001/aish/Documents/Research/Code/catkin_ws/src/dialog_active_learning/src/models/'
-
-
-def save_model(obj, name):
-    with open(models_path + str(name) + '.pkl', 'wb') as f:
-        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
-
-
-def save_obj_general(obj, name):
+# Expects name to be a valid relative or absolute path
+def save_obj(obj, name):
     print 'Saving log'
-    with open(str(name), 'wb') as f:
+    with open(str(name), 'w') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
     f.close()
 
-
+# Expects name to be a valid relative or absolute path
 def load_obj_general(name):
     try:
-        f = open(name, 'rb')
+        f = open(name, 'r')
         return pickle.load(f)
-    except IOError:
-        return None
-
-
-def load_model(name, path=models_path):
-    try:
-        print os.path.join(path, str(name) + '.pkl')  # DEBUG
-        with open(os.path.join(path, str(name) + '.pkl'), 'rb') as f:
-            return pickle.load(f)
     except IOError:
         return None
 
@@ -99,17 +79,6 @@ def arg_max(d):
             lmax = d[k]
             larg_max = k
     return larg_max, lmax
-
-
-def predicate_holds(predicate, argument, grounder):
-    if argument is None:
-        return False
-        
-    # Special case - things starting with "item_" are items
-    if argument.startswith('item_') and predicate == 'item' :
-        return True
-        
-    return grounder.predicate_holds(predicate, argument)
 
 
 def get_dict_val(dict_name, key):

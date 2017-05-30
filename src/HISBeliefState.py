@@ -90,7 +90,7 @@ class HISBeliefState:
     # Warning: This function only creates matching partitions in the sense
     # that they match in goal and params. In the case of a confirm system
     # action, it does not check whether the user said yes or no    
-    def make_all_matching_partitions(self, system_action, utterance, grounder) :
+    def make_all_matching_partitions(self, system_action, utterance) :
         #print 'In make_all_matching_partitions'    # DEBUG
         #print '**********************************************' # DEBUG
         required_goal = None
@@ -130,7 +130,7 @@ class HISBeliefState:
                 # This is a partition to be split
                 goal_split_partitions = list()
                 if required_goal != None :  # Split based on goal
-                    goal_split_partitions = partition.split_by_goal(required_goal, self.knowledge, grounder)
+                    goal_split_partitions = partition.split_by_goal(required_goal, self.knowledge)
                 else :
                     goal_split_partitions = [partition]
                     
@@ -155,7 +155,7 @@ class HISBeliefState:
                     for (param_name, param_value) in param_value_pairs :
                         resultant_partitions = list()
                         for partition in partitions_to_split :
-                            resultant_partitions = resultant_partitions + partition.split_by_param(param_name, param_value, self.knowledge, grounder)
+                            resultant_partitions = resultant_partitions + partition.split_by_param(param_name, param_value, self.knowledge)
                         partitions_to_split = resultant_partitions
                         
                     new_partitions = new_partitions + resultant_partitions
@@ -177,7 +177,7 @@ class HISBeliefState:
 
     # Perform belief monitoring update using the system action and n best 
     # parses
-    def update(self, system_action, n_best_utterances, grounder) :
+    def update(self, system_action, n_best_utterances) :
         #print 'In update'  # DEBUG
         #print '----------------------------------------------' # DEBUG
         #print str(system_action)   # DEBUG
@@ -191,7 +191,7 @@ class HISBeliefState:
                 # if there are no matching partitions, split all partitions
                 # that are supersets of the goal and param values of this 
                 # pair to obtain matching partitions
-                self.make_all_matching_partitions(system_action, utterance, grounder)
+                self.make_all_matching_partitions(system_action, utterance)
             else : # DEBUG
                 #for partition in matching_partitions : # DEBUG
                     #print str(partition)   # DEBUG
@@ -200,7 +200,7 @@ class HISBeliefState:
         hypothesis_beliefs = dict()
 
         # Clean up partitions
-        self.remove_invalid_partitions(grounder)
+        self.remove_invalid_partitions()
         self.merge_duplicate_partitions()
         
         #print 'Updation'   # DEBUG
@@ -262,12 +262,11 @@ class HISBeliefState:
 
         self.hypothesis_beliefs = hypothesis_beliefs
         
-    def remove_invalid_partitions(self, grounder) :    
+    def remove_invalid_partitions(self) :    
         invalid_partitions = set()  
         for partition in self.partitions :
-            partition.remove_invalid_params(self.knowledge, grounder)
-            partition.remove_invalid_goals(self.knowledge, grounder) 
-            if not partition.is_valid(self.knowledge, grounder) :
+            partition.remove_invalid_goals(self.knowledge) 
+            if not partition.is_valid(self.knowledge) :
                 invalid_partitions.add(partition)
         for partition in invalid_partitions :
             self.partitions.remove(partition)        

@@ -88,7 +88,7 @@ class Partition:
             return False
         return True     
                 
-    def is_valid(self, knowledge, grounder) :
+    def is_valid(self, knowledge) :
         # Basic sanity check - alteast one goal and all goals are valid
         if self.possible_goals is None or len(self.possible_goals) < 1 :
             return False
@@ -100,52 +100,9 @@ class Partition:
             if len(self.possible_param_values[param_name]) < 1 :
                 return False
         
-        # If there is only one goal. Check that all 
-        # its params have values which are valid
-        if len(self.possible_goals) == 1 :
-            goal = self.possible_goals[0]
-            relevant_params = knowledge.param_order[goal]
-            for param_name in relevant_params :
-                if param_name not in self.possible_param_values or len(self.possible_param_values[param_name]) < 1 :
-                    return False
-                if len(self.possible_param_values[param_name]) == 1 :
-                    value = self.possible_param_values[param_name][0]
-                    if not self.param_value_valid(goal, param_name, value, knowledge, grounder) :
-                        return False
-            return True
-            
-        # If control reaches here, there is more than one goal. Check if
-        # any param value is fixed. If so, some goal should be compatible
-        # with it
-        for param_name in self.possible_param_values :
-            if len(self.possible_param_values[param_name]) == 1 :            
-                # Parameter param_name has exactly one value
-                param_value = self.possible_param_values[param_name][0]
-                compatible_goals = list()
-                for goal in self.possible_goals :
-                    # No goal should be incompatible with it
-                    if self.param_value_valid(goal, param_name, param_value, knowledge, grounder) :
-                        compatible_goals.append(goal)
-                if len(compatible_goals) == 0 :
-                    return False
         return True
     
-    def param_value_valid(self, goal, param_name, value, knowledge, grounder) :
-        if param_name not in knowledge.param_order[goal] :
-            return True
-        if value is None :
-            return False
-        for true_pred in knowledge.true_constraints[goal][param_name] :
-            if not predicate_holds(true_pred, value, grounder) :
-                # A predicate that should hold does not
-                return False
-        for false_pred in knowledge.false_constraints[goal][param_name] :
-            if predicate_holds(false_pred, value, grounder) :
-                # A predicate that should not hold does
-                return False
-        return True
-    
-    def remove_invalid_goals(self, knowledge, grounder) :
+    def remove_invalid_goals(self, knowledge) :
         #print 'In remove_invalid_goals with ', str(self)
         
         if len(self.possible_goals) <= 1 :
@@ -166,10 +123,6 @@ class Partition:
                         # really need to removing it but pruning always 
                         # results in speedup
                         goals_to_remove.append(goal)
-                    if not self.param_value_valid(goal, param_name, value, knowledge, grounder) :
-                        # This goal is actually incompatible with the 
-                        # param value
-                        goals_to_remove.append(goal)
                 for goal in goals_to_remove :
                     if len(self.possible_goals) > 1 :
                         # Don't remove the goal if there is only one 
@@ -177,31 +130,7 @@ class Partition:
                         # problematic than having an ill-formed one. It
                         # will get removed elsewhere anyway
                         self.possible_goals.remove(goal)
-                
     
-    def remove_invalid_params(self, knowledge, grounder) :
-        #print 'In remove invalid params with '
-        #print str(self)
-        if len(self.possible_goals) != 1 :
-            #print 'no change'
-            return 
-        goal = self.possible_goals[0]
-        for param_name in self.possible_param_values :
-            if param_name in knowledge.param_order[goal] :
-                current_values = self.possible_param_values[param_name]
-                new_values = list()
-                for value in current_values :
-                    if self.param_value_valid(goal, param_name, value, knowledge, grounder) :
-                        new_values.append(value)
-                if len(new_values) > 0 :
-                    self.possible_param_values[param_name] = new_values
-                else :
-                    self.possible_param_values[param_name] = [None]
-            else :
-                self.possible_param_values[param_name] = [None]
-        #print 'End of remove invalid params with '
-        #print str(self)
-        #print '--------------------------------------------'
     
     # Check whether this partition contains all states having some goal 
     # and params        
@@ -272,37 +201,35 @@ class Partition:
                         return False
         return True
             
-    def split_by_goal(self, new_goal, knowledge, grounder) :
+    def split_by_goal(self, new_goal, knowledge) :
         #print 'In split_by_goal'
         if new_goal not in self.possible_goals or len(self.possible_goals) == 1 :
             return [self]
         else :
             p1 = Partition([new_goal], copy.deepcopy(self.possible_param_values))
             split_prob = knowledge.partition_split_goal_probs[new_goal]
-            p1.belief = self.belief + numpy.log(split_prob)
-            p1.remove_invalid_params(knowledge, grounder)    
+            p1.belief = self.belief + numpy.log(split_prob)  
             #print 'p1 - ', str(p1)
                 
             other_goals = [goal for goal in self.possible_goals if goal != new_goal]
             p2 = Partition(other_goals, copy.deepcopy(self.possible_param_values))
             p2.belief = self.belief + numpy.log(1 - split_prob)
-            p2.remove_invalid_params(knowledge, grounder)
             #print 'p2 - ', str(p2)
             
             # Check that both partitions are valid. If not, return only 
             # the one which is    
-            if not p1.is_valid(knowledge, grounder) :
+            if not p1.is_valid(knowledge) :
                 p2.belief = self.belief
                 #print 'p1 is not valid'
                 return [p2]
-            elif not p2.is_valid(knowledge, grounder) :
+            elif not p2.is_valid(knowledge) :
                 p1.belief = self.belief
                 #print 'p2 is not valid'
                 return [p1]
             else :
                 return [p1, p2]
 
-    def split_by_param(self, split_param_name, split_param_value, knowledge, grounder) :
+    def split_by_param(self, split_param_name, split_param_value, knowledge) :
         if self.possible_param_values == None or \
         split_param_name not in self.possible_param_values or \
         split_param_value not in self.possible_param_values[split_param_name] or \
@@ -325,15 +252,15 @@ class Partition:
             p1.belief = self.belief + numpy.log(split_prob)
             p2.belief = self.belief + numpy.log(1 - split_prob)
                 
-            p1.remove_invalid_goals(knowledge, grounder)
-            p2.remove_invalid_goals(knowledge, grounder)
+            p1.remove_invalid_goals(knowledge)
+            p2.remove_invalid_goals(knowledge)
             
             # Check that both partitions are valid. If not, return only 
             # the one which is    
-            if not p1.is_valid(knowledge, grounder) :
+            if not p1.is_valid(knowledge) :
                 p2.belief = self.belief
                 return [p2]
-            elif not p2.is_valid(knowledge, grounder) :
+            elif not p2.is_valid(knowledge) :
                 p1.belief = self.belief
                 return [p1]
             else :

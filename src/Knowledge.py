@@ -9,30 +9,13 @@ class Knowledge:
     unk = '-UNK-'
 
     def __init__(self):
-        #self.goal_actions = ['searchroom', 'speak_t', 'speak_e', 'remind', 'askperson', 'bring', 'at']
-        #self.goal_actions = ['bring', 'at']
-        #self.goal_params = ['patient', 'recipient', 'location']
-        self.goal_actions = ['push', 'press', 'shake', 'lift', 'drop', 'point']
+        self.goal_actions = ['point']
         self.goal_params = ['patient']
-
-        # This is kept as a single vector common to all values so that hopefully 
-        # some operaitons involving them can be made matrix operations and implemented
-        # efficiently using numpy
-        #self.goal_params_values = [None, 'peter', 'ray', 'dana', 'kazunori', 'matteo', 'shiqi', 'jivko', 'stacy', 'yuqian', 'max', 'pato', 'bwi', 'bwi_m', 'l3_516', 'l3_508', 'l3_512', 'l3_510', 'l3_402', 'l3_418', 'l3_420', 'l3_432', 'l3_502', 'l3_414b', True, False]
-        #self.goal_params_values = [None, 'chips', 'coffee', 'hamburger', 'juice', 'muffin', 'alice', 'frannie', 'bob', 'carol', 'dave', 'george', 'eve', 'mallory', 'peggy', 'walter', 'l3_516', 'l3_508', 'l3_512', 'l3_510', 'l3_402', 'l3_418', 'l3_420', 'l3_432', 'l3_502', 'l3_414b']      
-        #self.goal_params_values = [None, 'chips', 'coffee', 'hamburger', 'juice', 'muffin', 'stacy', 'ray', 'peter', 'scott', 'dana', 'jivko', 'shiqi', 'jesse', 'aishwarya', 'rodolfo', 'l3_502', 'l3_420', 'l3_432', 'l3_508', 'l3_510', 'l3_512', 'l3_404', 'l3_414b'] 
-        #self.goal_params_values = [None, 'stacy', 'ray', 'peter', 'scott', 'dana', 'jivko', 'shiqi', 'jesse', 'aishwarya', 'rodolfo']
-
-        # TODO: Should ideally use these lists for typechecking
-        #self.people = ['stacy', 'ray', 'peter', 'scott', 'dana', 'jivko', 'shiqi', 'jesse', 'aishwarya', 'rodolfo']
-        self.items = list()    
-        for i in range(0, 148) :
-            self.items.append('item_' + str(i)) 
-        self.goal_params_values = self.items 
+        self.goal_params_values = range(32)
         
-        self.system_dialog_actions = ['repeat_goal', 'confirm_action', 'request_missing_param', 'ask_classifier_example']
-        self.user_dialog_actions = ['inform_param', 'inform_full', 'affirm', 'deny']
-        self.summary_system_actions = self.system_dialog_actions + ['take_action']
+        self.summary_system_actions = ["make_guess", "ask_predicate_label", "ask_positive_example"]
+        self.system_dialog_actions = ["get_initial_description"] + self.summary_system_actions
+        self.user_dialog_actions = ['inform_param', 'affirm', 'deny']
 
         self.goal_change_prob = 0.0
 
@@ -61,50 +44,22 @@ class Knowledge:
         self.set_action_type_probs()
         
         # Probability that the obs is due to an utterance not in the 
-        # N-best list. The actual probability will be this minus the sum 
-        # of probabilities of N-best parses
-        self.max_obs_by_non_n_best_prob = math.exp(-56)
-        self.min_obs_by_non_n_best_prob = math.exp(-58)
+        # N-best list. 
+        self.non_n_best_prob = 0.3
         
         # Probability that an utterance not in the N-best list matches 
         # the partition and system_action - This can probably be 
         # calculated exactly but it will be hard to do so.
         self.non_n_best_match_prob = math.exp(-10)
         
-        # The system requires arguments to be passed to ASP in specific
-        # orders for each action. This is not an obviously generalizable
-        # order so it is hard-coded here. The following is the intended
-        # interpretation of the parameters
-        
-        #   searchroom - patient (who/what to search for), location (where to search)
-        #   speak_t - patient (what to say)
-        #   speak_e - patient (what to say)
-        #   remind - patient (event you are reminding someone of), location (where is the 
-        #            event), recipient (the person you are reminding)
-        #   askperson - patient (the person you ask), recipient (the person you ask about)
-        #   bring - patient (what to bring), recipient (whom to bring it to)
-        #   walk - location (where to go)
-        
-        #self.param_order = dict()
-        #self.param_order['searchroom'] = ['patient', 'location']
-        #self.param_order['speak_t'] = ['patient']
-        #self.param_order['speak_e'] = ['patient']
-        #self.param_order['remind'] = ['recipient', 'patient', 'location']
-        #self.param_order['askperson'] = ['patient', 'recipient']
-        #self.param_order['bring'] = ['patient', 'recipient']
-        #self.param_order['at'] = ['location']
-        
+        # Param order doesn't really matter because there is only one 
+        # param, but there are too many references to this
         self.param_order = dict()
         for action in self.goal_actions :
             self.param_order[action] = ['patient']
-        #self.param_order['bring'] = ['patient', 'recipient']
-        
 
         self.param_relevance = dict()
         self.set_param_relevance()
-
-        # Constraints for type checking
-        self.set_param_constraints()
         
         # Parameters for the RL problem
         self.gamma = 1
@@ -192,15 +147,14 @@ class Knowledge:
 
     def set_action_type_probs(self) :
         self.expected_actions = dict()
-        self.expected_actions['repeat_goal'] = ['inform_full']
-        self.expected_actions['request_missing_param'] = ['inform_param']
-        self.expected_actions['confirm_action'] = ['affirm', 'deny']
+        self.expected_actions['get_initial_description'] = ['inform_param']
+        self.expected_actions['ask_predicate_label'] = ['affirm', 'deny']
         self.expected_actions['ask_classifier_example'] = ['affirm', 'deny']
         for system_dialog_action in self.system_dialog_actions :
             if system_dialog_action not in self.action_type_probs :
                 self.action_type_probs[system_dialog_action] = dict()
             for user_dialog_action in self.user_dialog_actions :
-                if self.expected_actions[system_dialog_action] == None :
+                if system_dialog_action not in self.expected_actions or self.expected_actions[system_dialog_action] == None :
                     # The system doesn't know what user action to expect
                     # So all user actions are equally probable
                     self.action_type_probs[system_dialog_action][user_dialog_action] = 1.0 / len(self.user_dialog_actions)
@@ -215,36 +169,4 @@ class Knowledge:
                         # that the user took an unexpected action equally
                         # among all unexpected actions
                         self.action_type_probs[system_dialog_action][user_dialog_action] = self.user_wrong_action_prob / (len(self.user_dialog_actions) - len(self.expected_actions[system_dialog_action]))
-
-    # The true_constraints and false_constraints are to introduce 
-    # type constraints for each param of each action, for example, 
-    # the patient of searchroom should be a person and the patient 
-    # of bring should not be a room. The lists need to be initialized
-    # for each parameter relevant to each goal. By default, they will 
-    # be empty so it is sufficient to specify them when they are non 
-    # empty                        
-    def set_param_constraints(self) :
-        self.true_constraints = dict()
-        self.false_constraints = dict()
-        for action in self.goal_actions :
-            self.true_constraints[action] = dict()
-            self.false_constraints[action] = dict()
-            for param in self.goal_params : 
-                self.true_constraints[action][param] = list()
-                self.false_constraints[action][param] = list()
-                
-        #self.true_constraints['searchroom']['patient'] = ['person']
-        #self.true_constraints['searchroom']['location'] = ['room']
-        #self.true_constraints['remind']['recipient'] = ['person']
-        #self.true_constraints['remind']['location'] = ['room']
-        #self.true_constraints['askperson']['patient'] = ['person']
-        #self.true_constraints['askperson']['recipient'] = ['person']
-        #self.true_constraints['bring']['patient'] = ['item']
-        #self.true_constraints['bring']['recipient'] = ['person']
-        #self.true_constraints['at']['location'] = ['room']
-        
-        for action in self.goal_actions :
-            self.true_constraints[action]['patient'] = ['item']
-        
-        #self.false_constraints['speak_t']['patient'] = ['person', 'room']
-        #self.false_constraints['remind']['patient'] = ['person', 'room']
+]
