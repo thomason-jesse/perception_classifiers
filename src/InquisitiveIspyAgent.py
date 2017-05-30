@@ -13,7 +13,8 @@ from perception_classifiers.srv import *
 
 class InquisitiveIspyAgent(UnitTestAgent):
     # initial_predicates - The agent needs to track which classifiers 
-    #                      it can call. This gives the initial list 
+    #       it can call. This gives the initial list. This has to match 
+    #       the list in python classifier services
     def __init__(self, io, table_oidxs, stopwords_fn, policy, log_fn=None, initial_predicates=None):
         tid = 1
         UnitTestAgent.__init__(self, io, 1, table_oidxs)
@@ -84,7 +85,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         sorted_match_scores = sorted(obj_indices_with_scores, key=operator.itemgetter(1), reverse=True)
         guess_idx = sorted_match_scores[0][0] 
 
-        # TODO: Make the robot point the best guess
+        # Point to best guess
+        self.point_to_object(guess_idx)
 
         # Ask if the guess was right
         self.io.say("Is this the object you have in mind?")
@@ -100,9 +102,26 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 got_confirmation = False
                 self.io.say("I didn't catch that.")
                 
-        # TODO: Stop pointing
+        # Stop pointing
+        self.retract_arm()
 
-        # TODO: Add any required classifier updates
+        # Add required classifier updates
+        # Give a label of +1 to all predicates in current dialog with 
+        # the object guess_idx
+        new_preds = [predicate for predicate in self.cur_dialog_predicates if predicate not in self.known_predicates]
+        self.known_predicates.extend(new_preds) # Needed here to get correct indices of new predicates
+        pidxs = [self.known_predicates.index(predicate) for predicate in self.cur_dialog_predicates]
+        oidxs = [guess_idx] * len(pidxs)
+        labels = [1] * len(pidxs)
+        success = self.update_classifiers(self, new_preds, pidxs, oidxs, labels)
+        if success:
+            for predicate in new_preds:
+                self.unknown_predicates.remove(predicate)
+        else:
+            # Update didn't happen so undo the extension
+            for predicate in new_preds:
+                self.known_predicates.remove(predicate)
+        self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
 
 
     # Identify the object and predicate for which a label should be obtained    
@@ -124,53 +143,71 @@ class InquisitiveIspyAgent(UnitTestAgent):
     def ask_predicate_label(self):
         predicate, candidate_object = self.get_label_question_details()
         
-        # TODO: Point to the object about which the question is (may require turning)
+        # Point to the object about which the question is
+        self.point_to_object(candidate_object)
                     
         question_str = 'Would you use the word ' + predicate + ' to describe this object?'
         self.io.say(question_str)
         
         # Get response
         got_answer = False
-        predicate_holds = False
+        label_value = -1
         while not got_answer:
             got_answer = True
             self.io.say(question_str)
             answer = self.io.get()
             if self.is_yes(answer):
-                predicate_holds = True
+                label_value = 1
             elif not self.is_no(answer):
                 got_answer = False
                 self.io.say("I didn't catch that.")
                 
-        # TODO: Stop pointing
+        # Stop pointing
+        self.retract_arm()
         
-        # TODO: Add required classifier updates
+        # Add required classifier update
+        if predicate in self.unknown_predicates:
+            new_preds = [predicate]
+        else:
+            new_preds = []
+        self.known_predicates.extend(new_preds) # Needed here to get correct indices of new predicates
+        pidxs = [self.known_predicates.index(predicate)]
+        oidxs = [candidate_object]
+        labels = [label_value]
+        success = self.update_classifiers(self, new_preds, pidxs, oidxs, labels)
+        if success:
+            if predicate in self.unknown_predicates:
+                self.unknown_predicates.remove(predicate)
+            self.classifiers_changed.append(predicate)
+        else:
+            # Update didn't happen so undo the extension
+            if predicate in self.unknown_predicates:
+                self.known_predicates.remove(predicate)
         
-        self.unknown_predicates.remove(predicate)
-        self.known_predicates.append(predicate)
-
 
     def ask_positive_example(self):
         predicate = np.random.choice(self.unknown_predicates)
         
-        touch_detected = False
-        while not touch_detected:
-            touch_detected = True
-            
-            question_str = 'Could you point to an object that you would describe as ' + predicate + '?'
-            self.io.say(question_str)
-            
-            # TODO: Something extra may be needed here to allow for turning    
-            # TODO: Detect touch
-            
-            if not touch_detected:
-                self.io.say("I didn't catch that.")
+        question_str = 'Could you point to an object that you would describe as ' + predicate + '?'
+        self.io.say(question_str)
         
-        # TODO: Add required classifier updates
+        # Detect touch
+        pos_detected, obj_idx_detected = self.detect_touch()
         
-        self.unknown_predicates.remove(predicate)
-        self.known_predicates.append(predicate)
-        
+        # Add required classifier update
+        new_preds = [predicate]
+        self.known_predicates.extend(new_preds) # Needed here to get correct indices of new predicates
+        pidxs = [self.known_predicates.index(predicate)]
+        oidxs = [obj_idx_detected]
+        labels = [1]
+        success = self.update_classifiers(self, new_preds, pidxs, oidxs, labels)
+        if success:
+            self.unknown_predicates.remove(predicate)
+            self.classifiers_changed.append(predicate)
+        else:
+            # Update didn't happen so undo the extension
+            self.known_predicates.remove(predicate)
+
         
     # Start of human_take_turn of IspyAgent. Re-coded here because
     # only part of that function is to be used here
@@ -216,7 +253,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
             for predicate in predicates:
                 if predicate in self.known_predicates:
                     if predicate not in results or predicate in self.classifiers_changed:
-                        # TODO: Get classifier result
+                        classifier_idx = self.known_predicates.index(predicate)
+                        [result, confidence] = self.run_classifier_on_object(classifier_idx, obj_idx)
                 else:
                     [result, confidence] = [0, 0.0] 
                         # This is what a "classifier" without enough data 
@@ -258,7 +296,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         for predicate in self.known_predicates:
             if predicate not in self.min_confidence_objects or predicate in self.classifiers_changed:
                 for obj_idx in self.objects_for_questions:
-                    # TODO: Fetch [result, confidence] from classifier
+                    classifier_idx = self.known_predicates.index(predicate)
+                    [result, confidence] = self.run_classifier_on_object(classifier_idx, obj_idx)
                     if predicate not in self.min_confidence_objects \
                         or confidence < self.min_confidence_objects[predicate][1]:
                             self.min_confidence_objects[predicate] = (obj_idx, confidence)
@@ -297,16 +336,16 @@ class InquisitiveIspyAgent(UnitTestAgent):
                     
                 elif dialog_action == 'ask_positive_example':
                     self.ask_positive_example()
+                
+                # Update cached data for questions
+                self.update_min_confidence_objects()
+                self.classifiers_changed = list()
                     
                 if not object_guessed:
                     # Recompute match scores because relevant classifiers may
                     # have changed
                     self.cur_match_scores = self.get_match_scores(self.cur_dialog_predicates)
                     self.log("Match scores : " + str(self.cur_match_scores) + "\n")
-
-                    # Update cached data for questions
-                    self.update_min_confidence_objects()
-                    self.classifiers_changed = list()
 
                     dialog_state = self.get_dialog_state()
                     dialog_action = self.policy.get_next_action(dialog_state)

@@ -74,7 +74,7 @@ class UnitTestAgent:
     # Run a classifier on the specified object.
     # cidx - the index of the classifier to run
     # oidx - the object index to run on
-    # returns - a touple (dec, conf) of the decision in {True, False} and ensemble confidence in [0, 1]
+    # returns - a tuple (dec, conf) of the decision in {True, False} and ensemble confidence in [0, 1]
     def run_classifier_on_object(self, cidx, oidx):
         req = PythonRunClassifierRequest()
         req.pidx = cidx
@@ -86,3 +86,26 @@ class UnitTestAgent:
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
             return None, None
+            
+    # Update classifiers
+    # new_preds - List of predicates for which new classifiers have to 
+    #       be created. This allows the agent and the classifier service 
+    #       to have same order of predicates 
+    # pidxs, oidxs, labels are parallel arrays which give triples of
+    # (predicate_idx, obj_idx, {-1, 1}) to be updated
+    def update_classifiers(self, new_preds, pidxs, oidxs, labels):
+        req = PythonUpdateClassifiersRequest()
+        req.new_preds = new_preds
+        req.pidxs = pidxs
+        req.oidxs = oidxs
+        req.label = labels
+        try:
+            rc = rospy.ServiceProxy('python_update_classifiers', PythonUpdateClassifiers)
+            res = rc(req)
+            return res.success 
+        except rospy.ServiceException, e:
+            print "Service call failed: %s" % e
+            return False
+            
+            
+    
