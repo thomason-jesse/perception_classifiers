@@ -8,15 +8,18 @@ import operator
 import numpy as np
 import traceback
 from UnitTestAgent import UnitTestAgent
+from perception_classifiers.srv import *
 
-# TODO: Functionality for choosing next best question
-class PomdpIspyAgent(UnitTestAgent):
+
+class InquisitiveIspyAgent(UnitTestAgent):
     # initial_predicates - The agent needs to track which classifiers 
     #                      it can call. This gives the initial list 
-    def __init__(self, io, stopwords_fn, policy, log_fn=None, initial_predicates=None):
+    def __init__(self, io, table_oidxs, stopwords_fn, policy, log_fn=None, initial_predicates=None):
+        tid = 1
+        UnitTestAgent.__init__(self, io, 1, table_oidxs)
+        
         self.io = io
         self.log_fn = log_fn
-
         self.policy = policy
         
         # Read stopwords
@@ -301,12 +304,12 @@ class PomdpIspyAgent(UnitTestAgent):
                     self.cur_match_scores = self.get_match_scores(self.cur_dialog_predicates)
                     self.log("Match scores : " + str(self.cur_match_scores) + "\n")
 
-                    dialog_state = self.get_dialog_state()
-                    dialog_action = self.policy.get_next_action(dialog_state)
-                    
                     # Update cached data for questions
                     self.update_min_confidence_objects()
                     self.classifiers_changed = list()
+
+                    dialog_state = self.get_dialog_state()
+                    dialog_action = self.policy.get_next_action(dialog_state)
                     
         except KeyboardInterrupt, SystemExit:
             raise
