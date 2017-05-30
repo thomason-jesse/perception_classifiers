@@ -1,6 +1,1 @@
--remove detect ordering/touch at agent startup
--add 'retract' command
--run classifiers on objects at positions rather than by oidx
--wrap command processesing in try/catch to avoid crashing with speech
--add robot speech to contextualize what's happening, e.g. 'turning to table #' and 'getting the objects in my sights'
--add speech for detected touches and pointing objectives in unit test
+-write launchfile that opens classifier services, soundplay, and other needed pieces

@@ -4,7 +4,6 @@ __author__ = 'jesse'
 import argparse
 import UnitTestAgent
 from agent_io import *
-from perception_classifiers.srv import *
 
 
 def main():
@@ -31,34 +30,43 @@ def main():
         io = IORobot(None, logfn, table_oidxs[1])  # start facing center table.
     a.io = io
 
-    # Accept commands indefinitely.
+    # Accept commands until told to stop.
     while True:
         print "enter command: "
         c = a.io.get()
         if "face table" in c:  # face table [tid]
-            tid = int(c.split()[-1])
-            a.face_table(tid)
-        elif "run classifier" in c:  # run classifier [cidx] on [oidx]
-            cp = c.split()
-            req = PythonRunClassifierRequest()
-            req.pidx = int(cp[-3])
-            req.oidx = int(cp[-1])
             try:
-                rc = rospy.ServiceProxy('python_run_classifier', PythonRunClassifier)
-                res = rc(req)
-                print "... done; dec=" + str(res.dec) + ", conf=" + str(res.conf)
-            except rospy.ServiceException, e:
-                print "Service call failed: %s" % e
-        elif "point to " in c:  # point to [pidx]
-            pos = int(c.split()[-1])
-            a.io.point(pos)
-        elif "detect touch" == c:  # detect touch and return pidx
-            pos = a.io.get_guess()
-            print "saw touch at position " + str(pos)
+                tid = int(c.split()[-1])
+                a.face_table(tid, report=True)
+            except (IndexError, ValueError):
+                continue
+        elif "run classifier" in c and c.split()[3] == "on":  # run classifier [cidx] on [oidx]
+            try:
+                cp = c.split()
+                dec, conf = a.run_classifier_on_object(int(cp[-3]), int(cp[-1]))
+                a.io.say("Decision " + str(dec) + " with  confidence " + str(round(conf, 2)) + ".")
+            except (IndexError, ValueError):
+                continue
+        elif "run classifier" in c and c.split()[3] == "at":  # run classifier [cidx] at [pos]
+            try:
+                cp = c.split()
+                dec, conf = a.run_classifier_on_object_at_position(int(cp[-3]), int(cp[-1]))
+                a.io.say("Decision " + str(dec) + " with  confidence " + str(round(conf, 2)) + ".")
+            except (IndexError, ValueError):
+                continue
+        elif "point to " in c:  # point to [pos]
+            try:
+                pos = int(c.split()[-1])
+                a.io.say("Pointing to object at position " + str(pos) + ".")
+                a.io.point(pos)
+            except (IndexError, ValueError):
+                continue
+        elif "detect touch" == c:  # detect touch and return pos
+            a.io.say("Looking for a detected touch...")
+            pos, oidx = a.io.get_guess()
+            a.io.say("Saw touch at position " + str(pos) + " on object " + str(oidx) + ".")
         elif "stop" == c or "exit" == c:
-			break
-
-    # TODO: replace robot implementation of 'get' with speech listening
+            break
 
 
 if __name__ == '__main__':
