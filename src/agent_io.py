@@ -46,7 +46,7 @@ class IOStd:
         append_to_file("point:"+str(idx)+"\n", self.trans_fn)
         print "SYSTEM POINTS TO SLOT "+str(idx)
 
-    def face_table(self, tid, _):
+    def face_table(self, tid, _, report=False):
         append_to_file("face:" + str(tid) + "\n", self.trans_fn)
         print "SYSTEM TURNS TO TABLE " + str(tid)
         return True

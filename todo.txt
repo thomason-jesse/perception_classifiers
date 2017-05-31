@@ -1,1 +1,3 @@
--write launchfile that opens classifier services, soundplay, and other needed pieces
+-write launchfile that opens classifier services with arguments to source and classifier dirs
+-add debug information to python_classifier_services node so it doesn't sit all creepy
+-figure out how to download festival voices so soundplay starts working
