@@ -4,6 +4,7 @@ __author__ = 'jesse'
 import os
 import time
 import rospy
+from bwi_speech_services.srv import *
 from segbot_arm_perception.srv import *
 from segbot_arm_manipulation.srv import *
 from std_srvs.srv import *
@@ -172,8 +173,8 @@ class IORobot:
         if log:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
 
-        self.sound_client.say(str(s), voice=voice)
-        self.sound_client.say(str(s), voice=voice)
+        self.sound_client.say(str(s))  #, voice=voice)
+        # self.sound_client.say(str(s))  #, voice=voice)
         rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
         print "SYSTEM: "+s
 

@@ -1,3 +1,4 @@
--write launchfile that opens classifier services with arguments to source and classifier dirs
+-write launchfile that opens classifier services with arguments to source and classifier dirs, sound play, and speech recognition
 -add debug information to python_classifier_services node so it doesn't sit all creepy
--figure out how to download festival voices so soundplay starts working
+-get arctic voice working because it sounds nicer
+-will have to write translation script to pre-process utterances from google speech since so many words get garbled. this might be easiest to do as a pre-pilot phase
