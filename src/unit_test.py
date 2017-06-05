@@ -33,13 +33,13 @@ def main():
         print "enter command: "
         c = a.io.get()
         if "help" == c:
-			print "face table [tid]"
-			print "run classifier [cidx] on [oidx]"
-			print "run classifier [cidx] at [pos]"
-			print "point to position [pos]"
-			print "point to object [oidx]"
-			print "detect touch"
-			print "exit"
+            print "face table [tid]"
+            print "run classifier [cidx] on [oidx]"
+            print "run classifier [cidx] at [pos]"
+            print "point to position [pos]"
+            print "point to object [oidx]"
+            print "detect touch"
+            print "exit"
         elif "face table" in c:  # face table [tid]
             try:
                 tid = int(c.split()[-1])
@@ -73,9 +73,9 @@ def main():
                 a.io.say("Pointing to object " + str(oidx) + ".")
                 s = a.point_to_object(oidx)
                 if s:
-					a.io.say("Found and pointed.")
+                    a.io.say("Found and pointed.")
                 else:
-					a.io.say("Couldn't find object.")
+                    a.io.say("Couldn't find object.")
             except (IndexError, ValueError):
                 continue
         elif "detect touch" == c:  # detect touch and return pos

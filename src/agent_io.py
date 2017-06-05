@@ -2,11 +2,11 @@
 __author__ = 'jesse'
 
 import os
-import sys
 import time
 import rospy
 from segbot_arm_perception.srv import *
 from segbot_arm_manipulation.srv import *
+from std_srvs.srv import *
 import roslib
 roslib.load_manifest('sound_play')
 from sound_play.libsoundplay import SoundClient
@@ -144,15 +144,19 @@ class IORobot:
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
         print "IORobot: ... done"
 
-    # TODO: replace robot implementation of 'get' with speech listening
+    # Listen for speech from user.
     def get(self):
-        uin = raw_input().lower()
+        self.listening_mode_toggle_client()
+        uin = self.sound_transcript_client()
+        self.listening_mode_toggle_client()
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin
 
     # get touches by detecting human touches on top of objects
     def get_touch(self, log=True):
+        self.touch_waiting_mode_toggle_client()
         idx = self.detect_touch_client()
+        self.touch_waiting_mode_toggle_client()
         if log:
             append_to_file("touch:"+str(idx)+"\n", self.trans_fn)
         return int(idx)
@@ -226,6 +230,34 @@ class IORobot:
             ordered_cloud_clusters = self.reorder_client("x", True)
 
             return res.cloud_plane, res.cloud_plane_coef, ordered_cloud_clusters
+        except rospy.ServiceException, e:
+            sys.exit("Service call failed: %s " % e)
+
+    # Turn on or off the indicator behavior for watching for a touch.
+    def touch_waiting_mode_toggle_client(self):
+        rospy.wait_for_service('ispy/touch_waiting_mode_toggle')
+        try:
+            listen_toggle = rospy.ServiceProxy('ispy/touch_waiting_mode_toggle', Empty)
+            listen_toggle()
+        except rospy.ServiceException, e:
+            sys.exit("Service call failed: %s " % e)
+
+    # Turn on or off the indicator behavior for listening for speech.
+    def listening_mode_toggle_client(self):
+        rospy.wait_for_service('ispy/listening_mode_toggle')
+        try:
+            listen_toggle = rospy.ServiceProxy('ispy/listening_mode_toggle', Empty)
+            listen_toggle()
+        except rospy.ServiceException, e:
+            sys.exit("Service call failed: %s " % e)
+
+    # Listen for speech, transcribe it, and return it.
+    def sound_transcript_client(self):
+        rospy.wait_for_service('sound_transcript_server')
+        try:
+            transcribe = rospy.ServiceProxy('sound_transcript_server', RequestSoundTranscript)
+            resp = transcribe()
+            return resp.utterance
         except rospy.ServiceException, e:
             sys.exit("Service call failed: %s " % e)
 
