@@ -155,15 +155,13 @@ class IORobot:
 
     # get touches by detecting human touches on top of objects
     def get_touch(self, log=True):
-        self.touch_waiting_mode_toggle_client()
         idx = self.detect_touch_client()
-        self.touch_waiting_mode_toggle_client()
         if log:
             append_to_file("touch:"+str(idx)+"\n", self.trans_fn)
         return int(idx)
 
     # use built-in ROS sound client to do TTS
-    def say(self, s, log=True, voice='voice_cmu_us_slt_arctic_hts'):
+    def say(self, s, log=True, voice='voice_cmu_us_slt_arctic'):
 
         if self.last_say is None:
             self.last_say = s
@@ -173,8 +171,7 @@ class IORobot:
         if log:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
 
-        self.sound_client.say(str(s))  #, voice=voice)
-        # self.sound_client.say(str(s))  #, voice=voice)
+        self.sound_client.say(str(s), voice=voice)
         rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
         print "SYSTEM: "+s
 
@@ -231,15 +228,6 @@ class IORobot:
             ordered_cloud_clusters = self.reorder_client("x", True)
 
             return res.cloud_plane, res.cloud_plane_coef, ordered_cloud_clusters
-        except rospy.ServiceException, e:
-            sys.exit("Service call failed: %s " % e)
-
-    # Turn on or off the indicator behavior for watching for a touch.
-    def touch_waiting_mode_toggle_client(self):
-        rospy.wait_for_service('ispy/touch_waiting_mode_toggle')
-        try:
-            listen_toggle = rospy.ServiceProxy('ispy/touch_waiting_mode_toggle', Empty)
-            listen_toggle()
         except rospy.ServiceException, e:
             sys.exit("Service call failed: %s " % e)
 
