@@ -18,24 +18,23 @@ def main(args):
     rospy.init_node(node_name)
     
     print 'Creating policy'
-    policy = Policy(args.policy_type, args.max_questions, args.min_confidence_threshold,
-                    args.min_num_unknown_predicates)
+    policy = Policy(args.policy_type, args.policy_max_questions, args.policy_min_confidence_threshold,
+                    args.policy_min_num_unknown_predicates)
     
     print 'Loading initial predicates'
     initial_predicates = pickle.load(open(args.initial_predicates_fn))
     
-    print 'Creating agent'
-    agent = InquisitiveIspyAgent(None, table_oidxs, args.stopwords_fn, policy, \
-                                 args.log_fn, initial_predicates)
-    
     io = None
-    if io_type == "std":
-        print "... with input from keyboard and output to screen"
-        io = IOStd(logfn)
-    elif io_type == "robot":
-        print "... with input and output through embodied robot"
-        io = IORobot(None, logfn, table_oidxs[1])  # start facing center table.
-    agent.io = io
+    if args.io_type == "std":
+        print "Creating interface for input from keyboard and output to screen"
+        io = IOStd(args.logfn)
+    elif args.io_type == "robot":
+        print "Creating interface for input and output through embodied robot"
+        io = IORobot(None, args.logfn, table_oidxs[1])  # start facing center table.
+
+    print 'Creating agent'
+    agent = InquisitiveIspyAgent(io, table_oidxs, args.stopwords_fn, policy, \
+                                 args.logfn, initial_predicates)
     
     while True:
         agent.run_dialog()
@@ -47,7 +46,7 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument('--table_1_oidxs', type=str, required=True,
                         help="Comma-separated ids of objects on robot's left")
     parser.add_argument('--table_2_oidxs', type=str, required=True,
@@ -62,8 +61,6 @@ if __name__ == '__main__':
                         help="File with stop words")
     parser.add_argument('--initial_predicates_fn', type=str, required=True,
                         help="Pickle of initial predicates")
-    parser.add_argument('--policy_type', type=str, required=True,
-                        help="One of 'guess', 'yes_no', 'example'")
     parser.add_argument('--policy_type', type=str, required=True,
                         help="One of 'guess', 'yes_no', 'example'")
     parser.add_argument('--policy_max_questions', type=int, default=5,

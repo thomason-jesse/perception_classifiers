@@ -2,6 +2,7 @@
 __author__ = 'jesse'
 
 import sys
+import rospy
 from perception_classifiers.srv import *
 
 

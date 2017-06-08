@@ -267,8 +267,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
     
     
     # Calculate match scores from an object given a set of cnf clauses of predicates
-    def get_match_scores(self, cnf_clauses):
-        predicates = set(cnf_clauses)
+    def get_match_scores(self):
+        predicates = self.cur_dialog_predicates
         classifier_results = self.get_classifier_results(predicates, self.objects_for_guessing)
 
         match_scores = dict()
@@ -315,7 +315,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.cur_dialog_predicates = None
         self.get_initial_description()  # Sets self.cur_dialog_predicates
 
-        self.cur_match_scores = self.get_match_scores(predicates)
+        self.cur_match_scores = self.get_match_scores()
         self.log("Match scores :" + str(self.cur_match_scores) + "\n\n")
         
         dialog_state = self.get_dialog_state()
