@@ -1,19 +1,4 @@
 <launch>
-	<include
-		file="$(find segbot_arm_perception)/launch/segbot_arm_perception.launch"
-	/>
-	<node
-		pkg="segbot_arm_manipulation"
-		type="ispy_arm_server"
-		name="ispy_arm_server"
-		output="screen"
-	/>
-	<node
-		pkg="perception_classifiers"
-		type="python_classifier_services"
-		name="python_classifier_services"
-		output="screen"
-	/>
 	<node
 		pkg="sound_play"
 		type="soundplay_node.py"
