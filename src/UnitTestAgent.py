@@ -87,3 +87,23 @@ class UnitTestAgent:
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
             return None, None
+
+    # Update classifiers
+    # new_preds - List of predicates for which new classifiers have to
+    #       be created. This allows the agent and the classifier service
+    #       to have same order of predicates
+    # pidxs, oidxs, labels are parallel arrays which give triples of
+    # (predicate_idx, obj_idx, {-1, 1}) to be updated
+    def update_classifiers(self, new_preds, pidxs, oidxs, labels):
+        req = PythonUpdateClassifiersRequest()
+        req.new_preds = new_preds
+        req.pidxs = pidxs
+        req.oidxs = oidxs
+        req.labels = labels
+        try:
+            uc = rospy.ServiceProxy('python_update_classifiers', PythonUpdateClassifiers)
+            res = uc(req)
+            return res.success
+        except rospy.ServiceException, e:
+            print "Service call failed: %s" % e
+            return False
