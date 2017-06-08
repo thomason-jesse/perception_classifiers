@@ -116,8 +116,9 @@ class ClassifierServices:
 
     # Train all classifiers given boilerplate info and labels.
     def train_classifiers(self, pidxs):
-        self.classifiers = []  # pidx, b, m
-        self.kappas = []
+        if self.classifiers is None:  # training for the first time, so instantiate based on size of predicates.
+            self.classifiers = [None for _ in range(len(self.predicates))]  # pidx, b, m
+            self.kappas = [0 for _ in range(len(self.predicates))]
         for pidx in pidxs:
             train_pairs = self.get_pairs_from_labels(pidx)
             if -1 in [l for _, l in train_pairs] and 1 in [l for _, l in train_pairs]:
@@ -133,12 +134,12 @@ class ClassifierServices:
                 s = sum([pk[b][m] for b, m in self.contexts])
                 for b, m in self.contexts:
                     pk[b][m] = pk[b][m] / float(s) if s > 0 else 1.0 / len(self.contexts)
-                self.classifiers.append(pc)
-                self.kappas.append(pk)
+                self.classifiers[pidx] = pc
+                self.kappas[pidx] = pk
             else:
                 print "... '" + self.predicates[pidx] + "' lacks a +/- pair to fit"
-                self.classifiers.append(None)
-                self.kappas.append(0)
+                self.classifiers[pidx] = None
+                self.kappas[pidx] = 0
 
 
 # Given an SVM c and its training data, calculate the agreement with gold labels according to kappa
