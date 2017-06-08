@@ -54,6 +54,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.cur_dialog_predicates = None
         self.cur_match_scores = None
         
+        self.update_min_confidence_objects()
+        
 
     def debug_print(self, message):
         if self.print_debug_messages:
@@ -61,6 +63,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
 
     
     def log(self, log_str):
+        self.debug_print(log_str.strip())
         if self.log_fn is not None:
             f = open(self.log_fn, 'a')
             f.write(log_str)
@@ -80,16 +83,17 @@ class InquisitiveIspyAgent(UnitTestAgent):
     def make_guess(self, match_scores):
         # match_scores.items() gives (obj_idx, score) tuples
         # Shuffle to randomize order of equally scored items on sorting
-        obj_indices_with_scores = np.random.shuffle(match_scores.items())
+        obj_indices_with_scores = np.random.permutation(match_scores.items())
         # Sort by match score to identify what the robot should guess
         sorted_match_scores = sorted(obj_indices_with_scores, key=operator.itemgetter(1), reverse=True)
-        guess_idx = sorted_match_scores[0][0] 
+        guess_idx = int(sorted_match_scores[0][0]) 
 
         # Point to best guess
-        self.point_to_object(guess_idx)
+        self.debug_print('Trying to point to ' + str(guess_idx))
+        point_success = self.point_to_object(guess_idx)
+        self.debug_print('point_success = ' + str(point_success))
 
         # Ask if the guess was right
-        self.io.say("Is this the object you have in mind?")
         got_confirmation = False
         correct = False
         while not got_confirmation:
@@ -106,22 +110,23 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.retract_arm()
 
         # Add required classifier updates
-        # Give a label of +1 to all predicates in current dialog with 
-        # the object guess_idx
-        new_preds = [predicate for predicate in self.cur_dialog_predicates if predicate not in self.known_predicates]
-        self.known_predicates.extend(new_preds) # Needed here to get correct indices of new predicates
-        pidxs = [self.known_predicates.index(predicate) for predicate in self.cur_dialog_predicates]
-        oidxs = [guess_idx] * len(pidxs)
-        labels = [1] * len(pidxs)
-        success = self.update_classifiers(self, new_preds, pidxs, oidxs, labels)
-        if success:
-            for predicate in new_preds:
-                self.unknown_predicates.remove(predicate)
-        else:
-            # Update didn't happen so undo the extension
-            for predicate in new_preds:
-                self.known_predicates.remove(predicate)
-        self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
+        if correct:
+            # Give a label of +1 to all predicates in current dialog with 
+            # the object guess_idx
+            new_preds = [predicate for predicate in self.cur_dialog_predicates if predicate not in self.known_predicates]
+            self.known_predicates.extend(new_preds) # Needed here to get correct indices of new predicates
+            pidxs = [self.known_predicates.index(predicate) for predicate in self.cur_dialog_predicates]
+            oidxs = [guess_idx] * len(pidxs)
+            labels = [1] * len(pidxs)
+            success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
+            if success:
+                for predicate in new_preds:
+                    self.unknown_predicates.remove(predicate)
+            else:
+                # Update didn't happen so undo the extension
+                for predicate in new_preds:
+                    self.known_predicates.remove(predicate)
+            self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
 
 
     # Identify the object and predicate for which a label should be obtained    
@@ -174,7 +179,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         pidxs = [self.known_predicates.index(predicate)]
         oidxs = [candidate_object]
         labels = [label_value]
-        success = self.update_classifiers(self, new_preds, pidxs, oidxs, labels)
+        success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
         if success:
             if predicate in self.unknown_predicates:
                 self.unknown_predicates.remove(predicate)
@@ -200,7 +205,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         pidxs = [self.known_predicates.index(predicate)]
         oidxs = [obj_idx_detected]
         labels = [1]
-        success = self.update_classifiers(self, new_preds, pidxs, oidxs, labels)
+        success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
         if success:
             self.unknown_predicates.remove(predicate)
             self.classifiers_changed.append(predicate)
@@ -238,6 +243,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         response_parts = user_response.split()
         predicates = [w for w in response_parts if w not in self.stopwords]
         unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
+        self.unknown_predicates.extend(unknown_predicates)
         return predicates
     
     
@@ -253,6 +259,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             for predicate in predicates:
                 if predicate in self.known_predicates:
                     if predicate not in results or predicate in self.classifiers_changed:
+                        self.debug_print('In get_classifier_results fetching result for predicate ' + predicate + ' for object ' + str(obj_idx))
                         classifier_idx = self.known_predicates.index(predicate)
                         [result, confidence] = self.run_classifier_on_object(classifier_idx, obj_idx)
                 else:
@@ -286,8 +293,12 @@ class InquisitiveIspyAgent(UnitTestAgent):
             sum_match_scores += match_scores[obj_idx]
         
         # We need match scores that work like probabilities so normalize these
-        for obj_idx in self.objects_for_guessing:
-            match_scores[obj_idx] /= sum_match_scores
+        if np.isclose([sum_match_scores], [0.0]):
+            for obj_idx in self.objects_for_guessing:
+                match_scores[obj_idx] = 1.0 / len(self.objects_for_guessing)
+        else :
+            for obj_idx in self.objects_for_guessing:
+                match_scores[obj_idx] /= sum_match_scores
 
         return match_scores
     
@@ -296,6 +307,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         for predicate in self.known_predicates:
             if predicate not in self.min_confidence_objects or predicate in self.classifiers_changed:
                 for obj_idx in self.objects_for_questions:
+                    self.debug_print('In update_min_confidence_objects fetching result of predicate ' + predicate + ' for object ' + str(obj_idx))
                     classifier_idx = self.known_predicates.index(predicate)
                     [result, confidence] = self.run_classifier_on_object(classifier_idx, obj_idx)
                     if predicate not in self.min_confidence_objects \
@@ -325,10 +337,11 @@ class InquisitiveIspyAgent(UnitTestAgent):
         try:
             while not object_guessed:
                 self.log('\n\nAction : ' + dialog_action)
+                self.debug_print('self.classifiers_changed = ' + str(self.classifiers_changed))
                 self.num_dialog_turns += 1
                 
                 if dialog_action == 'make_guess':
-                    self.make_guess(match_scores)
+                    self.make_guess(self.cur_match_scores)
                     object_guessed = True
                     
                 elif dialog_action == 'ask_predicate_label':
@@ -337,15 +350,18 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 elif dialog_action == 'ask_positive_example':
                     self.ask_positive_example()
                 
+                self.debug_print('self.classifiers_changed = ' + str(self.classifiers_changed))
+                
                 # Update cached data for questions
                 self.update_min_confidence_objects()
-                self.classifiers_changed = list()
                     
                 if not object_guessed:
                     # Recompute match scores because relevant classifiers may
                     # have changed
                     self.cur_match_scores = self.get_match_scores(self.cur_dialog_predicates)
                     self.log("Match scores : " + str(self.cur_match_scores) + "\n")
+                    
+                    self.classifiers_changed = list()
 
                     dialog_state = self.get_dialog_state()
                     dialog_action = self.policy.get_next_action(dialog_state)
@@ -355,3 +371,20 @@ class InquisitiveIspyAgent(UnitTestAgent):
         except:
             # Log the exception
             self.log('\n' + traceback.format_exc() + '\n')
+
+    # determine whether an utterance is basically 'yes' or 'no'
+    def is_yes(self, u):
+        ws = u.split()
+        yw = ['yes', 'sure', 'yeah']
+        for y in yw:
+            if y in ws:
+                return True
+        return False
+
+    def is_no(self, u):
+        ws = u.split()
+        nw = ['no', 'nope', 'nah']
+        for n in nw:
+            if n in ws:
+                return True
+        return False

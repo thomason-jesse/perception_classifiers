@@ -80,7 +80,7 @@ class ClassifierServices:
         upreds = req.new_preds
         upidxs = req.pidxs
         uoidxs = req.oidxs
-        ulabels = req.labels
+        ulabels = req.label
         self.predicates.extend(upreds)
         retrain_pidxs = []
         for idx in range(len(upidxs)):

@@ -83,7 +83,7 @@ class UnitTestAgent:
         try:
             rc = rospy.ServiceProxy('python_run_classifier', PythonRunClassifier)
             res = rc(req)
-            return res.des, res.conf
+            return res.dec, res.conf
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
             return None, None
