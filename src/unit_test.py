@@ -32,7 +32,7 @@ def main():
     while True:
         print "enter command: "
         c = a.io.get()
-	print "got '" + c + "'"
+        print "got '" + c + "'"
         if "help" == c:
             print "face table [tid]"
             print "run classifier [cidx] on [oidx]"
@@ -43,19 +43,19 @@ def main():
             print "exit"
         elif "face table" in c:  # face table [tid]
             try:
-		tidw = c.split()[-1]
-		try:
-                	tid = int(c.split()[-1])
-		except ValueError:
-			if tidw == "one":
-				tid = 1
-			elif tidw == "two":
-				tid = 2
-			elif tidw == "three":
-				tid = 3
-			else:
-				continue
-               	a.face_table(tid, report=True)
+                tidw = c.split()[-1]
+                try:
+                    tid = int(c.split()[-1])
+                except ValueError:
+                    if tidw == "one":
+                        tid = 1
+                    elif tidw == "two":
+                        tid = 2
+                    elif tidw == "three":
+                        tid = 3
+                    else:
+                        continue
+                a.face_table(tid, report=True)
             except IndexError:
                 continue
         elif "run classifier" in c and c.split()[3] == "on":  # run classifier [cidx] on [oidx]
@@ -96,6 +96,8 @@ def main():
             a.io.say("Saw touch at position " + str(pos) + " on object " + str(oidx) + ".")
         elif "stop" == c or "exit" == c:
             break
+        else:
+            a.io.say("Sorry; I didn't catch that.")
 
 
 if __name__ == '__main__':
