@@ -2,11 +2,12 @@
 __author__ = 'jesse'
 
 import os
-import sys
 import time
 import rospy
+from bwi_speech_services.srv import *
 from segbot_arm_perception.srv import *
 from segbot_arm_manipulation.srv import *
+from std_srvs.srv import *
 import roslib
 roslib.load_manifest('sound_play')
 from sound_play.libsoundplay import SoundClient
@@ -46,7 +47,7 @@ class IOStd:
         append_to_file("point:"+str(idx)+"\n", self.trans_fn)
         print "SYSTEM POINTS TO SLOT "+str(idx)
 
-    def face_table(self, tid, _):
+    def face_table(self, tid, _, report=False):
         append_to_file("face:" + str(tid) + "\n", self.trans_fn)
         print "SYSTEM TURNS TO TABLE " + str(tid)
         return True
@@ -144,9 +145,11 @@ class IORobot:
         self.pointCloud2_plane, self.cloud_plane_coef, self.pointCloud2_objects = self.obtain_table_objects()
         print "IORobot: ... done"
 
-    # TODO: replace robot implementation of 'get' with speech listening
+    # Listen for speech from user.
     def get(self):
-        uin = raw_input().lower()
+        self.listening_mode_toggle_client()
+        uin = self.sound_transcript_client()
+        self.listening_mode_toggle_client()
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin
 
@@ -158,7 +161,7 @@ class IORobot:
         return int(idx)
 
     # use built-in ROS sound client to do TTS
-    def say(self, s, log=True, voice='voice_cmu_us_slt_arctic_hts'):
+    def say(self, s, log=True, voice='voice_cmu_us_slt_arctic'):
 
         if self.last_say is None:
             self.last_say = s
@@ -168,7 +171,6 @@ class IORobot:
         if log:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
 
-        self.sound_client.say(str(s), voice=voice)
         self.sound_client.say(str(s), voice=voice)
         rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
         print "SYSTEM: "+s
@@ -226,6 +228,25 @@ class IORobot:
             ordered_cloud_clusters = self.reorder_client("x", True)
 
             return res.cloud_plane, res.cloud_plane_coef, ordered_cloud_clusters
+        except rospy.ServiceException, e:
+            sys.exit("Service call failed: %s " % e)
+
+    # Turn on or off the indicator behavior for listening for speech.
+    def listening_mode_toggle_client(self):
+        rospy.wait_for_service('ispy/listening_mode_toggle')
+        try:
+            listen_toggle = rospy.ServiceProxy('ispy/listening_mode_toggle', Empty)
+            listen_toggle()
+        except rospy.ServiceException, e:
+            sys.exit("Service call failed: %s " % e)
+
+    # Listen for speech, transcribe it, and return it.
+    def sound_transcript_client(self):
+        rospy.wait_for_service('sound_transcript_server')
+        try:
+            transcribe = rospy.ServiceProxy('sound_transcript_server', RequestSoundTranscript)
+            resp = transcribe()
+            return resp.utterance
         except rospy.ServiceException, e:
             sys.exit("Service call failed: %s " % e)
 

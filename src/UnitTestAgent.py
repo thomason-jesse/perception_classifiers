@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 __author__ = 'jesse'
 
+import rospy
 import sys
 from perception_classifiers.srv import *
 
@@ -82,15 +83,14 @@ class UnitTestAgent:
         try:
             rc = rospy.ServiceProxy('python_run_classifier', PythonRunClassifier)
             res = rc(req)
-            return res.des, res.conf
+            return res.dec, res.conf
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
             return None, None
-            
-    # Update classifiers
-    # new_preds - List of predicates for which new classifiers have to 
-    #       be created. This allows the agent and the classifier service 
-    #       to have same order of predicates 
+
+    # new_preds - List of predicates for which new classifiers have to
+    #       be created. This allows the agent and the classifier service
+    #       to have same order of predicates
     # pidxs, oidxs, labels are parallel arrays which give triples of
     # (predicate_idx, obj_idx, {-1, 1}) to be updated
     def update_classifiers(self, new_preds, pidxs, oidxs, labels):
@@ -98,14 +98,11 @@ class UnitTestAgent:
         req.new_preds = new_preds
         req.pidxs = pidxs
         req.oidxs = oidxs
-        req.label = labels
+        req.labels = labels
         try:
-            rc = rospy.ServiceProxy('python_update_classifiers', PythonUpdateClassifiers)
-            res = rc(req)
-            return res.success 
+            uc = rospy.ServiceProxy('python_update_classifiers', PythonUpdateClassifiers)
+            res = uc(req)
+            return res.success
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
             return False
-            
-            
-    
