@@ -2,3 +2,8 @@
 -add classifier runs for object to unit test, e.g. "run classifiers on position [X]" to get all positive results for that object
 	-maybe add re-runs too "add object [X] to classifier [Y] as [pos/neg]" to make sure retraining works
 -get speech node to not crash every time it hasn't been in use for a few minutes
+
+-ispy agent
+	-add command 'repeat' that executes agent.io.say(agent.io.last_say) and sets last_say back
+	-add cycle when user describes object for robot to repeat back what was understood and get a confirmation
+	-add commands after asking user to point out an object with a property to turn left/right and turn to particular table numbers (let's label them w pieces of paper in experiment)

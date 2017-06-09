@@ -64,15 +64,19 @@ class ClassifierServices:
     def run_classifier(self, req):
         pidx = req.pidx
         oidx = req.oidx
-        print "running classifier " + str(pidx) + " on object " + str(oidx)
-        ds = []
-        ks = []
-        for b, m in self.contexts:
-            x, y, z = get_classifier_results(self.classifiers[pidx][b][m], b, m,
-                                             [(oidx, None)], self.features, None)
-            ds.append(np.mean(z))
-            ks.append(self.kappas[pidx][b][m])
-        dec = sum([ds[idx] * ks[idx] for idx in range(len(self.contexts))])
+        if self.classifiers[pidx] is not None:
+            print "running classifier '" + self.predicates[pidx] + "' on object " + str(oidx)
+            ds = []
+            ks = []
+            for b, m in self.contexts:
+                x, y, z = get_classifier_results(self.classifiers[pidx][b][m], b, m,
+                                                 [(oidx, 0.5)], self.features, None)
+                ds.append(np.mean(z))
+                ks.append(self.kappas[pidx][b][m])
+            dec = sum([ds[idx] * ks[idx] for idx in range(len(self.contexts))])
+        else:
+            print "classifier '" + self.predicates[pidx] + "' is untrained"
+            dec = 0
         res = PythonRunClassifierResponse()
         res.dec = True if dec > 0 else False
         res.conf = abs(dec) / float(len(self.contexts))
@@ -125,6 +129,7 @@ class ClassifierServices:
 
     # Train all classifiers given boilerplate info and labels.
     def train_classifiers(self, pidxs):
+        print "training classifiers " + ','.join([self.predicates[pidx] for pidx in pidxs])
         for pidx in pidxs:
             train_pairs = self.get_pairs_from_labels(pidx)
             if -1 in [l for _, l in train_pairs] and 1 in [l for _, l in train_pairs]:
