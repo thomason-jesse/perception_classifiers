@@ -52,14 +52,19 @@ class UnitTestAgent:
     # oidx - the object index to be pointed to.
     # return - True if the object was found on the table, False otherwise.
     def point_to_object(self, oidx):
-        if oidx in self.table_oidxs[self.tid - 1]:
+        obj_found = True
+        if oidx not in self.table_oidxs[self.tid - 1]:
+            obj_found = False
+            for tidx in range(0, len(self.table_oidxs)):
+                if oidx in self.table_oidxs[tidx]:
+                    self.face_table(tidx + 1)
+                    obj_found = True
+        if obj_found:
             pos = self.table_oidxs[self.tid - 1].index(oidx)
             self.retract_arm()
             if self.arm_pos != pos:
                 self.io.point(pos)
-            return True
-        else:
-            return False
+        return obj_found
 
     # The robot will watch for a touch on top of some object, returning the position and object id when detected.
     # returns - a tuple (pos, oidx) of the position and object id of the detected touch.
