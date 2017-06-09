@@ -17,7 +17,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
     #       it can call. This gives the initial list. This has to match 
     #       the list in python classifier services
     def __init__(self, io, table_oidxs, stopwords_fn, policy, log_fn=None, initial_predicates=None):
-        self.print_debug_messages = True 
+        self.debug_print_level = 2 # Print messages with debug_level <= this
         tid = 1
         UnitTestAgent.__init__(self, io, 1, table_oidxs)
         
@@ -39,9 +39,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.unknown_predicates = list()
         if initial_predicates is not None:
             self.known_predicates = initial_predicates
-        self.debug_print('self.known_predicates = ' + str(self.known_predicates))
-        self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates))
-        x = raw_input()
+        self.debug_print('self.known_predicates = ' + str(self.known_predicates), 1)
+        self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates), 1)
         
         # Caching useful classifier info    
         self.classifiers_changed = list() 
@@ -60,13 +59,14 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.update_min_confidence_objects()
         
 
-    def debug_print(self, message):
-        if self.print_debug_messages:
+    # A util to control how much debug stuff is printed
+    def debug_print(self, message, debug_level=2):
+        if debug_level <= self.debug_print_level:
             print 'PomdpIspyAgent:', message
 
     
     def log(self, log_str):
-        self.debug_print(log_str.strip())
+        self.debug_print(log_str.strip(), 5)
         if self.log_fn is not None:
             f = open(self.log_fn, 'a')
             f.write(log_str)
@@ -80,6 +80,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         dialog_state['unknown_predicates'] = self.unknown_predicates
         dialog_state['cur_dialog_predicates'] = self.cur_dialog_predicates
         dialog_state['min_confidence_objects'] = self.min_confidence_objects
+        self.debug_print('dialog_state = ' + str(dialog_state), 2)
         return dialog_state
 
 
@@ -92,9 +93,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
         guess_idx = int(sorted_match_scores[0][0]) 
 
         # Point to best guess
-        self.debug_print('Trying to point to ' + str(guess_idx))
+        self.debug_print('Trying to point to ' + str(guess_idx), 1)
         point_success = self.point_to_object(guess_idx)
-        self.debug_print('point_success = ' + str(point_success))
+        self.debug_print('point_success = ' + str(point_success), 1)
 
         # Ask if the guess was right
         got_confirmation = False
@@ -117,7 +118,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             # Give a label of +1 to all predicates in current dialog with 
             # the object guess_idx
             new_preds = [predicate for predicate in self.cur_dialog_predicates if predicate not in self.known_predicates]
-            self.debug_print('new_preds = ' + str(new_preds))
+            self.debug_print('new_preds = ' + str(new_preds), 2)
             self.known_predicates.extend(new_preds) # Needed here to get correct indices of new predicates
             pidxs = [self.known_predicates.index(predicate) for predicate in self.cur_dialog_predicates]
             oidxs = [guess_idx] * len(pidxs)
@@ -133,23 +134,23 @@ class InquisitiveIspyAgent(UnitTestAgent):
                     self.known_predicates.remove(predicate)
             self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
             
-            self.debug_print('self.known_predicates = ' + str(self.known_predicates))
-            self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates))
-            x = raw_input()
+            self.debug_print('self.known_predicates = ' + str(self.known_predicates), 2)
+            self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates), 2)
 
 
     # Identify the object and predicate for which a label should be obtained    
     def get_label_question_details(self):
-        predicates = self.unknown_predicates + [predicate for predicate in self.min_confidence_objects.keys()]
+        # TODO: Once the classifiers stop returning None, you shouldn't need the None check
+        predicates = self.unknown_predicates + [predicate for predicate in self.min_confidence_objects.keys() if self.min_confidence_objects[predicate][1] is not None]
         # Sample a predicate with probability proportional to 1 - confidence in lowest confidence object
-        prob_numerators = [1.0] * len(self.unknown_predicates) + [(1.0 - self.min_confidence_objects[predicate][1]) for predicate in self.min_confidence_objects.keys()]
+        prob_numerators = [1.0] * len(self.unknown_predicates) + [(1.0 - self.min_confidence_objects[predicate][1]) for predicate in self.min_confidence_objects.keys()  if self.min_confidence_objects[predicate][1] is not None]
         probs = [(v / sum(prob_numerators)) for v in prob_numerators]
         predicate = np.random.choice(predicates, p=probs)
         
         if predicate in self.unknown_predicates:
             candidate_object = np.random.choice(self.objects_for_questions)
         else:
-            candidate_object = self.min_confidence_objects[predicate]
+            candidate_object = self.min_confidence_objects[predicate][0]
         
         return predicate, candidate_object
 
@@ -161,11 +162,10 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.point_to_object(candidate_object)
                     
         question_str = 'Would you use the word ' + predicate + ' to describe this object?'
-        self.io.say(question_str)
         
         # Get response
         got_answer = False
-        label_value = -1
+        label_value = 0
         while not got_answer:
             got_answer = True
             self.io.say(question_str)
@@ -188,6 +188,10 @@ class InquisitiveIspyAgent(UnitTestAgent):
         pidxs = [self.known_predicates.index(predicate)]
         oidxs = [candidate_object]
         labels = [label_value]
+        self.debug_print('Updating in ask_predicate_label new_preds = ' + str(new_preds), 1)
+        self.debug_print('Updating in ask_predicate_label new_preds = ' + str(pidxs), 1)
+        self.debug_print('Updating in ask_predicate_label new_preds = ' + str(oidxs), 1)
+        self.debug_print('Updating in ask_predicate_label new_preds = ' + str(labels), 1)
         success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
         if success:
             if predicate in self.unknown_predicates:
@@ -268,7 +272,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             for predicate in predicates:
                 if predicate in self.known_predicates:
                     if predicate not in results or predicate in self.classifiers_changed:
-                        self.debug_print('In get_classifier_results fetching result for predicate ' + predicate + ' for object ' + str(obj_idx))
+                        self.debug_print('In get_classifier_results fetching result for predicate ' + predicate + ' for object ' + str(obj_idx), 3)
                         classifier_idx = self.known_predicates.index(predicate)
                         [result, confidence] = self.run_classifier_on_object(classifier_idx, obj_idx)
                 else:
@@ -316,7 +320,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         for predicate in self.known_predicates:
             if predicate not in self.min_confidence_objects or predicate in self.classifiers_changed:
                 for obj_idx in self.objects_for_questions:
-                    self.debug_print('In update_min_confidence_objects fetching result of predicate ' + predicate + ' for object ' + str(obj_idx))
+                    self.debug_print('In update_min_confidence_objects fetching result of predicate ' + predicate + ' for object ' + str(obj_idx), 3)
                     classifier_idx = self.known_predicates.index(predicate)
                     [result, confidence] = self.run_classifier_on_object(classifier_idx, obj_idx)
                     if predicate not in self.min_confidence_objects \
@@ -325,7 +329,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
 
     
     def run_dialog(self):
-        self.debug_print('In run_dialog')
+        self.debug_print('In run_dialog', 2)
         
         self.current_classifier_results = None
         self.classifiers_changed = list()
@@ -346,7 +350,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         try:
             while not object_guessed:
                 self.log('\n\nAction : ' + dialog_action)
-                self.debug_print('self.classifiers_changed = ' + str(self.classifiers_changed))
+                self.debug_print('Action : ' + dialog_action)
+                self.debug_print('self.classifiers_changed = ' + str(self.classifiers_changed), 1)
                 self.num_dialog_turns += 1
                 
                 if dialog_action == 'make_guess':
@@ -359,15 +364,17 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 elif dialog_action == 'ask_positive_example':
                     self.ask_positive_example()
                 
-                self.debug_print('self.classifiers_changed = ' + str(self.classifiers_changed))
+                self.debug_print('Dialog action executed', 1)
+                self.debug_print('object_guessed = ' + str(object_guessed), 1)
+                self.debug_print('self.classifiers_changed = ' + str(self.classifiers_changed), 1)
                 
                 # Update cached data for questions
                 self.update_min_confidence_objects()
-                    
+                
                 if not object_guessed:
                     # Recompute match scores because relevant classifiers may
                     # have changed
-                    self.cur_match_scores = self.get_match_scores(self.cur_dialog_predicates)
+                    self.cur_match_scores = self.get_match_scores()
                     self.log("Match scores : " + str(self.cur_match_scores) + "\n")
                     
                     self.classifiers_changed = list()
@@ -379,6 +386,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             raise
         except:
             # Log the exception
+            self.debug_print('\n' + traceback.format_exc() + '\n', 0)
             self.log('\n' + traceback.format_exc() + '\n')
 
     # determine whether an utterance is basically 'yes' or 'no'
