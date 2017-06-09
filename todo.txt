@@ -1,1 +1,4 @@
--write launchfile that opens classifier services, soundplay, and other needed pieces
+-will have to write translation script to pre-process utterances from google speech since so many words get garbled. this might be easiest to do as a pre-pilot phase
+-add classifier runs for object to unit test, e.g. "run classifiers on position [X]" to get all positive results for that object
+	-maybe add re-runs too "add object [X] to classifier [Y] as [pos/neg]" to make sure retraining works
+-get speech node to not crash every time it hasn't been in use for a few minutes

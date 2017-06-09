@@ -33,6 +33,8 @@ class ClassifierServices:
         print "reading in source information..."
         with open(os.path.join(self.source_dir, "predicates.pickle"), 'rb') as f:
             self.predicates = pickle.load(f)
+        self.classifiers = [None for _ in range(len(self.predicates))]  # pidx, b, m
+        self.kappas = [0 for _ in range(len(self.predicates))]
         with open(os.path.join(self.source_dir, "oidxs.pickle"), 'rb') as f:
             self.oidxs = pickle.load(f)
         with open(os.path.join(self.source_dir, "labels.pickle"), 'rb') as f:
@@ -62,6 +64,7 @@ class ClassifierServices:
     def run_classifier(self, req):
         pidx = req.pidx
         oidx = req.oidx
+        print "running classifier " + str(pidx) + " on object " + str(oidx)
         ds = []
         ks = []
         for b, m in self.contexts:
@@ -73,6 +76,7 @@ class ClassifierServices:
         res = PythonRunClassifierResponse()
         res.dec = True if dec > 0 else False
         res.conf = abs(dec) / float(len(self.contexts))
+        print "... returning dec " + str(res.dec) + " with conf " + str(res.conf)
         return res
 
     # Updates the in-memory classifiers given new labels in the request.
@@ -81,6 +85,8 @@ class ClassifierServices:
         upidxs = req.pidxs
         uoidxs = req.oidxs
         ulabels = req.label
+        print ("updating classifiers with new preds " + str(upreds) + " and triples " +
+               str([(upidxs[idx], uoidxs[idx], ulabels[idx]) for idx in range(len(upidxs))]))
         self.predicates.extend(upreds)
         retrain_pidxs = []
         for idx in range(len(upidxs)):
@@ -91,10 +97,12 @@ class ClassifierServices:
         self.train_classifiers(retrain_pidxs)
         res = PythonUpdateClassifiersResponse()
         res.success = True
+        print "... done; success = " + str(res.success)
         return res
 
     # Commits the trained classifiers and current labels to the classifier and source directories, respectively.
     def commit_changes(self, req):
+        print "committing new predicates, labels, and classifiers to disk"
         _ = req
         with open(os.path.join(self.source_dir, "predicates.pickle"), 'wb') as f:
             pickle.dump(self.predicates, f)
@@ -104,6 +112,7 @@ class ClassifierServices:
             pickle.dump([self.classifiers, self.kappas], f)
         res = PythonCommitChangesResponse()
         res.success = True
+        print "... done; success = " + str(res.success)
         return res
 
     # Get oidx, l from pidx, oidx, l labels.
@@ -116,8 +125,6 @@ class ClassifierServices:
 
     # Train all classifiers given boilerplate info and labels.
     def train_classifiers(self, pidxs):
-        self.classifiers = []  # pidx, b, m
-        self.kappas = []
         for pidx in pidxs:
             train_pairs = self.get_pairs_from_labels(pidx)
             if -1 in [l for _, l in train_pairs] and 1 in [l for _, l in train_pairs]:
@@ -133,12 +140,12 @@ class ClassifierServices:
                 s = sum([pk[b][m] for b, m in self.contexts])
                 for b, m in self.contexts:
                     pk[b][m] = pk[b][m] / float(s) if s > 0 else 1.0 / len(self.contexts)
-                self.classifiers.append(pc)
-                self.kappas.append(pk)
+                self.classifiers[pidx] = pc
+                self.kappas[pidx] = pk
             else:
                 print "... '" + self.predicates[pidx] + "' lacks a +/- pair to fit"
-                self.classifiers.append(None)
-                self.kappas.append(0)
+                self.classifiers[pidx] = None
+                self.kappas[pidx] = 0
 
 
 # Given an SVM c and its training data, calculate the agreement with gold labels according to kappa

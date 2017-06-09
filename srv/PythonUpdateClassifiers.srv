@@ -1,6 +1,6 @@
 string[] new_preds
 int32[] pidxs
 int32[] oidxs
-bool[] label
+bool[] labels
 ---
 bool success

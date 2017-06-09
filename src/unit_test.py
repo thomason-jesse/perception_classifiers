@@ -18,55 +18,86 @@ def main():
     node_name = 'obj_id_unit_test'
     rospy.init_node(node_name)
 
-    print "instantiating UnitTestAgent"
-    a = UnitTestAgent.UnitTestAgent(None, 2, table_oidxs)
-
     io = None
     if io_type == "std":
-        print "... with input from keyboard and output to screen"
+        print "input from keyboard and output to screen"
         io = IOStd(logfn)
     elif io_type == "robot":
-        print "... with input and output through embodied robot"
+        print "input and output through embodied robot"
         io = IORobot(None, logfn, table_oidxs[1])  # start facing center table.
-    a.io = io
+    print "instantiating UnitTestAgent"
+    a = UnitTestAgent.UnitTestAgent(io, 2, table_oidxs)
 
     # Accept commands until told to stop.
     while True:
         print "enter command: "
         c = a.io.get()
-        if "face table" in c:  # face table [tid]
+        print "got '" + c + "'"
+        if "help" == c:
+            print "face table [tid]"
+            print "run classifier [cidx] on [oidx]"
+            print "run classifier [cidx] at [pos]"
+            print "point to position [pos]"
+            print "point to object [oidx]"
+            print "detect touch"
+            print "exit"
+        elif "face table" in c:  # face table [tid]
             try:
-                tid = int(c.split()[-1])
+                tidw = c.split()[-1]
+                try:
+                    tid = int(c.split()[-1])
+                except ValueError:
+                    if tidw == "one":
+                        tid = 1
+                    elif tidw == "two":
+                        tid = 2
+                    elif tidw == "three":
+                        tid = 3
+                    else:
+                        continue
                 a.face_table(tid, report=True)
-            except (IndexError, ValueError):
+            except IndexError:
                 continue
         elif "run classifier" in c and c.split()[3] == "on":  # run classifier [cidx] on [oidx]
             try:
                 cp = c.split()
                 dec, conf = a.run_classifier_on_object(int(cp[-3]), int(cp[-1]))
-                a.io.say("Decision " + str(dec) + " with  confidence " + str(round(conf, 2)) + ".")
+                a.io.say("Decision " + str(dec) + " with confidence " + str(round(conf, 2)) + ".")
             except (IndexError, ValueError):
                 continue
         elif "run classifier" in c and c.split()[3] == "at":  # run classifier [cidx] at [pos]
             try:
                 cp = c.split()
                 dec, conf = a.run_classifier_on_object_at_position(int(cp[-3]), int(cp[-1]))
-                a.io.say("Decision " + str(dec) + " with  confidence " + str(round(conf, 2)) + ".")
+                a.io.say("Decision " + str(dec) + " with confidence " + str(round(conf, 2)) + ".")
             except (IndexError, ValueError):
                 continue
-        elif "point to " in c:  # point to [pos]
+        elif "point to position" in c:  # point to [pos]
             try:
                 pos = int(c.split()[-1])
                 a.io.say("Pointing to object at position " + str(pos) + ".")
-                a.io.point(pos)
+                a.point_to_position(pos)
+            except (IndexError, ValueError):
+                continue
+        elif "point to object " in c:  # point to object [oidx]
+            try:
+                oidx = int(c.split()[-1])
+                a.io.say("Pointing to object " + str(oidx) + ".")
+                s = a.point_to_object(oidx)
+                if s:
+                    a.io.say("Found and pointed.")
+                else:
+                    a.io.say("Couldn't find object.")
             except (IndexError, ValueError):
                 continue
         elif "detect touch" == c:  # detect touch and return pos
             a.io.say("Looking for a detected touch...")
-            pos, oidx = a.io.get_guess()
+            pos, oidx = a.detect_touch()
             a.io.say("Saw touch at position " + str(pos) + " on object " + str(oidx) + ".")
         elif "stop" == c or "exit" == c:
             break
+        else:
+            a.io.say("Sorry; I didn't catch that.")
 
 
 if __name__ == '__main__':
