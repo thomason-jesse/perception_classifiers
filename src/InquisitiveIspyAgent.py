@@ -7,6 +7,7 @@ import rospy
 import operator
 import numpy as np
 import traceback
+import copy
 from UnitTestAgent import UnitTestAgent
 from perception_classifiers.srv import *
 
@@ -16,6 +17,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
     #       it can call. This gives the initial list. This has to match 
     #       the list in python classifier services
     def __init__(self, io, table_oidxs, stopwords_fn, policy, log_fn=None, initial_predicates=None):
+        self.print_debug_messages = True 
         tid = 1
         UnitTestAgent.__init__(self, io, 1, table_oidxs)
         
@@ -37,14 +39,15 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.unknown_predicates = list()
         if initial_predicates is not None:
             self.known_predicates = initial_predicates
+        self.debug_print('self.known_predicates = ' + str(self.known_predicates))
+        self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates))
+        x = raw_input()
         
         # Caching useful classifier info    
         self.classifiers_changed = list() 
         self.min_confidence_objects = dict()
             # Key: predicate; Value: (obj_idx, confidence)
         self.current_classifier_results = None
-        
-        self.print_debug_messages = True 
         
         self.objects_for_guessing = self.table_oidxs[1]
         self.objects_for_questions = self.table_oidxs[0] + self.table_oidxs[2]
@@ -114,19 +117,25 @@ class InquisitiveIspyAgent(UnitTestAgent):
             # Give a label of +1 to all predicates in current dialog with 
             # the object guess_idx
             new_preds = [predicate for predicate in self.cur_dialog_predicates if predicate not in self.known_predicates]
+            self.debug_print('new_preds = ' + str(new_preds))
             self.known_predicates.extend(new_preds) # Needed here to get correct indices of new predicates
             pidxs = [self.known_predicates.index(predicate) for predicate in self.cur_dialog_predicates]
             oidxs = [guess_idx] * len(pidxs)
-            labels = [1] * len(pidxs)
+            labels = [True] * len(pidxs)
             success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
             if success:
                 for predicate in new_preds:
-                    self.unknown_predicates.remove(predicate)
+                    if predicate in self.unknown_predicates:
+                        self.unknown_predicates.remove(predicate)
             else:
                 # Update didn't happen so undo the extension
                 for predicate in new_preds:
                     self.known_predicates.remove(predicate)
             self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
+            
+            self.debug_print('self.known_predicates = ' + str(self.known_predicates))
+            self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates))
+            x = raw_input()
 
 
     # Identify the object and predicate for which a label should be obtained    
@@ -243,7 +252,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         response_parts = user_response.split()
         predicates = [w for w in response_parts if w not in self.stopwords]
         unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
-        self.unknown_predicates.extend(unknown_predicates)
+        #self.unknown_predicates.extend(unknown_predicates)
         return predicates
     
     
