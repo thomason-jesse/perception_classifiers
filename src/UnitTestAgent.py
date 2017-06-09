@@ -23,6 +23,12 @@ class UnitTestAgent:
         self.io.point(-1)
         self.arm_pos = -1
 
+    # The robot repeats the last thing it said.
+    def repeat_self(self):
+        ls = self.io.last_say
+        self.io.say(ls)
+        self.io.last_say = ls  # preserve for additional repetitions
+
     # The robot turns and faces table id tid, updating its io to reflect the new objects on the faced table.
     # tid - the destination table id
     # report - if True, the robot will speak aloud to explain its actions and delays during turning.
