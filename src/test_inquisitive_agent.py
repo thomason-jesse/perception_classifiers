@@ -65,7 +65,7 @@ if __name__ == '__main__':
                         help="One of 'guess', 'yes_no', 'example'")
     parser.add_argument('--policy_max_questions', type=int, default=5,
                         help="Max # questions in dialog")
-    parser.add_argument('--policy_min_confidence_threshold', type=float, default=0.0001,
+    parser.add_argument('--policy_min_confidence_threshold', type=float, default=0.1,
                         help="Min avg confidence threshold across candidate yes-no questions to allow asking")
     parser.add_argument('--policy_min_num_unknown_predicates', type=int, default=3,
                         help="Min # unknown predicates required before asking for example")                                                                

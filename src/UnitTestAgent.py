@@ -104,7 +104,7 @@ class UnitTestAgent:
         req.new_preds = new_preds
         req.pidxs = pidxs
         req.oidxs = oidxs
-        req.labels = labels
+        req.label = labels
         try:
             uc = rospy.ServiceProxy('python_update_classifiers', PythonUpdateClassifiers)
             res = uc(req)

@@ -20,3 +20,22 @@ $ rosrun perception_classifiers ispy.py [object_IDs] [num_rounds] \
   src/perception_classifiers/src/stopwords_en.txt [user_id/None] robot
 
 ---
+
+Testing the dialog agent -
+
+roscore
+
+rosrun perception_classifiers python_classifier_services.py \
+    --source_dir=/u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/source_dir \
+    --classifier_dir=/u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/classifier_dir
+
+rosrun perception_classifiers test_inquisitive_agent.py \
+    --table_1_oidxs 0,1,2,3 \
+    --table_2_oidxs 4,5,6,7 \
+    --table_3_oidxs 8,9,10,11 \
+    --io_type std \
+    --logfn /u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/log/trial.txt \
+    --stopwords_fn /u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/src/stopwords_en.txt \
+    --initial_predicates_fn /u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/source_dir/predicates.pickle \
+    --policy_type example
+
