@@ -8,6 +8,7 @@ from Policy import Policy
 from InquisitiveIspyAgent import InquisitiveIspyAgent
 from agent_io import *
 
+
 def main(args):
     table_oidxs = [[int(oidx) for oidx in tl.split(',')]
                    for tl in [args.table_1_oidxs, args.table_2_oidxs, args.table_3_oidxs]]
@@ -33,7 +34,7 @@ def main(args):
         io = IORobot(None, args.logfn, table_oidxs[1])  # start facing center table.
 
     print 'Creating agent'
-    agent = InquisitiveIspyAgent(io, table_oidxs, args.stopwords_fn, policy, \
+    agent = InquisitiveIspyAgent(io, table_oidxs, args.stopwords_fn, policy,
                                  args.logfn, initial_predicates)
     
     while True:
@@ -69,6 +70,6 @@ if __name__ == '__main__':
                         help="Min avg confidence threshold across candidate yes-no questions to allow asking")
     parser.add_argument('--policy_min_num_unknown_predicates', type=int, default=3,
                         help="Min # unknown predicates required before asking for example")                                                                
-    args = parser.parse_args()
+    cmd_args = parser.parse_args()
     
-    main(args)
+    main(cmd_args)

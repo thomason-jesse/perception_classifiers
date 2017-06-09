@@ -13,8 +13,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
     #       it can call. This gives the initial list. This has to match 
     #       the list in python classifier services
     def __init__(self, io, table_oidxs, stopwords_fn, policy, log_fn=None, initial_predicates=None):
-        self.debug_print_level = 2 # Print messages with debug_level <= this
-        tid = 1
+        self.debug_print_level = 2  # Print messages with debug_level <= this
         UnitTestAgent.__init__(self, io, 1, table_oidxs)
         
         self.io = io
@@ -319,6 +318,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 # confidence that this predicate holds for this object
                 [result, confidence] = classifier_results[obj_idx][predicate]
                 predicate_scores.append(result * confidence)
+
             # Sum the predicate scores across predicates
             match_scores[obj_idx] = sum(predicate_scores)
             sum_match_scores += match_scores[obj_idx]
@@ -327,7 +327,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         if np.isclose([sum_match_scores], [0.0]):
             for obj_idx in self.objects_for_guessing:
                 match_scores[obj_idx] = 1.0 / len(self.objects_for_guessing)
-        else :
+        else:
             for obj_idx in self.objects_for_guessing:
                 match_scores[obj_idx] /= sum_match_scores
 
@@ -337,12 +337,13 @@ class InquisitiveIspyAgent(UnitTestAgent):
         for predicate in self.known_predicates:
             if predicate not in self.min_confidence_objects or predicate in self.classifiers_changed:
                 for obj_idx in self.objects_for_questions:
-                    self.debug_print('In update_min_confidence_objects fetching result of predicate ' + predicate + ' for object ' + str(obj_idx), 3)
+                    self.debug_print('In update_min_confidence_objects fetching result of predicate '
+                                     + predicate + ' for object ' + str(obj_idx), 3)
                     classifier_idx = self.known_predicates.index(predicate)
-                    [result, confidence] = self.run_classifier_on_object(classifier_idx, obj_idx)
-                    if predicate not in self.min_confidence_objects \
-                        or confidence < self.min_confidence_objects[predicate][1]:
-                            self.min_confidence_objects[predicate] = (obj_idx, confidence)
+                    _, confidence = self.run_classifier_on_object(classifier_idx, obj_idx)
+                    if (predicate not in self.min_confidence_objects
+                            or confidence < self.min_confidence_objects[predicate][1]):
+                        self.min_confidence_objects[predicate] = (obj_idx, confidence)
 
     def run_dialog(self):
         self.debug_print('In run_dialog', 2)
