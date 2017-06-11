@@ -118,3 +118,14 @@ class UnitTestAgent:
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
             return False
+            
+    # Save modified classifiers to disk
+    def commit_classifier_changes(self):
+        req = PythonCommitChangesRequest()
+        try:
+            uc = rospy.ServiceProxy('python_update_classifiers', PythonCommitChanges)
+            res = uc(req)
+            return res.success
+        except rospy.ServiceException, e:
+            print "Service call failed: %s" % e
+            return False

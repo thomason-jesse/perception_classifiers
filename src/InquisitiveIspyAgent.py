@@ -37,21 +37,24 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.debug_print('self.known_predicates = ' + str(self.known_predicates), 1)
         self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates), 1)
         
-        # Caching useful classifier info    
-        self.classifiers_changed = list() 
-        self.min_confidence_objects = dict()
-        # Key: predicate; Value: (obj_idx, confidence)
-        self.current_classifier_results = None  # key - predicate, key - oidx, value [result, confidence]
-        
         self.objects_for_guessing = self.table_oidxs[1]
         self.objects_for_questions = self.table_oidxs[0] + self.table_oidxs[2]
+        
+        # Caching useful classifier info    
+        self.classifiers_changed = list() 
+        
+        # key - predicate, key - oidx, value [result, confidence]
+        self.current_classifier_results = None
+        
+        # Key: predicate; Value: (obj_idx, confidence)
+        self.min_confidence_objects = dict()
+        self.update_min_confidence_objects()
         
         # Some additional state info
         self.num_dialog_turns = 0
         self.cur_dialog_predicates = None
         self.cur_match_scores = None
         
-        self.update_min_confidence_objects()
 
     # A util to control how much debug stuff is printed
     def debug_print(self, message, debug_level=2):
@@ -185,9 +188,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
         oidxs = [candidate_object]
         labels = [label_value]
         self.debug_print('Updating in ask_predicate_label new_preds = ' + str(new_preds), 1)
-        self.debug_print('Updating in ask_predicate_label new_preds = ' + str(pidxs), 1)
-        self.debug_print('Updating in ask_predicate_label new_preds = ' + str(oidxs), 1)
-        self.debug_print('Updating in ask_predicate_label new_preds = ' + str(labels), 1)
+        self.debug_print('Updating in ask_predicate_label pidxs = ' + str(pidxs), 1)
+        self.debug_print('Updating in ask_predicate_label oidxs = ' + str(oidxs), 1)
+        self.debug_print('Updating in ask_predicate_label labels = ' + str(labels), 1)
         success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
         if success:
             if predicate in self.unknown_predicates:
@@ -205,16 +208,21 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.io.say(question_str)
 
         # Loop while user reorients the robot.
+        self.debug_print('Waiting for user direction to table for touch detection', 1)
         ready_to_detect = False
         while not ready_to_detect:
             cmd = self.io.get()
+            self.debug_print('cmd = ' + str(cmd), 1)
             tid = self.table_turn_command(cmd)
+            self.debug_print('Identified target table ID ' + str(tid), 1)
             if tid is not None:
                 self.face_table(tid, report=True)
+                self.debug_print('Faced table ' + str(tid), 1)
             elif self.is_detect(cmd):
                 ready_to_detect = True
         
         # Detect touch
+        self.debug_print('Waiting to detect touch', 1)
         touch_str = 'I am waiting to detect the object you touch.'
         self.io.say(touch_str)
         pos_detected, obj_idx_detected = self.detect_touch()
@@ -274,7 +282,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         response_parts = user_response.split()
         predicates = [w for w in response_parts if w not in self.stopwords]
         unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
-        #self.unknown_predicates.extend(unknown_predicates)
+        self.unknown_predicates.extend(unknown_predicates)
         return predicates
     
     # Given predicates and object idxs, return a map of results
@@ -307,6 +315,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
     def get_match_scores(self):
         predicates = self.cur_dialog_predicates
         classifier_results = self.get_classifier_results(predicates, self.objects_for_guessing)
+        self.debug_print('classifier_results = ' + str(classifier_results), 3)
 
         match_scores = dict()
         sum_match_scores = 0.0
@@ -405,6 +414,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
             # Log the exception
             self.debug_print('\n' + traceback.format_exc() + '\n', 0)
             self.log('\n' + traceback.format_exc() + '\n')
+            
+            # TODO: Might want to block exceptions during actual experiment
+            raise
 
     # process an utterance and return the table id to turn to if it seems to be a turning command
     def table_turn_command(self, u):
@@ -422,6 +434,16 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 tid = 2
             elif 'three' in u or '3' in u:
                 tid = 3
+        
+        self.debug_print('tid before mod = ' + str(tid), 2)
+                
+        if tid is not None and tid <= 0:
+            tid = 3
+        elif tid is not None and tid >= 4:
+            tid = 1
+        
+        self.debug_print('tid after mod = ' + str(tid), 2)
+                
         return tid
 
     # determine whether an utterance is basically 'yes' or 'no'
