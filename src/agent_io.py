@@ -19,7 +19,7 @@ def append_to_file(s, fn):
     f.close()
 
 vowels = ['a', 'e', 'i', 'o', 'u']
-secs_per_vowel = 0.3
+secs_per_vowel = 0.4
 speech_sec_buffer = 1
 
 
@@ -161,7 +161,7 @@ class IORobot:
         return int(idx)
 
     # use built-in ROS sound client to do TTS
-    def say(self, s, log=True, voice='voice_cmu_us_slt_arctic'):
+    def say(self, s, log=True, voice='voice_cmu_us_slt_arctic_clunits'):
 
         if self.last_say is None:
             self.last_say = s
@@ -172,8 +172,9 @@ class IORobot:
             append_to_file("say:"+str(s)+"\n", self.trans_fn)
 
         self.sound_client.say(str(s), voice=voice)
-        rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
         print "SYSTEM: "+s
+        rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
+
 
     # point using the robot arm
     def point(self, idx, log=True):

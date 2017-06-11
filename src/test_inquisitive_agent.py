@@ -40,7 +40,8 @@ def main(args):
     while True:
         agent.run_dialog()
         
-        agent.io.say('Do you want to try another dialog? (yes/no)')
+        agent.retract_arm()
+        agent.io.say('Do you want to try another dialog?')
         response = agent.io.get()
         if response.lower() == 'no':
             break

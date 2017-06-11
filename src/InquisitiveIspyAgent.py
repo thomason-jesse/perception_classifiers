@@ -14,7 +14,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
     #       the list in python classifier services
     def __init__(self, io, table_oidxs, stopwords_fn, policy, log_fn=None, initial_predicates=None):
         self.debug_print_level = 2  # Print messages with debug_level <= this
-        UnitTestAgent.__init__(self, io, 1, table_oidxs)
+        UnitTestAgent.__init__(self, io, 2, table_oidxs)
         
         self.io = io
         self.log_fn = log_fn
@@ -316,7 +316,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 # Compute per-predicate score as just result * confidence
                 # Since result is 0-1, this is basically equal to the 
                 # confidence that this predicate holds for this object
-                [result, confidence] = classifier_results[obj_idx][predicate]
+                [result, confidence] = classifier_results[predicate][obj_idx]
                 predicate_scores.append(result * confidence)
 
             # Sum the predicate scores across predicates

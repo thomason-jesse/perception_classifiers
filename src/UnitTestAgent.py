@@ -63,7 +63,7 @@ class UnitTestAgent:
             obj_found = False
             for tidx in range(0, len(self.table_oidxs)):
                 if oidx in self.table_oidxs[tidx]:
-                    self.face_table(tidx + 1)
+                    self.face_table(tidx + 1, report=True)
                     obj_found = True
         if obj_found:
             pos = self.table_oidxs[self.tid - 1].index(oidx)
@@ -110,7 +110,7 @@ class UnitTestAgent:
         req.new_preds = new_preds
         req.pidxs = pidxs
         req.oidxs = oidxs
-        req.label = labels
+        req.labels = labels
         try:
             uc = rospy.ServiceProxy('python_update_classifiers', PythonUpdateClassifiers)
             res = uc(req)

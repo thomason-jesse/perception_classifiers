@@ -88,10 +88,13 @@ class ClassifierServices:
         upreds = req.new_preds
         upidxs = req.pidxs
         uoidxs = req.oidxs
-        ulabels = req.label
+        ulabels = req.labels
         print ("updating classifiers with new preds " + str(upreds) + " and triples " +
                str([(upidxs[idx], uoidxs[idx], ulabels[idx]) for idx in range(len(upidxs))]))
         self.predicates.extend(upreds)
+        for _ in range(len(upreds)):
+            self.classifiers.append(None)
+            self.kappas.append(None)
         retrain_pidxs = []
         for idx in range(len(upidxs)):
             pidx = upidxs[idx]
