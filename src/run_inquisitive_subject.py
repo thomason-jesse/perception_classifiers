@@ -31,7 +31,7 @@ def main(args):
     # Create needed data from args and prepare directory structures.
     table_oidxs = [[int(oidx) for oidx in tl.split(',')]
                    for tl in [args.table_1_oidxs, args.table_2_oidxs, args.table_3_oidxs]]
-    object_dir = os.path.join(args.exp_dir, "objects")
+    feature_dir = os.path.join(args.exp_dir, "objects")
     policy_dir = os.path.join(args.exp_dir, args.policy_type)
     user_dir = os.path.join(policy_dir, str(args.uid))
     if not os.path.isdir(user_dir):
@@ -49,7 +49,9 @@ def main(args):
     os.system(cmd)  # fold + policy preds and init classifiers
 
     # Launch python_classifier_services node with appropriate operating directory.
-    cmd = "rosrun perception_classifiers python_classifier_services.py --source_dir " + source_dir
+    cmd = ("rosrun perception_classifiers python_classifier_services.py +"
+           " --source_dir " + source_dir +
+           " --feature_dir " + feature_dir)
     print "> " + cmd
     os.system(cmd)
 
