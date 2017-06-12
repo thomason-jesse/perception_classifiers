@@ -1,6 +1,9 @@
 -will have to write translation script to pre-process utterances from google speech since so many words get garbled. this might be easiest to do as a pre-pilot phase
 -get speech node to not crash every time it hasn't been in use for a few minutes
 -use expensive mounted microphone instead of little dinky laptop one
+-expose n-best hypothesis list from speech node and run understanding modules on each in order
+-fix launch script arguments for python_perception_classifiers node
+-make UnitTestAgent start up and manage the classifier services node maybe
 
 -object identification experiment
 	-write experiment manager to generate orderings of objects, fold splits, and conditions for each user

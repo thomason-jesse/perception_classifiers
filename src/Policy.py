@@ -32,7 +32,8 @@ class Policy:
             if len(state['unknown_predicates']) > self.min_num_unknown_predicates \
                 and state['num_dialog_turns'] < self.max_questions:
                     return 'ask_positive_example'
-        elif self.policy_type != 'guess':
+                    
+        if self.policy_type != 'guess':
             # TODO: You shouldn't get any None's here. Once that is fixed, change the following line
             confidences = [confidence for (predicate, (obj_idx, confidence)) in state['min_confidence_objects'].items() if confidence is not None]
             self.debug_print('confidences = ' + str(confidences), 2)
