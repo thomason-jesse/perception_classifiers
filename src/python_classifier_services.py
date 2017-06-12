@@ -15,11 +15,11 @@ kernel = 'linear'
 
 class ClassifierServices:
 
-    def __init__(self, source_dir, classifier_dir):
+    def __init__(self, source_dir, feature_dir):
 
         # Service parameters.
         self.source_dir = source_dir  # str
-        self.classifier_dir = classifier_dir  # str
+        self.feature_dir = feature_dir  # str
         self.predicates = None  # list of strs
         self.oidxs = None  # list of ints
         self.labels = None  # list of (pidx, oidx, label) triples for label in {-1, 1}
@@ -33,13 +33,11 @@ class ClassifierServices:
         print "reading in source information..."
         with open(os.path.join(self.source_dir, "predicates.pickle"), 'rb') as f:
             self.predicates = pickle.load(f)
-        self.classifiers = [None for _ in range(len(self.predicates))]  # pidx, b, m
-        self.kappas = [0 for _ in range(len(self.predicates))]
-        with open(os.path.join(self.source_dir, "oidxs.pickle"), 'rb') as f:
-            self.oidxs = pickle.load(f)
         with open(os.path.join(self.source_dir, "labels.pickle"), 'rb') as f:
             self.labels = pickle.load(f)
-        with open(os.path.join(self.source_dir, "features.pickle"), 'rb') as f:
+        with open(os.path.join(self.feature_dir, "oidxs.pickle"), 'rb') as f:
+            self.oidxs = pickle.load(f)
+        with open(os.path.join(self.feature_dir, "features.pickle"), 'rb') as f:
             self.features = pickle.load(f)
         self.behaviors = ["drop", "grasp", "hold", "lift", "look", "lower", "press", "push"]
         self.modalities = ["audio_ispy", "color", "fpfh", "haptic_ispy"]
@@ -50,13 +48,15 @@ class ClassifierServices:
         print "... done"
 
         # Read in cashed classifiers or train fresh ones.
-        classifier_fn = os.path.join(classifier_dir, "classifiers.pickle")
+        classifier_fn = os.path.join(source_dir, "classifiers.pickle")
         if os.path.isfile(classifier_fn):
             print "reading cached classifiers from file..."
             with open(classifier_fn, 'rb') as f:
                 self.classifiers, self.kappas = pickle.load(f)
         else:
             print "training classifiers from source information..."
+            self.classifiers = [None for _ in range(len(self.predicates))]  # pidx, b, m
+            self.kappas = [0 for _ in range(len(self.predicates))]
             self.train_classifiers(range(len(self.predicates)))
         print "... done"
 
@@ -115,7 +115,7 @@ class ClassifierServices:
             pickle.dump(self.predicates, f)
         with open(os.path.join(self.source_dir, "labels.pickle"), 'wb') as f:
             pickle.dump(self.labels, f)
-        with open(os.path.join(self.classifier_dir, "classifiers.pickle"), 'wb') as f:
+        with open(os.path.join(self.source_dir, "classifiers.pickle"), 'wb') as f:
             pickle.dump([self.classifiers, self.kappas], f)
         res = PythonCommitChangesResponse()
         res.success = True
@@ -253,9 +253,9 @@ def main():
 
     # Read in command-line arguments.
     source_dir = FLAGS_source_dir
-    classifier_dir = FLAGS_classifier_dir
+    feature_dir = FLAGS_feature_dir
 
-    cs = ClassifierServices(source_dir, classifier_dir)
+    cs = ClassifierServices(source_dir, feature_dir)
 
     # Initialize node and advertise services.
     rospy.init_node('python_classifier_services')
@@ -268,9 +268,9 @@ def main():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--source_dir', type=str, required=True,
-                        help="directory where object ids, predicates, and labels pickles live")
-    parser.add_argument('--classifier_dir', type=str, required=True,
-                        help="directory in which to stash trained classifiers")
+                        help="directory where predicates, labels, and (possibly) classifier pickles live")
+    parser.add_argument('--feature_dir', type=str, required=True,
+                        help="directory where object ids and feature pickles live")
     args = parser.parse_args()
     for k, v in vars(args).items():
         globals()['FLAGS_%s' % k] = v

@@ -11,11 +11,4 @@
 	  name="sound_transcript_server"
 	  output="screen"
 	/>
-	<node
-	  pkg="perception_classifiers"
-	  type="python_classifier_services.py"
-	  name="python_classifier_services"
-	  args="--source_dir $(arg source_dir) --classifier_dir $(arg classifier_dir)"
-	  output="screen"
-	/>
 </launch>
