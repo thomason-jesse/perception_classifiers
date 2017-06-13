@@ -35,7 +35,7 @@ def main(args):
                    for tl in [args.table_1_oidxs, args.table_2_oidxs, args.table_3_oidxs]]
     feature_dir = os.path.join(args.exp_dir, "objects")
     policy_dir = os.path.join(args.exp_dir, "fold" + str(args.fold), args.policy_type)
-    user_dir = os.path.join(policy_dir, str(args.uid), '_'.join([str(oidx) for oidx in args.table_2_oidxs]))
+    user_dir = os.path.join(policy_dir, str(args.uid), '_'.join([str(oidx) for oidx in table_oidxs[1]]))
     if not os.path.isdir(user_dir):
         cmd = "mkdir -p " + user_dir
         print "> " + cmd
