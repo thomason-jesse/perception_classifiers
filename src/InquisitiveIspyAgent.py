@@ -48,6 +48,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         
         # Key: predicate; Value: (obj_idx, confidence)
         self.min_confidence_objects = dict()
+        self.io.say("I am thinking about the objects around me.")
         self.update_min_confidence_objects()
         
         # Some additional state info

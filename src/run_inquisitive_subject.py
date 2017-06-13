@@ -2,6 +2,7 @@
 __author__ = 'jesse'
 
 import pickle
+import subprocess
 from argparse import ArgumentParser
 from Policy import Policy
 from InquisitiveIspyAgent import InquisitiveIspyAgent
@@ -32,7 +33,7 @@ def main(args):
     table_oidxs = [[int(oidx) for oidx in tl.split(',')]
                    for tl in [args.table_1_oidxs, args.table_2_oidxs, args.table_3_oidxs]]
     feature_dir = os.path.join(args.exp_dir, "objects")
-    policy_dir = os.path.join(args.exp_dir, args.policy_type)
+    policy_dir = os.path.join(args.exp_dir, "fold" + str(args.fold), args.policy_type)
     user_dir = os.path.join(policy_dir, str(args.uid))
     if not os.path.isdir(user_dir):
         cmd = "mkdir " + user_dir
@@ -49,11 +50,11 @@ def main(args):
     os.system(cmd)  # fold + policy preds and init classifiers
 
     # Launch python_classifier_services node with appropriate operating directory.
-    cmd = ("rosrun perception_classifiers python_classifier_services.py +"
+    cmd = ("rosrun perception_classifiers python_classifier_services.py " +
            " --source_dir " + source_dir +
            " --feature_dir " + feature_dir)
     print "> " + cmd
-    os.system(cmd)
+    pc = subprocess.Popen(cmd.split())
 
     print "Initializing run_inquisitive_agent node"
     node_name = 'run_inquisitive_agent'
@@ -77,7 +78,9 @@ def main(args):
     agent.run_dialog()
     print "Concluding..."
     agent.io.say("Thanks for playing.")
-    agent.retract_arm()
+    agent.io.point(-1)
+    agent.commit_classifier_changes()
+    pc.kill()
 
 
 if __name__ == '__main__':
@@ -96,6 +99,8 @@ if __name__ == '__main__':
                         help="Comma-separated ids of objects on robot's right")
     parser.add_argument('--uid', type=int, required=True,
                         help="unique user id number")
+    parser.add_argument('--fold', type=int, required=True,
+                        help="the current fold")
     parser.add_argument('--policy_type', type=str, required=True,
                         help="One of 'guess', 'yes_no', 'example'")
     cmd_args = parser.parse_args()

@@ -89,15 +89,19 @@ class UnitTestAgent:
     # oidx - the object index to run on
     # returns - a tuple (dec, conf) of the decision in {True, False} and ensemble confidence in [0, 1]
     def run_classifier_on_object(self, cidx, oidx):
+        rospy.wait_for_service('python_run_classifier')
         req = PythonRunClassifierRequest()
         req.pidx = cidx
         req.oidx = oidx
+        print ("UnitTestAgent: calling python_run_classifier with " +
+               str(cidx) + ", " + str(oidx))
         try:
             rc = rospy.ServiceProxy('python_run_classifier', PythonRunClassifier)
             res = rc(req)
+            print "UnitTestAgent: ... done"
             return res.dec, res.conf
         except rospy.ServiceException, e:
-            print "Service call failed: %s" % e
+            print "UnitTestAgent: Service call failed: %s" % e
             return None, None
 
     # new_preds - List of predicates for which new classifiers have to
@@ -106,26 +110,33 @@ class UnitTestAgent:
     # pidxs, oidxs, labels are parallel arrays which give triples of
     # (predicate_idx, obj_idx, {-1, 1}) to be updated
     def update_classifiers(self, new_preds, pidxs, oidxs, labels):
+        rospy.wait_for_service('python_update_classifiers')
         req = PythonUpdateClassifiersRequest()
         req.new_preds = new_preds
         req.pidxs = pidxs
         req.oidxs = oidxs
         req.labels = labels
+        print ("UnitTestAgent: calling python_update_classifiers with " +
+               str(new_preds) + ", " + str(pidxs) + ", " + str(oidxs) + ", " + str(labels))
         try:
             uc = rospy.ServiceProxy('python_update_classifiers', PythonUpdateClassifiers)
             res = uc(req)
+            print "UnitTestAgent: ... done"
             return res.success
         except rospy.ServiceException, e:
-            print "Service call failed: %s" % e
+            print "UnitTestAgent: Service call failed: %s" % e
             return False
             
     # Save modified classifiers to disk
     def commit_classifier_changes(self):
+        rospy.wait_for_service('python_commit_changes')
         req = PythonCommitChangesRequest()
+        print "UnitTestAgent: calling python_commit_changes"
         try:
-            uc = rospy.ServiceProxy('python_update_classifiers', PythonCommitChanges)
+            uc = rospy.ServiceProxy('python_commit_changes', PythonCommitChanges)
             res = uc(req)
+            print "UnitTestAgent: ... done"
             return res.success
         except rospy.ServiceException, e:
-            print "Service call failed: %s" % e
+            print "UnitTestAgent: Service call failed: %s" % e
             return False

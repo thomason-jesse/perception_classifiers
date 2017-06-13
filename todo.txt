@@ -1,12 +1,8 @@
--will have to write translation script to pre-process utterances from google speech since so many words get garbled. this might be easiest to do as a pre-pilot phase
--get speech node to not crash every time it hasn't been in use for a few minutes
--use expensive mounted microphone instead of little dinky laptop one
--expose n-best hypothesis list from speech node and run understanding modules on each in order
--fix launch script arguments for python_perception_classifiers node
--make UnitTestAgent start up and manage the classifier services node maybe
+-justin:
+	-get speech node to not crash every time it hasn't been in use for a few minutes
+	-use expensive mounted microphone instead of little dinky laptop one
+	-expose n-best hypothesis list from speech node and run understanding modules on each in order
 
--object identification experiment
-	-write experiment manager to generate orderings of objects, fold splits, and conditions for each user
-	-write consolidation script to take results from every user in a fold and generate new baseline classifiers and redo directory structure to save user results and logs from fold
-	-write script to re-initialize file structure between users in the same fold
-	-write actual experiment python script that accepts a user id; this is probably what should deal with re-arranging files to ensure most up-to-date classifiers for fold get used + logs go in the right place + move data into designated storage space post-experiment
+-jesse:
+	-test fold retraining script
+        -use real objects and do pilot test

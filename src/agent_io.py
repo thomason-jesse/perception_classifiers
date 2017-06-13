@@ -149,6 +149,7 @@ class IORobot:
     def get(self):
         self.listening_mode_toggle_client()
         uin = self.sound_transcript_client()
+        uin = uin.lower()
         self.listening_mode_toggle_client()
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin
