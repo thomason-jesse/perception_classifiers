@@ -20,9 +20,10 @@ def main(args):
     #           source/  # contains pre-trained classifiers and preds from all PREVIOUS folds
     #               labels.pickle, objects.pickle, predicates.pickle, classifiers.pickle
     #           uid0/, uid1/, ...
-    #               log.txt
-    #               source/  # contains re-trained classifiers and new preds from dialog after the game
-    #                   labels.pickle, objects.pickle, predicates.pickle, classifiers.pickle
+    #               toidx0_toidx1_toidx2_toidx3, ...  # directories named for test object ids (4 each, 2 dirs)
+    #                   log.txt
+    #                   source/  # contains re-trained classifiers and new preds from dialog after the game
+    #                       labels.pickle, objects.pickle, predicates.pickle, classifiers.pickle
 
     # Hard-coded parameters
     policy_max_questions = 5
@@ -34,9 +35,9 @@ def main(args):
                    for tl in [args.table_1_oidxs, args.table_2_oidxs, args.table_3_oidxs]]
     feature_dir = os.path.join(args.exp_dir, "objects")
     policy_dir = os.path.join(args.exp_dir, "fold" + str(args.fold), args.policy_type)
-    user_dir = os.path.join(policy_dir, str(args.uid))
+    user_dir = os.path.join(policy_dir, str(args.uid), '_'.join([str(oidx) for oidx in args.table_2_oidxs]))
     if not os.path.isdir(user_dir):
-        cmd = "mkdir " + user_dir
+        cmd = "mkdir -p " + user_dir
         print "> " + cmd
         os.system(cmd)
     logfn = os.path.join(user_dir, "log.txt")

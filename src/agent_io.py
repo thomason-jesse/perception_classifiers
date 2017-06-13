@@ -248,6 +248,8 @@ class IORobot:
         try:
             transcribe = rospy.ServiceProxy('sound_transcript_server', RequestSoundTranscript)
             resp = transcribe()
+            if not resp.isGood:
+                return ''
             return resp.utterance
         except rospy.ServiceException, e:
             sys.exit("Service call failed: %s " % e)
