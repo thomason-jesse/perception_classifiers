@@ -13,9 +13,9 @@ def main(args):
     #   objects/  # these are shared across all conditions
     #       oidxs.pickle, features.pickle
     #   fold0/, fold1/, ...  # each subsequent fold generated from previous; fold0 created by hand
-    #       policy0/, policy1/, policy2/
+    #       cond1/, cond2/
     #           source/  # contains pre-trained classifiers and preds from all PREVIOUS folds
-    #               labels.pickle, objects.pickle, predicates.pickle, classifiers.pickle
+    #               labels.pickle, predicates.pickle, classifiers.pickle
     #           uid0/, uid1/, ...
     #               toidx0_toidx1_toidx2_toidx3, ...  # directories named for test object ids (4 each, 2 dirs)
     #                   log.txt
@@ -25,28 +25,33 @@ def main(args):
     fold_dir = os.path.join(args.exp_dir, "fold" + str(args.train_fold))
     new_fold_dir = os.path.join(args.exp_dir, "fold" + str(args.train_fold + 1))
 
-    # For each policy, collect source info for fold, subtract it from all user data, and write new fold
+    # For each condition, collect source info for fold, subtract it from all user data, and write new fold
     # with source + user data
-    for policy in ['guess', 'yes_no', 'example']:
+    for cond in [1, 2]:
+        print "retraining condition " + str(cond) + "..."
 
         # Read in source information so it can be subtracted from individual user sessions, then added in only once.
-        policy_dir = os.path.join(fold_dir, policy)
-        fold_source_dir = os.path.join(policy_dir, "source")
+        print "... reading in information from fold " + str(args.train_fold) + "..."
+        cond_dir = os.path.join(fold_dir, str(cond))
+        fold_source_dir = os.path.join(cond_dir, "source")
         with open(os.path.join(fold_source_dir, "predicates.pickle"), 'rb') as f:
             source_predicates = pickle.load(f)
         with open(os.path.join(fold_source_dir, "labels.pickle"), 'rb') as f:
             source_labels = pickle.load(f)
+        print "...... done"
 
         # Change (pidx, oidx, l) label triples to (predicate, oidx, l) to prevent bad indexing.
         source_labels = [(source_predicates[pidx], oidx, l)
                          for pidx, oidx, l in source_labels]
 
         # Read in user data and subtract source information as we go.
+        print "... reading in information from each user and subtracting original data..."
         user_predicates = {}  # indexed by uid, value is list of new user preds
         user_labels = {}  # indexed by uid, value is list of new user label triples
-        for root, dirs, fs in os.walk(policy_dir):
-            if root != "policy_dir" and root != "source":
+        for root, dirs, fs in os.walk(cond_dir):
+            if root != cond_dir and root != "source":
                 user_id = int(root)
+                print "...... processing user id " + str(user_id)
                 user_predicates[user_id] = []
                 user_labels[user_id] = []
                 for test_dir in dirs:
@@ -73,8 +78,10 @@ def main(args):
                 print "user " + str(user_id) + ":"
                 print "\tnew preds: " + str(user_predicates[user_id])
                 print "\tnew labels: " + str(user_labels[user_id])
+        print "...... done"
 
         # Unify predicates and labels.
+        print "... unifying information from old fold with nove user information..."
         new_predicates = source_predicates[:]
         new_labels = source_labels[:]
         for uid in user_predicates.keys():
@@ -84,17 +91,26 @@ def main(args):
             new_labels += user_labels[uid]
         print "all preds: " + str(new_predicates)
         print "all labels: " + str(new_labels)
+        print "...... done"
 
         # Change labels from (predicate, oidx, l) to (pidx, oidx, l) with new predicate order established.
         new_labels = [(new_predicates.index(predicate), oidx, l)
                       for predicate, oidx, l in new_labels]
 
         # Write outfiles.
-        policy_out_dir = os.path.join(new_fold_dir, policy)
-        with open(os.path.join(policy_out_dir, "predicates.pickle"), 'wb') as f:
+        print "... writing outfiles for fold " + str(args.train_fold + 1) + "..."
+        cond_out_dir = os.path.join(new_fold_dir, str(cond), "source")
+        if not os.path.isfile(cond_out_dir):
+            cmd = "mkdir -p " + cond_out_dir
+            print "> " + cmd
+            os.system(cmd)
+        with open(os.path.join(cond_out_dir, "predicates.pickle"), 'wb') as f:
             pickle.dump(new_predicates, f)
-        with open(os.path.join(policy_out_dir, "labels.pickle"), 'wb') as f:
+        with open(os.path.join(cond_out_dir, "labels.pickle"), 'wb') as f:
             pickle.dump(new_labels, f)
+        print "...... done"
+
+        print "... done"
 
 
 if __name__ == '__main__':

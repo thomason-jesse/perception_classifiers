@@ -12,21 +12,15 @@ def main(args):
              [21, 24, 19, 23, 16, 0, 4, 9],
              [22, 28, 12, 25, 11, 6, 26, 13]]
 
-    policies = ['guess', 'yes_no', 'example']
-
     test_obs = folds[args.test_fold][:]
     random.shuffle(test_obs)
     train_obs = folds[args.train_fold][:]
     random.shuffle(train_obs)
-    all_conds = policies + policies
-    random.shuffle(all_conds)
 
-    for idx in range(len(all_conds)):
-        tidx = all_conds[:idx].count(all_conds[idx])
-
+    for tidx in range(4):
         t1o = train_obs[:4]
         t3o = train_obs[4:]
-        if tidx == 0:
+        if tidx % 2 == 0:
             t2o = test_obs[:4]
         else:
             t2o = test_obs[4:]
@@ -39,7 +33,7 @@ def main(args):
                " --table_3_oidxs " + ','.join([str(o) for o in t3o]) +
                " --uid " + str(args.uid) +
                " --fold " + str(args.train_fold) +
-               " --policy_type " + all_conds[idx])
+               " --cond " + str(args.cond))
         print cmd
 
 
@@ -57,6 +51,8 @@ if __name__ == '__main__':
                         help="the active train fold")
     parser.add_argument('--test_fold', type=int, required=True,
                         help="the current test fold")
+    parser.add_argument('--cond', type=int, required=True,
+                        help="the condition to run")
     cmd_args = parser.parse_args()
     
     main(cmd_args)

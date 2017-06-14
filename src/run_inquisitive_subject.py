@@ -16,7 +16,7 @@ def main(args):
     #   objects/  # these are shared across all conditions
     #       oidxs.pickle, features.pickle
     #   fold0/, fold1/, ...  # each subsequent fold generated from previous; fold0 created by hand
-    #       policy0/, policy1/, policy2/
+    #       cond1/, cond2/
     #           source/  # contains pre-trained classifiers and preds from all PREVIOUS folds
     #               labels.pickle, predicates.pickle, classifiers.pickle
     #           uid0/, uid1/, ...
@@ -25,17 +25,25 @@ def main(args):
     #                   source/  # contains re-trained classifiers and new preds from dialog after the game
     #                       labels.pickle, objects.pickle, predicates.pickle, classifiers.pickle
 
-    # Hard-coded parameters
-    policy_max_questions = 5
-    policy_min_confidence_threshold = 0.1
-    policy_min_num_unknown_predicates = 3
+    # Policy parameters
+    assert args.cond == 1 or args.cond == 2
+    if args.cond == 1:  # This condition should only try to get an answer for the current dialog preds
+        policy_type = 'example'
+        policy_max_questions = 2
+        policy_min_confidence_threshold = 0.1
+        policy_min_num_unknown_predicates = 3
+    else:  # This condition should be willing to ask about any preds
+        policy_type = 'example'
+        policy_max_questions = 5
+        policy_min_confidence_threshold = 0.1
+        policy_min_num_unknown_predicates = 3
 
     # Create needed data from args and prepare directory structures.
     table_oidxs = [[int(oidx) for oidx in tl.split(',')]
                    for tl in [args.table_1_oidxs, args.table_2_oidxs, args.table_3_oidxs]]
     feature_dir = os.path.join(args.exp_dir, "objects")
-    policy_dir = os.path.join(args.exp_dir, "fold" + str(args.fold), args.policy_type)
-    user_dir = os.path.join(policy_dir, str(args.uid), '_'.join([str(oidx) for oidx in table_oidxs[1]]))
+    cond_dir = os.path.join(args.exp_dir, "fold" + str(args.fold), str(args.cond))
+    user_dir = os.path.join(cond_dir, str(args.uid), '_'.join([str(oidx) for oidx in table_oidxs[1]]))
     if not os.path.isdir(user_dir):
         cmd = "mkdir -p " + user_dir
         print "> " + cmd
@@ -46,7 +54,7 @@ def main(args):
         cmd = "mkdir " + source_dir
         print "> " + cmd
         os.system(cmd)
-    cmd = "cp " + os.path.join(policy_dir, 'source', '*') + " " + source_dir
+    cmd = "cp " + os.path.join(cond_dir, 'source', '*') + " " + source_dir
     print "> " + cmd
     os.system(cmd)  # fold + policy preds and init classifiers
 
@@ -62,7 +70,7 @@ def main(args):
     rospy.init_node(node_name)
     
     print 'Creating policy'
-    policy = Policy(args.policy_type, policy_max_questions, policy_min_confidence_threshold,
+    policy = Policy(policy_type, policy_max_questions, policy_min_confidence_threshold,
                     policy_min_num_unknown_predicates)
     
     print 'Loading initial predicates'
@@ -76,6 +84,9 @@ def main(args):
 
     # Run the dialog.
     print "Running experiment..."
+    agent.run_dialog()
+    agent.io.say("That was fun. Let's do it again.")
+    agent.io.point(-1)
     agent.run_dialog()
     print "Concluding..."
     agent.io.say("Thanks for playing.")
@@ -102,8 +113,8 @@ if __name__ == '__main__':
                         help="unique user id number")
     parser.add_argument('--fold', type=int, required=True,
                         help="the active train fold")
-    parser.add_argument('--policy_type', type=str, required=True,
-                        help="One of 'guess', 'yes_no', 'example'")
+    parser.add_argument('--cond', type=int, required=True,
+                        help="experimental condition; one of '1' or '2'")
     cmd_args = parser.parse_args()
     
     main(cmd_args)

@@ -31,10 +31,22 @@ class ClassifierServices:
 
         # Read in source information.
         print "reading in source information..."
-        with open(os.path.join(self.source_dir, "predicates.pickle"), 'rb') as f:
-            self.predicates = pickle.load(f)
-        with open(os.path.join(self.source_dir, "labels.pickle"), 'rb') as f:
-            self.labels = pickle.load(f)
+        predicate_fn = os.path.join(self.source_dir, "predicates.pickle")
+        if os.path.isfile(predicate_fn):
+            with open(predicate_fn, 'rb') as f:
+                self.predicates = pickle.load(f)
+        else:
+            print ("WARNING: python_classifier_services unable to load " +
+                   str(predicate_fn) + "; starting with blank predicate list")
+            self.predicates = []
+        labels_fn = os.path.join(self.source_dir, "labels.pickle")
+        if os.path.isfile(labels_fn):
+            with open(labels_fn, 'rb') as f:
+                self.labels = pickle.load(f)
+        else:
+            print ("WARNING: python_classifier_services unable to load " +
+                   str(labels_fn) + "; starting with blank labels list")
+            self.labels = []
         with open(os.path.join(self.feature_dir, "oidxs.pickle"), 'rb') as f:
             self.oidxs = pickle.load(f)
         with open(os.path.join(self.feature_dir, "features.pickle"), 'rb') as f:

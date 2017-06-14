@@ -57,7 +57,6 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.cur_match_scores = None
         
         self.blacklisted_predicates_for_example = None
-        
 
     # A util to control how much debug stuff is printed
     def debug_print(self, message, debug_level=2):
@@ -75,8 +74,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
         dialog_state = dict()
         dialog_state['num_dialog_turns'] = self.num_dialog_turns
         dialog_state['match_scores'] = self.cur_match_scores
-        candidate_predicates_for_example = set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example)
-        dialog_state['unknown_predicates'] = self.candidate_predicates_for_example
+        candidate_predicates_for_example = set(self.unknown_predicates).difference(
+            self.blacklisted_predicates_for_example)
+        dialog_state['unknown_predicates'] = candidate_predicates_for_example
         dialog_state['cur_dialog_predicates'] = self.cur_dialog_predicates
         dialog_state['min_confidence_objects'] = self.min_confidence_objects
         self.debug_print('dialog_state = ' + str(dialog_state), 2)
