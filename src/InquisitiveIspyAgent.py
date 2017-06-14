@@ -56,6 +56,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.cur_dialog_predicates = None
         self.cur_match_scores = None
         
+        self.blacklisted_predicates_for_example = None
+        
 
     # A util to control how much debug stuff is printed
     def debug_print(self, message, debug_level=2):
@@ -73,7 +75,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         dialog_state = dict()
         dialog_state['num_dialog_turns'] = self.num_dialog_turns
         dialog_state['match_scores'] = self.cur_match_scores
-        dialog_state['unknown_predicates'] = self.unknown_predicates
+        candidate_predicates_for_example = set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example)
+        dialog_state['unknown_predicates'] = self.candidate_predicates_for_example
         dialog_state['cur_dialog_predicates'] = self.cur_dialog_predicates
         dialog_state['min_confidence_objects'] = self.min_confidence_objects
         self.debug_print('dialog_state = ' + str(dialog_state), 2)
@@ -203,7 +206,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 self.known_predicates.remove(predicate)
 
     def ask_positive_example(self):
-        predicate = np.random.choice(self.unknown_predicates)
+        candidate_predicates = set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example)
+        predicate = np.random.choice(candidate_predicates)
         
         question_str = 'Could you show me an object that you would describe as ' + predicate + '?'
         self.io.say(question_str)
@@ -229,6 +233,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 self.io.say("I didn't catch that.")
 
         if no_such_object:
+            self.blacklisted_predicates_for_example.append(predicate)
             self.io.say("I see.")
             return
         
@@ -371,6 +376,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         
         self.current_classifier_results = None
         self.classifiers_changed = list()
+        self.blacklisted_predicates_for_example = list()
         self.num_dialog_turns = 0
         
         # Get initial user description and update state
