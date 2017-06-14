@@ -40,7 +40,7 @@ class ClassifierServices:
         with open(os.path.join(self.feature_dir, "features.pickle"), 'rb') as f:
             self.features = pickle.load(f)
         self.behaviors = ["drop", "grasp", "hold", "lift", "look", "lower", "press", "push"]
-        self.modalities = ["audio_ispy", "color", "fpfh", "haptic_ispy"]
+        self.modalities = ["audio", "color", "fpfh", "haptics", "fc7"]
         self.contexts = []
         for b in self.behaviors:
             self.contexts.extend([(b, m) for m in self.modalities
@@ -64,19 +64,30 @@ class ClassifierServices:
     def run_classifier(self, req):
         pidx = req.pidx
         oidx = req.oidx
-        if self.classifiers[pidx] is not None:
-            print "running classifier '" + self.predicates[pidx] + "' on object " + str(oidx)
-            ds = []
-            ks = []
-            for b, m in self.contexts:
-                x, y, z = get_classifier_results(self.classifiers[pidx][b][m], b, m,
-                                                 [(oidx, 0.5)], self.features, None)
-                ds.append(np.mean(z))
-                ks.append(self.kappas[pidx][b][m])
-            dec = sum([ds[idx] * ks[idx] for idx in range(len(self.contexts))])
+
+        # Check existing labels.
+        ls = [l for _p, _o, l in self.labels if _p == pidx and _o == oidx]
+        if len(ls) > 0 and sum(ls) != 0:  # This object is already labeled and has majority class
+            print "returning majority class label for seen pred '" + self.predicates[pidx] + "' on object " + str(oidx)
+            dec = (1 if sum(ls) > 0 else -1) * float(len(self.contexts))
         else:
-            print "classifier '" + self.predicates[pidx] + "' is untrained"
-            dec = 0
+
+            # Run classifiers if trained.
+            if self.classifiers[pidx] is not None:
+                print "running classifier '" + self.predicates[pidx] + "' on object " + str(oidx)
+                ds = []
+                ks = []
+                for b, m in self.contexts:
+                    x, y, z = get_classifier_results(self.classifiers[pidx][b][m], b, m,
+                                                     [(oidx, None)], self.features, None)
+                    ds.append(np.mean(z))
+                    ks.append(self.kappas[pidx][b][m])
+                dec = sum([ds[idx] * ks[idx] for idx in range(len(self.contexts))])
+            else:
+                print "classifier '" + self.predicates[pidx] + "' is untrained"
+                dec = 0
+        # Prepare and send response.
+
         res = PythonRunClassifierResponse()
         res.dec = True if dec > 0 else False
         res.conf = abs(dec) / float(len(self.contexts))

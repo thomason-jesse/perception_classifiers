@@ -201,15 +201,19 @@ class IORobot:
     # get the point cloud objects on the table for pointing / recognizing touches
     def obtain_table_objects(self):
         pointCloud2_plane = cloud_plane_coef = pointCloud2_objects = None
-        tries = 10
-        while tries > 0:
-            pointCloud2_plane, cloud_plane_coef, pointCloud2_objects = self.get_pointCloud2_objects()
-            if len(pointCloud2_objects) == len(self.oidxs):
-                break
-            tries -= 1
-            rospy.sleep(1)
-        if tries == 0:
-            sys.exit("ERROR: ran out of tries to detect pointCloud2 objects")
+        focus = False
+        while not focus:
+            tries = 5
+            while tries > 0:
+                pointCloud2_plane, cloud_plane_coef, pointCloud2_objects = self.get_pointCloud2_objects()
+                if len(pointCloud2_objects) == len(self.oidxs):
+                    focus = True
+                    break
+                tries -= 1
+                rospy.sleep(1)
+            if tries == 0 and not focus:
+                self.say("I am having trouble focusing on the objects. The operator will adjust them.")
+                rospy.sleep(10)
         return pointCloud2_plane, cloud_plane_coef, pointCloud2_objects
 
     # get PointCloud2 objects from service

@@ -1,8 +1,10 @@
 -justin:
-	-get speech node to not crash every time it hasn't been in use for a few minutes
 	-use expensive mounted microphone instead of little dinky laptop one
-	-expose n-best hypothesis list from speech node and run understanding modules on each in order
 
 -jesse:
+	-check through stopwords.txt for common words that might be missing like 'an'
 	-test fold retraining script
         -use real objects and do pilot test
+
+-aishwarya:
+	-handle case where user bails on giving a positive example in 'example' policy

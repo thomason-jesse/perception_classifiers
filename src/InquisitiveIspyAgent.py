@@ -211,20 +211,30 @@ class InquisitiveIspyAgent(UnitTestAgent):
         # Loop while user reorients the robot.
         self.debug_print('Waiting for user direction to table for touch detection', 1)
         ready_to_detect = False
+        no_such_object = False
         while not ready_to_detect:
             cmd = self.io.get()
             self.debug_print('cmd = ' + str(cmd), 1)
+            if 'none' in cmd:
+                no_such_object = True
+                break
             tid = self.table_turn_command(cmd)
             self.debug_print('Identified target table ID ' + str(tid), 1)
             if tid is not None:
                 self.face_table(tid, report=True)
                 self.debug_print('Faced table ' + str(tid), 1)
-            elif self.is_detect(cmd):
+            elif self.is_detect(cmd) and self.tid != 2:  # don't detect test objects
                 ready_to_detect = True
+            else:
+                self.io.say("I didn't catch that.")
+
+        if no_such_object:
+            self.io.say("I see.")
+            return
         
         # Detect touch
         self.debug_print('Waiting to detect touch', 1)
-        touch_str = 'I am waiting to detect the object you touch.'
+        touch_str = 'I am waiting to detect the object your touch.'
         self.io.say(touch_str)
         pos_detected, obj_idx_detected = self.detect_touch()
         
@@ -282,6 +292,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
     def get_predicates(self, user_response):
         response_parts = user_response.split()
         predicates = [w for w in response_parts if w not in self.stopwords]
+        predicates = list(set(predicates))  # remove duplicates
         unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
         self.unknown_predicates.extend(unknown_predicates)
         return predicates

@@ -18,7 +18,7 @@ def main(args):
     #   fold0/, fold1/, ...  # each subsequent fold generated from previous; fold0 created by hand
     #       policy0/, policy1/, policy2/
     #           source/  # contains pre-trained classifiers and preds from all PREVIOUS folds
-    #               labels.pickle, objects.pickle, predicates.pickle, classifiers.pickle
+    #               labels.pickle, predicates.pickle, classifiers.pickle
     #           uid0/, uid1/, ...
     #               toidx0_toidx1_toidx2_toidx3, ...  # directories named for test object ids (4 each, 2 dirs)
     #                   log.txt
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('--uid', type=int, required=True,
                         help="unique user id number")
     parser.add_argument('--fold', type=int, required=True,
-                        help="the current fold")
+                        help="the active train fold")
     parser.add_argument('--policy_type', type=str, required=True,
                         help="One of 'guess', 'yes_no', 'example'")
     cmd_args = parser.parse_args()
