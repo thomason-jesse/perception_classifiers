@@ -206,7 +206,10 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 self.known_predicates.remove(predicate)
 
     def ask_positive_example(self):
-        candidate_predicates = set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example)
+        self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates))
+        self.debug_print('self.blacklisted_predicates_for_example = ' + str(self.blacklisted_predicates_for_example))
+        candidate_predicates = list(set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example))
+        self.debug_print('candidate_predicates = ' + str(candidate_predicates))
         predicate = np.random.choice(candidate_predicates)
         
         question_str = 'Could you show me an object that you would describe as ' + predicate + '?'
