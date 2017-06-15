@@ -248,13 +248,13 @@ class IORobot:
 
     # Listen for speech, transcribe it, and return it.
     def sound_transcript_client(self):
-        print "agent_io: waiting for sound_transcript_server..."  # DEBUG
+        print "<enter speech text>"  # DEBUG - until snowball is working
+        return raw_input()  # DEBUG - until snowball is working
+
         rospy.wait_for_service('sound_transcript_server')
         try:
             transcribe = rospy.ServiceProxy('sound_transcript_server', RequestSoundTranscript)
-            print "agent_io: calling transcription service..."  # DEBUG
             resp = transcribe()
-            print "agent_io: got transcription response"  # DEBUG
             if not resp.isGood:
                 return ''
             return resp.utterance
