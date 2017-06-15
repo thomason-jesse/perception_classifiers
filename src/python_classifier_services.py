@@ -81,7 +81,8 @@ class ClassifierServices:
 
         # Check existing labels.
         ls = [l for _p, _o, l in self.labels if _p == pidx and _o == oidx]
-        if len(ls) > 0 and sum([1 if l else -1 for l in ls]) != 0:  # This object is already labeled and has majority class
+        if len(ls) > 0 and sum([1 if l else -1 for l in ls]) != 0:
+            # This object is already labeled and has majority class.
             print "returning majority class label for seen pred '" + self.predicates[pidx] + "' on object " + str(oidx)
             dec = (1 if sum([1 if l else -1 for l in ls]) > 0 else -1) * float(len(self.contexts))
         else:

@@ -56,6 +56,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         
         # Some additional state info
         self.num_dialog_turns = 0
+        self.cur_dialog_desc = None
         self.cur_dialog_predicates = None
         self.cur_match_scores = None
         
@@ -103,7 +104,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         correct = False
         while not got_confirmation:
             got_confirmation = True
-            self.io.say("Is this the object you had in mind?")
+            self.io.say("Is this the object you had in mind when you said '" + self.cur_dialog_desc + "'?")
             confirmation = self.io.get()
             if self.is_yes(confirmation):
                 correct = True
@@ -150,7 +151,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
     # Identify the object and predicate for which a label should be obtained    
     def get_label_question_details(self):
         if self.only_dialog_relevant_questions:
-            unknown_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates if predicate in self.unknown_predicates]
+            unknown_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates
+                                             if predicate in self.unknown_predicates]
             known_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates
                                            if predicate in self.min_confidence_objects and
                                            self.min_confidence_objects[predicate][1] is not None]
@@ -322,7 +324,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
 
         understood = False
         predicates = None
-        
+
+        user_response = ''
         while not understood:
             user_response = self.io.get().strip()
             self.log('Get : ' + user_response + '\n')
@@ -350,6 +353,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             else:
                 self.io.say("Sorry; I didn't catch that. Could you re-word your description?")
 
+        self.cur_dialog_desc = user_response
         self.cur_dialog_predicates = predicates
 
     def get_predicates(self, user_response):
@@ -439,11 +443,12 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.classifiers_changed = list()
         self.blacklisted_predicates_for_example = list()
         if init_blacklist is not None:
-		self.blacklisted_predicates_for_example = init_blacklist[:]
+            self.blacklisted_predicates_for_example = init_blacklist[:]
         self.num_dialog_turns = 0
-        
+
         # Get initial user description and update state
         self.log('Action : get_initial_description')
+        self.cur_dialog_desc = None
         self.cur_dialog_predicates = None
         self.get_initial_description()  # Sets self.cur_dialog_predicates
 

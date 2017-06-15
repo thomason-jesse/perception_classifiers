@@ -2,6 +2,7 @@
 __author__ = 'jesse'
 
 import os
+import string
 import time
 import rospy
 from bwi_speech_services.srv import *
@@ -149,7 +150,9 @@ class IORobot:
     def get(self):
         self.listening_mode_toggle_client()
         uin = self.sound_transcript_client()
-        uin = uin.lower()
+        uin = uin.lower()  # lowercase
+        uin = uin.translate(None, string.punctuation)  # remove punctuation
+        uin = uin.strip()  # strip any leading or trailing whitespace
         self.listening_mode_toggle_client()
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin

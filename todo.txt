@@ -2,8 +2,6 @@
 	-use expensive mounted microphone instead of little dinky laptop one
 
 -jesse:
-	-in speech recognition, strip all punctuation in addition to lowercasing
-	-add "when you said [X]" to end description to remind user what their description was
 	-test fold retraining script
         -use real objects and do pilot test
 
