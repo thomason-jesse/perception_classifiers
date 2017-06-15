@@ -85,9 +85,6 @@ def main(args):
     # Run the dialog.
     print "Running experiment..."
     agent.run_dialog()
-    agent.io.say("That was fun. Let's do it again.")
-    agent.io.point(-1)
-    agent.run_dialog()
     print "Concluding..."
     agent.io.say("Thanks for playing.")
     agent.io.point(-1)
