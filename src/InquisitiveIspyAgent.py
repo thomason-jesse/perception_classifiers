@@ -12,13 +12,16 @@ class InquisitiveIspyAgent(UnitTestAgent):
     # initial_predicates - The agent needs to track which classifiers 
     #       it can call. This gives the initial list. This has to match 
     #       the list in python classifier services
-    def __init__(self, io, table_oidxs, stopwords_fn, policy, log_fn=None, initial_predicates=None):
+    def __init__(self, io, table_oidxs, stopwords_fn, policy, 
+                 only_dialog_relevant_questions,   
+                 log_fn=None, initial_predicates=None):
         self.debug_print_level = 2  # Print messages with debug_level <= this
         UnitTestAgent.__init__(self, io, 2, table_oidxs)
         
         self.io = io
         self.log_fn = log_fn
         self.policy = policy
+        self.only_dialog_relevant_questions = only_dialog_relevant_questions
         
         # Read stopwords
         self.stopwords = []
@@ -74,11 +77,11 @@ class InquisitiveIspyAgent(UnitTestAgent):
         dialog_state = dict()
         dialog_state['num_dialog_turns'] = self.num_dialog_turns
         dialog_state['match_scores'] = self.cur_match_scores
-        candidate_predicates_for_example = set(self.unknown_predicates).difference(
-            self.blacklisted_predicates_for_example)
-        dialog_state['unknown_predicates'] = candidate_predicates_for_example
+        dialog_state['blacklisted_predicates'] = self.blacklisted_predicates_for_example
+        dialog_state['unknown_predicates'] = self.unknown_predicates
         dialog_state['cur_dialog_predicates'] = self.cur_dialog_predicates
         dialog_state['min_confidence_objects'] = self.min_confidence_objects
+        dialog_state['only_dialog_relevant_questions'] = self.only_dialog_relevant_questions
         self.debug_print('dialog_state = ' + str(dialog_state), 2)
         return dialog_state
 
@@ -138,14 +141,23 @@ class InquisitiveIspyAgent(UnitTestAgent):
 
     # Identify the object and predicate for which a label should be obtained    
     def get_label_question_details(self):
-        # TODO: Once the classifiers stop returning None, you shouldn't need the None check
-        predicates = self.unknown_predicates + [predicate for predicate in self.min_confidence_objects.keys()
-                                                if self.min_confidence_objects[predicate][1] is not None]
-        # Sample a predicate with probability proportional to 1 - confidence in lowest confidence object
-        prob_numerators = [1.0] * len(self.unknown_predicates) + [(1.0 - self.min_confidence_objects[predicate][1])
-                                                                  for predicate in self.min_confidence_objects.keys()
-                                                                  if self.min_confidence_objects[predicate][1]
-                                                                  is not None]
+        if self.only_dialog_relevant_questions:
+            unknown_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates if predicate in self.unknown_predicates]
+            known_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates \
+                    if predicate in self.min_confidence_objects and \
+                    self.min_confidence_objects[predicate][1] is not None]
+            predicates = unknown_cur_dialog_predicates + known_cur_dialog_predicates
+            prob_numerators = [1.0] * len(unknown_cur_dialog_predicates) + \
+                              [(1.0 - self.min_confidence_objects[predicate][1])
+                                  for predicate in known_cur_dialog_predicates]
+        else:
+            known_predicates = [predicate for predicate in self.min_confidence_objects.keys() if self.min_confidence_objects[predicate][1] is not None]
+            predicates = self.unknown_predicates + known_predicates
+            # Sample a predicate with probability proportional to 1 - confidence in lowest confidence object
+            prob_numerators = [1.0] * len(self.unknown_predicates) + \
+                              [(1.0 - self.min_confidence_objects[predicate][1])
+                                  for predicate in known_predicates]
+                                  
         probs = [(v / sum(prob_numerators)) for v in prob_numerators]
         predicate = np.random.choice(predicates, p=probs)
         
@@ -206,10 +218,15 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 self.known_predicates.remove(predicate)
 
     def ask_positive_example(self):
+        if self.only_dialog_relevant_questions:
+            candidate_predicates = list(set(self.cur_dialog_predicates).difference(self.blacklisted_predicates_for_example))
+        else:
+            candidate_predicates = list(set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example))
+        
         self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates))
         self.debug_print('self.blacklisted_predicates_for_example = ' + str(self.blacklisted_predicates_for_example))
-        candidate_predicates = list(set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example))
         self.debug_print('candidate_predicates = ' + str(candidate_predicates))
+
         predicate = np.random.choice(candidate_predicates)
         
         question_str = 'Could you show me an object that you would describe as ' + predicate + '?'
@@ -236,6 +253,27 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 self.io.say("I didn't catch that.")
 
         if no_such_object:
+            # All objects on the table are negative examples
+            if predicate in self.unknown_predicates:
+                new_preds = [predicate]
+                self.known_predicates.extend(new_preds)  # Needed here to get correct indices of new predicates
+            else:
+                new_preds = []
+            pidxs = [self.known_predicates.index(predicate)]
+            oidxs = self.objects_for_questions
+            labels = [0] * len(self.objects_for_questions)
+            success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
+            if success:
+                if predicate in self.unknown_predicates:
+                    self.unknown_predicates.remove(predicate)
+                self.classifiers_changed.append(predicate)
+            else:
+                # Update didn't happen so undo the extension
+                if predicate in self.unknown_predicates:
+                    self.known_predicates.remove(predicate)
+            
+            
+            
             self.blacklisted_predicates_for_example.append(predicate)
             self.io.say("I see.")
             return
@@ -247,18 +285,23 @@ class InquisitiveIspyAgent(UnitTestAgent):
         pos_detected, obj_idx_detected = self.detect_touch()
         
         # Add required classifier update
-        new_preds = [predicate]
-        self.known_predicates.extend(new_preds)  # Needed here to get correct indices of new predicates
+        if predicate in self.unknown_predicates:
+            new_preds = [predicate]
+            self.known_predicates.extend(new_preds)  # Needed here to get correct indices of new predicates
+        else:
+            new_preds = []
         pidxs = [self.known_predicates.index(predicate)]
         oidxs = [obj_idx_detected]
         labels = [1]
         success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
         if success:
-            self.unknown_predicates.remove(predicate)
+            if predicate in self.unknown_predicates:
+                self.unknown_predicates.remove(predicate)
             self.classifiers_changed.append(predicate)
         else:
             # Update didn't happen so undo the extension
-            self.known_predicates.remove(predicate)
+            if predicate in self.unknown_predicates:
+                self.known_predicates.remove(predicate)
 
     # Start of human_take_turn of IspyAgent. Re-coded here because
     # only part of that function is to be used here

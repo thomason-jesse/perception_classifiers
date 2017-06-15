@@ -19,7 +19,7 @@ def main(args):
     rospy.init_node(node_name)
     
     print 'Creating policy'
-    policy = Policy(args.policy_type, args.policy_max_questions, args.policy_min_confidence_threshold,
+    policy = Policy(args.policy_ask_yes_no_prob, args.policy_max_questions, args.policy_min_confidence_threshold,
                     args.policy_min_num_unknown_predicates)
     
     print 'Loading initial predicates'
@@ -35,6 +35,7 @@ def main(args):
 
     print 'Creating agent'
     agent = InquisitiveIspyAgent(io, table_oidxs, args.stopwords_fn, policy,
+                                 args.only_dialog_relevant_questions,
                                  args.logfn, initial_predicates)
     
     while True:
@@ -57,19 +58,21 @@ if __name__ == '__main__':
                         help="Comma-separated ids of objects on robot's right")
     parser.add_argument('--io_type', type=str, required=True,
                         help="One of 'std' or 'robot'")
+    parser.add_argument('--only_dialog_relevant_questions', dest='only_dialog_relevant_questions', action='store_true')    
+    parser.set_defaults(only_dialog_relevant_questions=False)
     parser.add_argument('--logfn', type=str, required=True,
                         help="Log filename")
     parser.add_argument('--stopwords_fn', type=str, required=True,
                         help="File with stop words")
     parser.add_argument('--initial_predicates_fn', type=str, required=True,
                         help="Pickle of initial predicates")
-    parser.add_argument('--policy_type', type=str, required=True,
-                        help="One of 'guess', 'yes_no', 'example'")
+    parser.add_argument('--policy_ask_yes_no_prob', type=float, default=0.5,
+                        help="Probability that a question is a yes-no question")
     parser.add_argument('--policy_max_questions', type=int, default=5,
                         help="Max # questions in dialog")
-    parser.add_argument('--policy_min_confidence_threshold', type=float, default=0.1,
+    parser.add_argument('--policy_min_confidence_threshold', type=float, default=1,
                         help="Min avg confidence threshold across candidate yes-no questions to allow asking")
-    parser.add_argument('--policy_min_num_unknown_predicates', type=int, default=3,
+    parser.add_argument('--policy_min_num_unknown_predicates', type=int, default=0,
                         help="Min # unknown predicates required before asking for example")                                                                
     cmd_args = parser.parse_args()
     
