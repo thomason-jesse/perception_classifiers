@@ -1,3 +1,5 @@
+object
+thing
 a
 a's
 able

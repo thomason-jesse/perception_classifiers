@@ -3,8 +3,9 @@
 
 -jesse:
 	-check through stopwords.txt for common words that might be missing like 'an'
+	-update repo exp/ directory to look like fold0 prepped
 	-test fold retraining script
         -use real objects and do pilot test
 
 -aishwarya:
-	-handle case where user bails on giving a positive example in 'example' policy
+	-design an inquisitive versus baseline condition to test
