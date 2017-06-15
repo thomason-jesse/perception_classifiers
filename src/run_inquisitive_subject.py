@@ -28,15 +28,14 @@ def main(args):
     # Policy parameters
     assert args.cond == 1 or args.cond == 2
     if args.cond == 1:  # This condition should only try to get an answer for the current dialog preds
-        policy_type = 'example'
-        policy_max_questions = 2
-        policy_min_confidence_threshold = 0.1
-        policy_min_num_unknown_predicates = 3
+        policy_max_questions = 3
+        only_dialog_relevant_questions = True
     else:  # This condition should be willing to ask about any preds
-        policy_type = 'example'
         policy_max_questions = 5
-        policy_min_confidence_threshold = 0.1
-        policy_min_num_unknown_predicates = 3
+        only_dialog_relevant_questions = False
+    policy_ask_yes_no_prob = 0.2
+    policy_min_confidence_threshold = 0.8
+    policy_min_num_unknown_predicates = 0
 
     # Create needed data from args and prepare directory structures.
     table_oidxs = [[int(oidx) for oidx in tl.split(',')]
@@ -70,7 +69,7 @@ def main(args):
     rospy.init_node(node_name)
     
     print 'Creating policy'
-    policy = Policy(policy_type, policy_max_questions, policy_min_confidence_threshold,
+    policy = Policy(policy_ask_yes_no_prob, policy_max_questions, policy_min_confidence_threshold,
                     policy_min_num_unknown_predicates)
     
     print 'Loading initial predicates'
@@ -80,14 +79,17 @@ def main(args):
     print 'Instantiating an InquistiveIspyAgent'
     agent = InquisitiveIspyAgent(IORobot(None, logfn, table_oidxs[1]),
                                  table_oidxs, args.stopwords_fn, policy,
+                                 only_dialog_relevant_questions,
                                  logfn, initial_predicates)
 
     # Run the dialog.
     print "Running experiment..."
     agent.run_dialog()
-    print "Concluding..."
+    agent.io.say("That was fun. Let's do it again.")
+    agent.io.point(-1)
     agent.io.say("Thanks for playing.")
     agent.io.point(-1)
+    print "Committing classifiers to file..."
     agent.commit_classifier_changes()
     pc.kill()
 

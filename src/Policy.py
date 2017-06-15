@@ -3,6 +3,7 @@ __author__ = 'aishwarya'
 
 import random 
 
+
 class Policy:
     # ask_yes_no_prob - Probability that a question is yes-no rather 
     #   than example
@@ -30,11 +31,11 @@ class Policy:
             candidates = set(state['cur_dialog_predicates']).difference(state['blacklisted_predicates'])
         else:
             candidates = set(state['unknown_predicates']).difference(state['blacklisted_predicates'])
-        return (len(candidates) > self.min_num_unknown_predicates)
+        return len(candidates) > self.min_num_unknown_predicates
 
     def yes_no_allowed(self, state):
         confidences = [confidence for (predicate, (obj_idx, confidence)) in state['min_confidence_objects'].items()
-                           if confidence is not None]
+                       if confidence is not None]
         self.debug_print('confidences = ' + str(confidences), 2)
         self.debug_print('state[\'unknown_predicates\'] = ' + str(state['unknown_predicates']), 2)
         num_candidates = len(state['min_confidence_objects'].items()) + len(state['unknown_predicates'])
@@ -65,4 +66,3 @@ class Policy:
                 return 'ask_predicate_label'
             else:
                 return 'make_guess'
-        

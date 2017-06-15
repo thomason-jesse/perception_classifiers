@@ -143,15 +143,16 @@ class InquisitiveIspyAgent(UnitTestAgent):
     def get_label_question_details(self):
         if self.only_dialog_relevant_questions:
             unknown_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates if predicate in self.unknown_predicates]
-            known_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates \
-                    if predicate in self.min_confidence_objects and \
-                    self.min_confidence_objects[predicate][1] is not None]
+            known_cur_dialog_predicates = [predicate for predicate in self.cur_dialog_predicates
+                                           if predicate in self.min_confidence_objects and
+                                           self.min_confidence_objects[predicate][1] is not None]
             predicates = unknown_cur_dialog_predicates + known_cur_dialog_predicates
             prob_numerators = [1.0] * len(unknown_cur_dialog_predicates) + \
                               [(1.0 - self.min_confidence_objects[predicate][1])
                                   for predicate in known_cur_dialog_predicates]
         else:
-            known_predicates = [predicate for predicate in self.min_confidence_objects.keys() if self.min_confidence_objects[predicate][1] is not None]
+            known_predicates = [predicate for predicate in self.min_confidence_objects.keys()
+                                if self.min_confidence_objects[predicate][1] is not None]
             predicates = self.unknown_predicates + known_predicates
             # Sample a predicate with probability proportional to 1 - confidence in lowest confidence object
             prob_numerators = [1.0] * len(self.unknown_predicates) + \
@@ -219,9 +220,11 @@ class InquisitiveIspyAgent(UnitTestAgent):
 
     def ask_positive_example(self):
         if self.only_dialog_relevant_questions:
-            candidate_predicates = list(set(self.cur_dialog_predicates).difference(self.blacklisted_predicates_for_example))
+            candidate_predicates = list(set(self.cur_dialog_predicates).difference(
+                self.blacklisted_predicates_for_example))
         else:
-            candidate_predicates = list(set(self.unknown_predicates).difference(self.blacklisted_predicates_for_example))
+            candidate_predicates = list(set(self.unknown_predicates).difference(
+                self.blacklisted_predicates_for_example))
         
         self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates))
         self.debug_print('self.blacklisted_predicates_for_example = ' + str(self.blacklisted_predicates_for_example))
@@ -271,9 +274,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 # Update didn't happen so undo the extension
                 if predicate in self.unknown_predicates:
                     self.known_predicates.remove(predicate)
-            
-            
-            
+
             self.blacklisted_predicates_for_example.append(predicate)
             self.io.say("I see.")
             return

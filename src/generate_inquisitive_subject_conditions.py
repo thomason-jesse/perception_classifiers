@@ -17,7 +17,7 @@ def main(args):
     train_obs = folds[args.train_fold][:]
     random.shuffle(train_obs)
 
-    for tidx in range(4):
+    for tidx in range(2):
         t1o = train_obs[:4]
         t3o = train_obs[4:]
         if tidx % 2 == 0:
