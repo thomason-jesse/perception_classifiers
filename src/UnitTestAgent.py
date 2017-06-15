@@ -43,15 +43,20 @@ class UnitTestAgent:
 
     # The robot retracts its arm to the resting position, enabling all objects to be seen.
     def retract_arm(self):
-        self.io.point(-1)
+        self.point(-1)
+
+    # Wrapper for point that updates arm state.
+    def point(self, pos):
+        if self.arm_pos != pos:
+            self.io.point(pos)
+            self.arm_pos = pos
 
     # The robot points to an object at the specified position on the table.
     # pos - position index in {0, 1, 2, 3} for four objects.
     def point_to_position(self, pos):
         assert 0 <= pos <= 3
         self.retract_arm()
-        if self.arm_pos != pos:
-            self.io.point(pos)
+        self.point(pos)
 
     # The robot points to an object by its id if on the table, or does nothing if the id specified is not on the table.
     # oidx - the object index to be pointed to.
@@ -67,14 +72,13 @@ class UnitTestAgent:
         if obj_found:
             pos = self.table_oidxs[self.tid - 1].index(oidx)
             self.retract_arm()
-            if self.arm_pos != pos:
-                self.io.point(pos)
+            self.point(pos)
         return obj_found
 
     # The robot will watch for a touch on top of some object, returning the position and object id when detected.
     # returns - a tuple (pos, oidx) of the position and object id of the detected touch.
     def detect_touch(self):
-	self.retract_arm()
+        self.retract_arm()
         pos = self.io.get_touch()
         oidx = self.table_oidxs[self.tid - 1][pos]
         return pos, oidx

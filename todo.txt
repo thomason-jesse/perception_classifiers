@@ -2,8 +2,6 @@
 	-use expensive mounted microphone instead of little dinky laptop one
 
 -jesse:
-	-add "repeat" and "what" functionality, maybe at the _get level
-	-fix arm state so we can not retract when -1 is already pos; -1 is being erroneously set now I think
 	-test fold retraining script
         -use real objects and do pilot test
 

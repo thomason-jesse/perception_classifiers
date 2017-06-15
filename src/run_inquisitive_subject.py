@@ -86,10 +86,10 @@ def main(args):
     print "Running experiment..."
     agent.run_dialog()
     agent.io.say("That was fun. Let's do it again.")
-    agent.io.point(-1)
+    agent.retract_arm()
     agent.run_dialog()
     agent.io.say("Thanks for playing.")
-    agent.io.point(-1)
+    agent.retract_arm()
     print "Committing classifiers to file..."
     agent.commit_classifier_changes()
     pc.kill()
