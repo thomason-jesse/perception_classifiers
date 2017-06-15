@@ -2,8 +2,4 @@
 	-use expensive mounted microphone instead of little dinky laptop one
 
 -jesse:
-	-test fold retraining script
-        -use real objects and do pilot test
-
--aishwarya:
-	-design an inquisitive versus baseline condition to test
+	-continue pilot test with fold1
