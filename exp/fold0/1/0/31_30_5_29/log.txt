@@ -1,4 +1,0 @@
-point:-1
-point:-1
-say:I am thinking about the objects around me.
-Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
