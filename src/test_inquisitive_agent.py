@@ -66,11 +66,11 @@ if __name__ == '__main__':
                         help="File with stop words")
     parser.add_argument('--initial_predicates_fn', type=str, required=True,
                         help="Pickle of initial predicates")
-    parser.add_argument('--policy_ask_yes_no_prob', type=float, default=0.5,
+    parser.add_argument('--policy_ask_yes_no_prob', type=float, default=0.2,
                         help="Probability that a question is a yes-no question")
     parser.add_argument('--policy_max_questions', type=int, default=5,
                         help="Max # questions in dialog")
-    parser.add_argument('--policy_min_confidence_threshold', type=float, default=1,
+    parser.add_argument('--policy_min_confidence_threshold', type=float, default=0.8,
                         help="Min avg confidence threshold across candidate yes-no questions to allow asking")
     parser.add_argument('--policy_min_num_unknown_predicates', type=int, default=0,
                         help="Min # unknown predicates required before asking for example")                                                                
