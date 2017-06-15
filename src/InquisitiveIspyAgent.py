@@ -114,30 +114,37 @@ class InquisitiveIspyAgent(UnitTestAgent):
         # Stop pointing
         self.retract_arm()
 
+	# If not correct, ask the user to touch the correct object.
+	if not correct:
+	    self.io.say("Can you touch the object that you were describing?")
+            pos, oidx = self.detect_touch()
+            true_idx = oidx
+        else:
+            true_idx = guess_idx
+
         # Add required classifier updates
-        if correct:
-            # Give a label of +1 to all predicates in current dialog with 
-            # the object guess_idx
-            new_preds = [predicate for predicate in self.cur_dialog_predicates
-                         if predicate not in self.known_predicates]
-            self.debug_print('new_preds = ' + str(new_preds), 2)
-            self.known_predicates.extend(new_preds)  # Needed here to get correct indices of new predicates
-            pidxs = [self.known_predicates.index(predicate) for predicate in self.cur_dialog_predicates]
-            oidxs = [guess_idx] * len(pidxs)
-            labels = [True] * len(pidxs)
-            success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
-            if success:
-                for predicate in new_preds:
-                    if predicate in self.unknown_predicates:
-                        self.unknown_predicates.remove(predicate)
-            else:
-                # Update didn't happen so undo the extension
-                for predicate in new_preds:
-                    self.known_predicates.remove(predicate)
-            self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
+        # Give a label of +1 to all predicates in current dialog with 
+        # the object true_idx
+        new_preds = [predicate for predicate in self.cur_dialog_predicates
+                     if predicate not in self.known_predicates]
+        self.debug_print('new_preds = ' + str(new_preds), 2)
+        self.known_predicates.extend(new_preds)  # Needed here to get correct indices of new predicates
+        pidxs = [self.known_predicates.index(predicate) for predicate in self.cur_dialog_predicates]
+        oidxs = [true_idx] * len(pidxs)
+        labels = [True] * len(pidxs)
+        success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
+        if success:
+            for predicate in new_preds:
+                if predicate in self.unknown_predicates:
+                    self.unknown_predicates.remove(predicate)
+        else:
+            # Update didn't happen so undo the extension
+            for predicate in new_preds:
+                self.known_predicates.remove(predicate)
+        self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
             
-            self.debug_print('self.known_predicates = ' + str(self.known_predicates), 2)
-            self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates), 2)
+        self.debug_print('self.known_predicates = ' + str(self.known_predicates), 2)
+        self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates), 2)
 
     # Identify the object and predicate for which a label should be obtained    
     def get_label_question_details(self):

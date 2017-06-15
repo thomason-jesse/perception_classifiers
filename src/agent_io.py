@@ -228,7 +228,7 @@ class IORobot:
             res = self.tabletop_object_detection_service(req)
 
             if len(res.cloud_clusters) == 0:
-                sys.exit("ERROR: no objects detected")
+                return [], [], []
 
             # re-index clusters so order matches left-to-right indexing expected
             ordered_cloud_clusters = self.reorder_client("x", True)

@@ -87,6 +87,7 @@ def main(args):
     agent.run_dialog()
     agent.io.say("That was fun. Let's do it again.")
     agent.io.point(-1)
+    agent.run_dialog()
     agent.io.say("Thanks for playing.")
     agent.io.point(-1)
     print "Committing classifiers to file..."
