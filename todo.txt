@@ -2,11 +2,6 @@
 	-use expensive mounted microphone instead of little dinky laptop one
 
 -jesse:
-	-when user answers 'none' for example, add negative labels for ALL train objects
-	-make sure classifier structures are being updated after every question
-	-make sure classifiers return label mc if present at all
-	-see how ties are broken with objects of same low conf; looks like always picking same
-	-change conditions to have same max questions
 	-test fold retraining script
         -use real objects and do pilot test
 

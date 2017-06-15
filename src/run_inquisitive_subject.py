@@ -28,7 +28,7 @@ def main(args):
     # Policy parameters
     assert args.cond == 1 or args.cond == 2
     if args.cond == 1:  # This condition should only try to get an answer for the current dialog preds
-        policy_max_questions = 3
+        policy_max_questions = 5
         only_dialog_relevant_questions = True
     else:  # This condition should be willing to ask about any preds
         policy_max_questions = 5

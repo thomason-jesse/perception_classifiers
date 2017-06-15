@@ -68,7 +68,9 @@ class ClassifierServices:
         else:
             print "training classifiers from source information..."
             self.classifiers = [None for _ in range(len(self.predicates))]  # pidx, b, m
-            self.kappas = [0 for _ in range(len(self.predicates))]
+            self.kappas = [{b: {m: 0 for _b, m in self.contexts if b == _b}
+                            for b in self.behaviors}
+                           for _ in range(len(self.predicates))]
             self.train_classifiers(range(len(self.predicates)))
         print "... done"
 
@@ -117,7 +119,8 @@ class ClassifierServices:
         self.predicates.extend(upreds)
         for _ in range(len(upreds)):
             self.classifiers.append(None)
-            self.kappas.append(None)
+            self.kappas.append({b: {m: 0 for _b, m in self.contexts if b == _b}
+                                for b in self.behaviors})
         retrain_pidxs = []
         for idx in range(len(upidxs)):
             pidx = upidxs[idx]
@@ -176,7 +179,8 @@ class ClassifierServices:
             else:
                 print "... '" + self.predicates[pidx] + "' lacks a +/- pair to fit"
                 self.classifiers[pidx] = None
-                self.kappas[pidx] = 0
+                self.kappas[pidx] = {b: {m: 0 for _b, m in self.contexts if b == _b}
+                                     for b in self.behaviors}
 
 
 # Given an SVM c and its training data, calculate the agreement with gold labels according to kappa

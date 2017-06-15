@@ -114,9 +114,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
         # Stop pointing
         self.retract_arm()
 
-	# If not correct, ask the user to touch the correct object.
-	if not correct:
-	    self.io.say("Can you touch the object that you were describing?")
+        # If not correct, ask the user to touch the correct object.
+        if not correct:
+            self.io.say("Can you touch the object that you were describing?")
             pos, oidx = self.detect_touch()
             true_idx = oidx
         else:
@@ -139,10 +139,11 @@ class InquisitiveIspyAgent(UnitTestAgent):
                     self.unknown_predicates.remove(predicate)
         else:
             # Update didn't happen so undo the extension
+            print "WARNING: failed to update classifiers"
             for predicate in new_preds:
                 self.known_predicates.remove(predicate)
         self.classifiers_changed = self.classifiers_changed + self.cur_dialog_predicates
-            
+
         self.debug_print('self.known_predicates = ' + str(self.known_predicates), 2)
         self.debug_print('self.unknown_predicates = ' + str(self.unknown_predicates), 2)
 
@@ -222,6 +223,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             self.classifiers_changed.append(predicate)
         else:
             # Update didn't happen so undo the extension
+            print "WARNING: failed to update classifiers"
             if predicate in self.unknown_predicates:
                 self.known_predicates.remove(predicate)
 
@@ -279,6 +281,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 self.classifiers_changed.append(predicate)
             else:
                 # Update didn't happen so undo the extension
+                print "WARNING: failed to update classifiers"
                 if predicate in self.unknown_predicates:
                     self.known_predicates.remove(predicate)
 
@@ -308,6 +311,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             self.classifiers_changed.append(predicate)
         else:
             # Update didn't happen so undo the extension
+            print "WARNING: failed to update classifiers"
             if predicate in self.unknown_predicates:
                 self.known_predicates.remove(predicate)
 
@@ -416,14 +420,17 @@ class InquisitiveIspyAgent(UnitTestAgent):
     def update_min_confidence_objects(self):
         for predicate in self.known_predicates:
             if predicate not in self.min_confidence_objects or predicate in self.classifiers_changed:
+                tied_mins = []
+                tied_min_conf = None
                 for obj_idx in self.objects_for_questions:
                     self.debug_print('In update_min_confidence_objects fetching result of predicate '
                                      + predicate + ' for object ' + str(obj_idx), 3)
                     classifier_idx = self.known_predicates.index(predicate)
                     _, confidence = self.run_classifier_on_object(classifier_idx, obj_idx)
-                    if (predicate not in self.min_confidence_objects
-                            or confidence < self.min_confidence_objects[predicate][1]):
-                        self.min_confidence_objects[predicate] = (obj_idx, confidence)
+                    if tied_min_conf is None or confidence < tied_min_conf:
+                        tied_mins.append(obj_idx)
+                        tied_min_conf = confidence
+                self.min_confidence_objects[predicate] = (np.random.choice(tied_mins), tied_min_conf)
 
     def run_dialog(self):
         self.debug_print('In run_dialog', 2)

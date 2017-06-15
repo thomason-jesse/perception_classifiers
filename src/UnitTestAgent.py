@@ -55,7 +55,6 @@ class UnitTestAgent:
     # pos - position index in {0, 1, 2, 3} for four objects.
     def point_to_position(self, pos):
         assert 0 <= pos <= 3
-        self.retract_arm()
         self.point(pos)
 
     # The robot points to an object by its id if on the table, or does nothing if the id specified is not on the table.
@@ -71,7 +70,6 @@ class UnitTestAgent:
                     obj_found = True
         if obj_found:
             pos = self.table_oidxs[self.tid - 1].index(oidx)
-            self.retract_arm()
             self.point(pos)
         return obj_found
 
