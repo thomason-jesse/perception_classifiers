@@ -22,7 +22,7 @@ class ClassifierServices:
         self.feature_dir = feature_dir  # str
         self.predicates = None  # list of strs
         self.oidxs = None  # list of ints
-        self.labels = None  # list of (pidx, oidx, label) triples for label in {-1, 1}
+        self.labels = None  # list of (pidx, oidx, label) triples for label in {False, True}
         self.features = None  # list of behavior, modality indexed dictionaries into lists of observation vectors
         self.behaviors = None  # list of strs
         self.contexts = None  # list of (behavior, modality) str tuples
@@ -81,9 +81,9 @@ class ClassifierServices:
 
         # Check existing labels.
         ls = [l for _p, _o, l in self.labels if _p == pidx and _o == oidx]
-        if len(ls) > 0 and sum(ls) != 0:  # This object is already labeled and has majority class
+        if len(ls) > 0 and sum([1 if l else -1 for l in ls]) != 0:  # This object is already labeled and has majority class
             print "returning majority class label for seen pred '" + self.predicates[pidx] + "' on object " + str(oidx)
-            dec = (1 if sum(ls) > 0 else -1) * float(len(self.contexts))
+            dec = (1 if sum([1 if l else -1 for l in ls]) > 0 else -1) * float(len(self.contexts))
         else:
 
             # Run classifiers if trained.
@@ -114,6 +114,7 @@ class ClassifierServices:
         upidxs = req.pidxs
         uoidxs = req.oidxs
         ulabels = req.labels
+        assert len(upidxs) == len(uoidxs) and len(uoidxs) == len(ulabels)
         print ("updating classifiers with new preds " + str(upreds) + " and triples " +
                str([(upidxs[idx], uoidxs[idx], ulabels[idx]) for idx in range(len(upidxs))]))
         self.predicates.extend(upreds)
@@ -153,7 +154,7 @@ class ClassifierServices:
         pairs = []
         for pjdx, oidx, l in self.labels:
             if pjdx == pidx:
-                pairs.append((oidx, l))
+                pairs.append((oidx, 1 if l else -1))
         return pairs
 
     # Train all classifiers given boilerplate info and labels.

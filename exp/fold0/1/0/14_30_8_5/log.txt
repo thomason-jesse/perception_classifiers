@@ -1,0 +1,92 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
+get:a tall and skinny red water bottle
+Get : a tall and skinny red water bottle
+Predicates : ['water', 'tall', 'skinny', 'bottle', 'red']
+say:Did you say: ' a tall and skinny red water bottle ' ?
+get:yes
+Match scores :{8: 0.25, 30: 0.25, 14: 0.25, 5: 0.25}
+
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as red?
+get:face table 3
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+get:ready
+say:I am waiting to detect the object your touch.
+touch:0
+Match scores : {8: 0.25, 30: 0.25, 14: 0.25, 5: 0.25}
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as red?
+get:ready
+say:I am waiting to detect the object your touch.
+touch:3
+Match scores : {8: 0.25, 30: 0.25, 14: 0.25, 5: 0.25}
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as red?
+get:none
+say:I see.
+Match scores : {8: 0.25, 30: 0.25, 14: 0.25, 5: 0.25}
+
+
+Action : make_guessface:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:0
+say:Is this the object you have in mind?
+get:no
+say:Can you touch the object that you were describing?
+touch:1
+say:That was fun. Let's do it again.
+point:-1
+Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
+get:a skinny yellow cylinder
+Get : a skinny yellow cylinder
+Predicates : ['skinny', 'cylinder', 'yellow']
+say:Did you say: ' a skinny yellow cylinder ' ?
+get:yes
+Match scores :{8: 0.0, 30: 1.0, 14: 0.0, 5: 0.0}
+
+
+
+Action : ask_predicate_labelface:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:0
+say:Would you use the word cylinder to describe this object?
+get:yes
+Match scores : {8: 0.0, 30: 1.0, 14: 0.0, 5: 0.0}
+
+
+Action : ask_predicate_labelpoint:0
+say:Would you use the word yellow to describe this object?
+get:no
+Match scores : {8: 0.0, 30: 1.0, 14: 0.0, 5: 0.0}
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as skinny?
+get:ready
+say:I am waiting to detect the object your touch.
+touch:1
+Match scores : {8: 0.0, 30: 1.0, 14: 0.0, 5: 0.0}
+
+
+Action : make_guessface:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:1
+say:Is this the object you have in mind?
+get:no
+say:Can you touch the object that you were describing?
+touch:3
+say:Thanks for playing.
+point:-1

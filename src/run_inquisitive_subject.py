@@ -28,7 +28,7 @@ def main(args):
     # Policy parameters
     assert args.cond == 1 or args.cond == 2
     if args.cond == 1:  # This condition should only try to get an answer for the current dialog preds
-        policy_max_questions = 5
+        policy_max_questions = 3
         only_dialog_relevant_questions = True
     else:  # This condition should be willing to ask about any preds
         policy_max_questions = 5
@@ -87,7 +87,8 @@ def main(args):
     agent.run_dialog()
     agent.io.say("That was fun. Let's do it again.")
     agent.retract_arm()
-    agent.run_dialog()
+    blacklist_from_before = agent.blacklisted_predicates_for_example
+    agent.run_dialog(init_blacklist=blacklist_from_before)
     agent.io.say("Thanks for playing.")
     agent.retract_arm()
     print "Committing classifiers to file..."

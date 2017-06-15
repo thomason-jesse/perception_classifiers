@@ -103,7 +103,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         correct = False
         while not got_confirmation:
             got_confirmation = True
-            self.io.say("Is this the object you have in mind?")
+            self.io.say("Is this the object you had in mind?")
             confirmation = self.io.get()
             if self.is_yes(confirmation):
                 correct = True
@@ -187,7 +187,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         
         # Get response
         got_answer = False
-        label_value = 0
+        label_value = False
         while not got_answer:
             got_answer = True
             self.io.say(question_str)
@@ -195,7 +195,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             if self.is_repeat(answer):
                 continue
             elif self.is_yes(answer):
-                label_value = 1
+                label_value = True
             elif not self.is_no(answer):
                 got_answer = False
                 self.io.say("I didn't catch that.")
@@ -264,6 +264,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
             else:
                 self.io.say("I didn't catch that.")
 
+        # Don't ask an open-ended question about this predicate in this dialog again.
+        self.blacklisted_predicates_for_example.append(predicate)
+
         if no_such_object:
             # All objects on the table are negative examples
             if predicate in self.unknown_predicates:
@@ -271,9 +274,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 self.known_predicates.extend(new_preds)  # Needed here to get correct indices of new predicates
             else:
                 new_preds = []
-            pidxs = [self.known_predicates.index(predicate)]
+            pidxs = [self.known_predicates.index(predicate)] * len(self.objects_for_questions)
             oidxs = self.objects_for_questions
-            labels = [0] * len(self.objects_for_questions)
+            labels = [False] * len(self.objects_for_questions)
             success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
             if success:
                 if predicate in self.unknown_predicates:
@@ -285,14 +288,11 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 if predicate in self.unknown_predicates:
                     self.known_predicates.remove(predicate)
 
-            self.blacklisted_predicates_for_example.append(predicate)
             self.io.say("I see.")
             return
         
         # Detect touch
         self.debug_print('Waiting to detect touch', 1)
-        touch_str = 'I am waiting to detect the object your touch.'
-        self.io.say(touch_str)
         pos_detected, obj_idx_detected = self.detect_touch()
         
         # Add required classifier update
@@ -303,7 +303,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             new_preds = []
         pidxs = [self.known_predicates.index(predicate)]
         oidxs = [obj_idx_detected]
-        labels = [1]
+        labels = [True]
         success = self.update_classifiers(new_preds, pidxs, oidxs, labels)
         if success:
             if predicate in self.unknown_predicates:
@@ -432,12 +432,14 @@ class InquisitiveIspyAgent(UnitTestAgent):
                         tied_min_conf = confidence
                 self.min_confidence_objects[predicate] = (np.random.choice(tied_mins), tied_min_conf)
 
-    def run_dialog(self):
+    def run_dialog(self, init_blacklist=None):
         self.debug_print('In run_dialog', 2)
         
         self.current_classifier_results = None
         self.classifiers_changed = list()
         self.blacklisted_predicates_for_example = list()
+        if init_blacklist is not None:
+		self.blacklisted_predicates_for_example = init_blacklist[:]
         self.num_dialog_turns = 0
         
         # Get initial user description and update state
