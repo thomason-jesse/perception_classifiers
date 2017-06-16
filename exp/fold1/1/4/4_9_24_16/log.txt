@@ -1,97 +1,13 @@
 point:-1
 say:I am thinking about the objects around me.
 Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
-get:a fat red cylinder
-Get : a fat red cylinder
-Predicates : ['cylinder', 'red', 'fat']
-say:Did you say: ' a fat red cylinder ' ?
-get:yes
-Match scores :{24: 0.25127311712677564, 9: 0.25127311712677564, 4: 0.25127311712677564, 16: 0.246180648619673}
-
-
-
-Action : ask_positive_examplesay:Could you show me an object that you would describe as red?
-get:turn left
-face:1
-say:I am turning to face table 1.
-say:I am getting the objects on the table into focus.
-say:I am having trouble focusing on the objects. The operator will adjust them.
-say:Okay, I see them.
-get:look
-touch:2
-Match scores : {24: 0.2512970168612192, 9: 0.2512970168612192, 4: 0.2512970168612192, 16: 0.24610894941634245}
-
-
-Action : ask_positive_examplesay:Could you show me an object that you would describe as fat?
-get:look
-touch:2
-Match scores : {24: 0.2512970168612192, 9: 0.2512970168612192, 4: 0.2512970168612192, 16: 0.24610894941634245}
-
-
-Action : ask_positive_examplesay:Could you show me an object that you would describe as cylinder?
-get:watch
-touch:2
-Match scores : {24: 0.2512970168612192, 9: 0.2512970168612192, 4: 0.2512970168612192, 16: 0.24610894941634245}
-
-
-Action : make_guessface:2
-say:I am turning to face table 2.
-say:I am getting the objects on the table into focus.
-say:Okay, I see them.
-point:2
-say:Is this the object you had in mind when you said 'a fat red cylinder'?
-get:no
-point:-1
-say:Can you touch the object that you were describing?
-touch:1
-say:That was fun. Let's do it again.
-Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
-get:a pointy yellow container
-Get : a pointy yellow container
-Predicates : ['pointy', 'container', 'yellow']
-say:Did you say: ' a pointy yellow container ' ?
+get:im thinking of a blue cylinder
+Get : im thinking of a blue cylinder
+Predicates : ['thinking', 'blue', 'cylinder', 'im']
+say:Did you say: ' im thinking of a blue cylinder ' ?
 get:yes
 Match scores :{24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
 
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as yellow?
-get:turn right
-face:3
-say:I am turning to face table 3.
-say:I am getting the objects on the table into focus.
-say:Okay, I see them.
-get:look
-touch:1
-Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
-
-
-Action : ask_predicate_labelface:1
-say:I am turning to face table 1.
-say:I am getting the objects on the table into focus.
-say:I am having trouble focusing on the objects. The operator will adjust them.
-say:Okay, I see them.
-point:0
-say:Would you use the word container to describe this object?
-get:yeah
-point:-1
-Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
-
-
-Action : ask_positive_examplesay:Could you show me an object that you would describe as pointy?
-get:look
-touch:2
-Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
-
-
-Action : make_guessface:2
-say:I am turning to face table 2.
-say:I am getting the objects on the table into focus.
-say:Okay, I see them.
-point:3
-say:Is this the object you had in mind when you said 'a pointy yellow container'?
-get:no
-point:-1
-say:Can you touch the object that you were describing?
-touch:0
-say:Thanks for playing.
+Action : ask_positive_examplesay:Could you show me an object that you would describe as thinking?
