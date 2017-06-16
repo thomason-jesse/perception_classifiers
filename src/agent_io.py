@@ -179,7 +179,6 @@ class IORobot:
         print "SYSTEM: "+s
         rospy.sleep(int(secs_per_vowel*len([v for v in s if v in vowels]) + 0.5 + speech_sec_buffer))
 
-
     # point using the robot arm
     def point(self, idx, log=True):
         if log:

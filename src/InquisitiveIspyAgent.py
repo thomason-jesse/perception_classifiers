@@ -191,19 +191,15 @@ class InquisitiveIspyAgent(UnitTestAgent):
         got_answer = False
         label_value = False
         while not got_answer:
-            got_answer = True
             self.io.say(question_str)
             answer = self.io.get()
             if self.is_repeat(answer):
                 continue
             elif self.is_yes(answer):
+                got_answer = True
                 label_value = True
             elif not self.is_no(answer):
-                got_answer = False
                 self.io.say("I didn't catch that.")
-                
-        # Stop pointing
-        self.retract_arm()
         
         # Add required classifier update
         if predicate in self.unknown_predicates:
@@ -242,7 +238,10 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.debug_print('candidate_predicates = ' + str(candidate_predicates))
 
         predicate = np.random.choice(candidate_predicates)
-        
+
+        # Stop pointing, if previously pointing, because user might want to point at this table.
+        self.retract_arm()
+
         question_str = 'Could you show me an object that you would describe as ' + predicate + '?'
         self.io.say(question_str)
 
@@ -261,6 +260,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
             if tid is not None:
                 self.face_table(tid, report=True)
                 self.debug_print('Faced table ' + str(tid), 1)
+                self.io.say(question_str)  # repeat self since facing table can take too long
             elif self.is_detect(cmd) and self.tid != 2:  # don't detect test objects
                 ready_to_detect = True
             else:
@@ -432,8 +432,10 @@ class InquisitiveIspyAgent(UnitTestAgent):
                     classifier_idx = self.known_predicates.index(predicate)
                     _, confidence = self.run_classifier_on_object(classifier_idx, obj_idx)
                     if tied_min_conf is None or confidence < tied_min_conf:
-                        tied_mins.append(obj_idx)
+                        tied_mins = [obj_idx]
                         tied_min_conf = confidence
+                    elif np.isclose(confidence, tied_min_conf):
+                        tied_mins.append(obj_idx)
                 self.min_confidence_objects[predicate] = (np.random.choice(tied_mins), tied_min_conf)
 
     def run_dialog(self, init_blacklist=None):
