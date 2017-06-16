@@ -53,6 +53,13 @@ def main(args):
         cmd = "mkdir " + source_dir
         print "> " + cmd
         os.system(cmd)
+    if os.path.isfile(logfn):
+        cmd = "rm " + logfn  # clear logfile if it exists, since we're restarting
+        print "> " + cmd
+        os.system(cmd)
+    cmd = "rm " + os.path.join(source_dir, '*')  # clear any existing data in this user/fold/test_objs combo
+    print "> " + cmd
+    os.system(cmd)
     cmd = "cp " + os.path.join(cond_dir, 'source', '*') + " " + source_dir
     print "> " + cmd
     os.system(cmd)  # fold + policy preds and init classifiers

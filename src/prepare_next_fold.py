@@ -6,6 +6,21 @@ import pickle
 from argparse import ArgumentParser
 
 
+# Takes in a list of (pidx, oidx, l) labels and standardizes them, turning l in {0, 1}
+# or {-1, 1} into {True, False}, and returning a list of such.
+# This can be phased out after pilot test, which fixed the nonstandardization bugs.
+def standardize_labels(labels):
+    s = []
+    for pidx, oidx, l in labels:
+        if l == 0 or l == -1 or not l:
+            s.append((pidx, oidx, False))
+        elif l == 1 or l:
+            s.append((pidx, oidx, True))
+        else:
+            print "WARNING: label " + str(l) + " is not possible to standardize"
+    return s
+
+
 def main(args):
 
     # Directory structure:
@@ -38,6 +53,7 @@ def main(args):
             source_predicates = pickle.load(f)
         with open(os.path.join(fold_source_dir, "labels.pickle"), 'rb') as f:
             source_labels = pickle.load(f)
+            source_labels = standardize_labels(source_labels)
         print "...... done"
 
         # Change (pidx, oidx, l) label triples to (predicate, oidx, l) to prevent bad indexing.
@@ -49,35 +65,42 @@ def main(args):
         user_predicates = {}  # indexed by uid, value is list of new user preds
         user_labels = {}  # indexed by uid, value is list of new user label triples
         for root, dirs, fs in os.walk(cond_dir):
-            if root != cond_dir and root != "source":
-                user_id = int(root)
-                print "...... processing user id " + str(user_id)
-                user_predicates[user_id] = []
-                user_labels[user_id] = []
-                for test_dir in dirs:
-                    user_source_dir = os.path.join(root, test_dir, "source")
-                    with open(os.path.join(user_source_dir, "predicates.pickle"), 'rb') as f:
-                        all_user_predicates = pickle.load(f)
-                    with open(os.path.join(user_source_dir, "labels.pickle"), 'rb') as f:
-                        all_user_labels = pickle.load(f)
+            if root == cond_dir:
+                for uid in dirs:
+                    if uid != "source":
+                        user_id = int(uid)
+                        print "...... processing user id " + str(user_id)
+                        user_predicates[user_id] = []
+                        user_labels[user_id] = []
+                        user_dir = os.path.join(root, uid)
+                        for _root, test_dirs, _fs in os.walk(user_dir):
+                            if _root == user_dir:
+                                for test_dir in test_dirs:
+                                    user_source_dir = os.path.join(_root, test_dir, "source")
+                                    with open(os.path.join(user_source_dir, "predicates.pickle"), 'rb') as f:
+                                        all_user_predicates = pickle.load(f)
+                                    with open(os.path.join(user_source_dir, "labels.pickle"), 'rb') as f:
+                                        all_user_labels = pickle.load(f)
+                                        all_user_labels = standardize_labels(all_user_labels)
 
-                    # Change (pidx, oidx, l) label triples to (predicate, oidx, l) to prevent bad indexing.
-                    all_user_labels = [(all_user_predicates[pidx], oidx, l)
-                                       for pidx, oidx, l in all_user_labels]
+                                    # Change (pidx, oidx, l) label triples to (predicate, oidx, l)
+                                    # to prevent bad indexing.
+                                    all_user_labels = [(all_user_predicates[pidx], oidx, l)
+                                                       for pidx, oidx, l in all_user_labels]
 
-                    # Remove sources and record.
-                    for pred in source_predicates:
-                        all_user_predicates.remove(pred)
-                    for label in source_labels:
-                        all_user_labels.remove(label)
-                    for pred in all_user_predicates:
-                        if pred not in user_predicates[user_id]:
-                            user_predicates[user_id].append(pred)
-                    user_labels[user_id].extend(all_user_labels)
+                                    # Remove sources and record.
+                                    for pred in source_predicates:
+                                        all_user_predicates.remove(pred)
+                                    for label in source_labels:
+                                        all_user_labels.remove(label)
+                                    for pred in all_user_predicates:
+                                        if pred not in user_predicates[user_id]:
+                                            user_predicates[user_id].append(pred)
+                                    user_labels[user_id].extend(all_user_labels)
 
-                print "user " + str(user_id) + ":"
-                print "\tnew preds: " + str(user_predicates[user_id])
-                print "\tnew labels: " + str(user_labels[user_id])
+                        print "......... user " + str(user_id) + ":"
+                        print "......... new preds: " + str(user_predicates[user_id])
+                        print "......... new labels: " + str(user_labels[user_id])
         print "...... done"
 
         # Unify predicates and labels.
@@ -89,8 +112,8 @@ def main(args):
                 if pred not in new_predicates:
                     new_predicates.append(pred)
             new_labels += user_labels[uid]
-        print "all preds: " + str(new_predicates)
-        print "all labels: " + str(new_labels)
+        print "...... all preds: " + str(new_predicates)
+        print "...... all labels: " + str(new_labels)
         print "...... done"
 
         # Change labels from (predicate, oidx, l) to (pidx, oidx, l) with new predicate order established.
