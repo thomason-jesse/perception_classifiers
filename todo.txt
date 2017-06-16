@@ -3,3 +3,6 @@
 
 -jesse:
 	-continue pilot test with fold1
+	-fix "what" behavior for "would you use the word __ to describe this object"
+	-repeat self after getting objects into focus after turning on an open-ended question so user remembers what word they're demonstrating
+	-fix bug in aishwarya's code where classifiers_changed has pred p in it, but after classifiers return conf 1.0 for p on O, O remains the min confidence pred for p with some old conf value; happened after yes_no update

@@ -1,0 +1,141 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
+get:a fat red cylinder
+Get : a fat red cylinder
+Predicates : ['cylinder', 'red', 'fat']
+say:Did you say: ' a fat red cylinder ' ?
+get:yes
+Match scores :{24: 0.2514159848961611, 9: 0.2514159848961611, 4: 0.2514159848961611, 16: 0.24575204531151662}
+
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as fat?
+get:face table 1
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+get:look
+touch:0
+Match scores : {24: 0.2514159848961611, 9: 0.2514159848961611, 4: 0.2514159848961611, 16: 0.24575204531151662}
+
+
+Action : ask_predicate_labelpoint:0
+say:Would you use the word container to describe this object?
+get:yes
+point:-1
+Match scores : {24: 0.2514159848961611, 9: 0.2514159848961611, 4: 0.2514159848961611, 16: 0.24575204531151662}
+
+
+Action : ask_predicate_labelpoint:2
+say:Would you use the word blue to describe this object?
+get:no
+point:-1
+Match scores : {24: 0.2514159848961611, 9: 0.2514159848961611, 4: 0.2514159848961611, 16: 0.24575204531151662}
+
+
+Action : ask_predicate_labelpoint:0
+say:Would you use the word tall to describe this object?
+get:what
+point:-1
+Match scores : {24: 0.2514159848961611, 9: 0.2514159848961611, 4: 0.2514159848961611, 16: 0.24575204531151662}
+
+
+Action : ask_predicate_labelpoint:0
+say:Would you use the word shiny to describe this object?
+get:no
+point:-1
+Match scores : {24: 0.2514159848961611, 9: 0.2514159848961611, 4: 0.2514159848961611, 16: 0.24575204531151662}
+
+
+Action : make_guessface:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:0
+say:Is this the object you had in mind when you said 'a fat red cylinder'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:1
+say:That was fun. Let's do it again.
+Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
+get:a neon green bottle
+Get : a neon green bottle
+Predicates : ['green', 'neon', 'bottle']
+say:Did you say: ' a neon green bottle ' ?
+get:yes
+Match scores :{24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
+
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as bottle?
+get:look
+say:I didn't catch that.
+get:face table 1
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+get:look
+touch:3
+Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as green?
+get:turn around
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+get:look
+touch:1
+Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
+
+
+Action : ask_positive_examplesay:Could you show me an object that you would describe as neon?
+get:none
+say:I see.
+Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
+
+
+Action : ask_predicate_labelface:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:0
+say:Would you use the word red to describe this object?
+get:no
+point:-1
+Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
+
+
+Action : ask_predicate_labelpoint:0
+say:Would you use the word red to describe this object?
+get:no
+point:-1
+Match scores : {24: 0.25, 9: 0.25, 4: 0.25, 16: 0.25}
+
+
+Action : make_guessface:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:2
+say:Is this the object you had in mind when you said 'a neon green bottle'?
+get:yes
+point:-1
+say:Thanks for playing.
