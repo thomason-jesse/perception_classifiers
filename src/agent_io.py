@@ -153,6 +153,7 @@ class IORobot:
         uin = uin.lower()  # lowercase
         uin = uin.translate(None, string.punctuation)  # remove punctuation
         uin = uin.strip()  # strip any leading or trailing whitespace
+        print "agent_io: get returning '" + uin + "'"
         self.listening_mode_toggle_client()
         append_to_file("get:"+str(uin)+"\n", self.trans_fn)
         return uin
@@ -250,8 +251,8 @@ class IORobot:
 
     # Listen for speech, transcribe it, and return it.
     def sound_transcript_client(self):
-        print "<enter speech text>"  # DEBUG - until snowball is working
-        return raw_input()  # DEBUG - until snowball is working
+        # print "<enter speech text>"  # DEBUG - until snowball is working
+        # return raw_input()  # DEBUG - until snowball is working
 
         rospy.wait_for_service('sound_transcript_server')
         try:

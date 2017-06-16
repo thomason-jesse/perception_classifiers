@@ -198,7 +198,10 @@ class InquisitiveIspyAgent(UnitTestAgent):
             elif self.is_yes(answer):
                 got_answer = True
                 label_value = True
-            elif not self.is_no(answer):
+            elif self.is_no(answer):
+                got_answer = True
+                label_value = False
+            else:
                 self.io.say("I didn't catch that.")
         
         # Add required classifier update

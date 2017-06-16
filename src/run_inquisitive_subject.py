@@ -92,10 +92,10 @@ def main(args):
     # Run the dialog.
     print "Running experiment..."
     agent.run_dialog()
-    agent.io.say("That was fun. Let's do it again.")
-    agent.retract_arm()
-    blacklist_from_before = agent.blacklisted_predicates_for_example
-    agent.run_dialog(init_blacklist=blacklist_from_before)
+    # agent.io.say("That was fun. Let's do it again.")
+    # agent.retract_arm()
+    # blacklist_from_before = agent.blacklisted_predicates_for_example
+    # agent.run_dialog(init_blacklist=blacklist_from_before)
     agent.io.say("Thanks for playing.")
     agent.retract_arm()
     print "Committing classifiers to file..."
