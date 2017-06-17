@@ -1,6 +1,7 @@
 point:-1
 say:I am thinking about the objects around me.
-Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
 get:a medium blue cylinder with a white lid that rattles when shaken
 Get : a medium blue cylinder with a white lid that rattles when shaken
 Predicates : ['blue', 'lid', 'cylinder', 'medium', 'shaken', 'white', 'rattles']
@@ -10,7 +11,8 @@ Match scores :{1: 0.25, 29: 0.25, 30: 0.25, 31: 0.25}
 
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as cylinder?
+Action : ask_positive_example
+say:Could you show me an object that you would describe as cylinder?
 get:turn left
 face:1
 say:I am turning to face table 1.
@@ -32,13 +34,15 @@ touch:2
 Match scores : {1: 0.25, 29: 0.25, 30: 0.25, 31: 0.25}
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as medium?
+Action : ask_positive_example
+say:Could you show me an object that you would describe as medium?
 get:look
 touch:2
 Match scores : {1: 0.25, 29: 0.25, 30: 0.25, 31: 0.25}
 
 
-Action : ask_predicate_labelface:3
+Action : ask_predicate_label
+face:3
 say:I am turning to face table 3.
 say:I am getting the objects on the table into focus.
 say:Okay, I see them.
@@ -48,7 +52,8 @@ get:yes
 Match scores : {1: 0.25, 29: 0.25, 30: 0.25, 31: 0.25}
 
 
-Action : ask_predicate_labelpoint:-1
+Action : ask_predicate_label
+point:-1
 face:1
 say:I am turning to face table 1.
 say:I am getting the objects on the table into focus.
@@ -69,7 +74,8 @@ get:yes
 Match scores : {1: 0.25, 29: 0.25, 30: 0.25, 31: 0.25}
 
 
-Action : ask_positive_examplepoint:-1
+Action : ask_positive_example
+point:-1
 say:Could you show me an object that you would describe as lid?
 get:book
 say:I didn't catch that.
@@ -78,7 +84,8 @@ touch:2
 Match scores : {1: 0.25, 29: 0.25, 30: 0.25, 31: 0.25}
 
 
-Action : make_guessface:2
+Action : make_guess
+face:2
 say:I am turning to face table 2.
 say:I am getting the objects on the table into focus.
 say:Okay, I see them.

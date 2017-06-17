@@ -1,6 +1,7 @@
 point:-1
 say:I am thinking about the objects around me.
-Action : get_initial_descriptionsay:Please pick an object that you see and describe it to me in one phrase.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
 get:a small white cylinder with a green lid
 Get : a small white cylinder with a green lid
 Predicates : ['small', 'lid', 'white', 'green', 'cylinder']
@@ -10,7 +11,8 @@ Match scores :{8: 0.25, 5: 0.25, 14: 0.25, 15: 0.25}
 
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as lid?
+Action : ask_positive_example
+say:Could you show me an object that you would describe as lid?
 get:turn left
 face:1
 say:I am turning to face table 1.
@@ -28,7 +30,8 @@ touch:2
 Match scores : {8: 0.25, 5: 0.25, 14: 0.25, 15: 0.25}
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as green?
+Action : ask_positive_example
+say:Could you show me an object that you would describe as green?
 get:face table 3
 face:3
 say:I am turning to face table 3.
@@ -48,19 +51,22 @@ touch:0
 Match scores : {8: 0.25, 5: 0.25, 14: 0.25, 15: 0.25}
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as white?
+Action : ask_positive_example
+say:Could you show me an object that you would describe as white?
 get:there are none
 say:I see.
 Match scores : {8: 0.25, 5: 0.25, 14: 0.25, 15: 0.25}
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as cylinder?
+Action : ask_positive_example
+say:Could you show me an object that you would describe as cylinder?
 get:look
 touch:2
 Match scores : {8: 0.25, 5: 0.25, 14: 0.25, 15: 0.25}
 
 
-Action : ask_positive_examplesay:Could you show me an object that you would describe as small?
+Action : ask_positive_example
+say:Could you show me an object that you would describe as small?
 get:book
 say:I didn't catch that.
 get:cats that look
@@ -68,7 +74,8 @@ touch:1
 Match scores : {8: 0.25, 5: 0.25, 14: 0.25, 15: 0.25}
 
 
-Action : make_guessface:2
+Action : make_guess
+face:2
 say:I am turning to face table 2.
 say:I am getting the objects on the table into focus.
 say:I am having trouble focusing on the objects. The operator will adjust them.

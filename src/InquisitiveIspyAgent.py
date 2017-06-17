@@ -452,7 +452,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         self.num_dialog_turns = 0
 
         # Get initial user description and update state
-        self.log('Action : get_initial_description')
+        self.log('Action : get_initial_description\n')
         self.cur_dialog_desc = None
         self.cur_dialog_predicates = None
         self.get_initial_description()  # Sets self.cur_dialog_predicates
@@ -466,7 +466,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         object_guessed = False
         try:
             while not object_guessed:
-                self.log('\n\nAction : ' + dialog_action)
+                self.log('\n\nAction : ' + dialog_action + '\n')
                 self.debug_print('Action : ' + dialog_action)
                 self.debug_print('self.classifiers_changed = ' + str(self.classifiers_changed), 1)
                 self.num_dialog_turns += 1

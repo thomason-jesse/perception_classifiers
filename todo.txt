@@ -1,6 +1,0 @@
--justin:
-	-use expensive mounted microphone instead of little dinky laptop one
-
--jesse:
-  -run final quick pilot tomorrow morning with or without microphone at highest fidelity,
-  then clean directories and start running real subjects

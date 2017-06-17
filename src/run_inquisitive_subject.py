@@ -27,10 +27,16 @@ def main(args):
 
     # Policy parameters
     assert args.cond == 1 or args.cond == 2
-    if args.cond == 1:  # This condition should only try to get an answer for the current dialog preds
+    assert 0 <= args.fold <= 2  # training fold never exceeds 2
+
+    # This condition only tries to get an answer for the current dialog preds and asks no more than 3 questions
+    # This is the baseline condition and, when fold 3 is the testing fold (e.g. fold 2 training), both conditions
+    # use this policy so that we can compare how well the system learned with condition 2 up until now by contrast.
+    if args.cond == 1 or args.fold == 2:
         policy_max_questions = 3
         only_dialog_relevant_questions = True
-    else:  # This condition should be willing to ask about any preds
+    # This condition is willing to ask about any preds and can stretch conversation to 5 questions
+    else:
         policy_max_questions = 5
         only_dialog_relevant_questions = False
     policy_ask_yes_no_prob = 0.2
