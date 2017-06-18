@@ -2,7 +2,6 @@
 __author__ = 'jesse'
 
 import os
-import pickle
 from argparse import ArgumentParser
 
 
@@ -42,6 +41,7 @@ def main(args):
                                         nb_q_ex = 0
                                         nb_g = 0
                                         correct = 1
+                                        preds = None
                                         with open(logfn, 'r') as f:
                                             for line in f.readlines():
                                                 line = line.strip()
@@ -57,15 +57,19 @@ def main(args):
                                                         nb_q_ex += 1
                                                     elif lp[2] == "make_guess":
                                                         nb_g += 1
+                                                elif lp[0] == "Predicates":
+                                                    preds = '_'.join([pred.strip("[]',") for pred in lp[2:]])
                                                 elif "Can you touch the object that you were describing" in line:
                                                     correct = 0
                                         user_data.append([fold_idx, cond, uid, toidx_dir,
-                                                          nb_q_init, nb_q_yn, nb_q_ex, nb_g, correct])
+                                                          nb_q_init, nb_q_yn, nb_q_ex, nb_g, correct,
+                                                          preds])
 
     # Write user data to file.
     with open(args.outfile, 'w') as f:
         f.write(','.join(["fold", "condition", "uid", "test_oidxs",
-                          "nb_q_init", "nb_q_yn", "nb_q_ex", "nb_g", "correct"]) + '\n')
+                          "nb_q_init", "nb_q_yn", "nb_q_ex", "nb_g", "correct",
+                          "predicates_used"]) + '\n')
         for entry in user_data:
             f.write(','.join([str(d) for d in entry]) + '\n')
 
@@ -77,7 +81,7 @@ if __name__ == '__main__':
                               "Expects a source/ sub-directory with initial predicates, labels, " +
                               "and, for fold > 0, classifiers pickles."))
     parser.add_argument('--outfile', type=str, required=True,
-                        help=("CSV outfile summarizing information extracted from logs"))
+                        help="CSV outfile summarizing information extracted from logs")
     cmd_args = parser.parse_args()
     
     main(cmd_args)
