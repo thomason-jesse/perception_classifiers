@@ -262,7 +262,8 @@ class IORobot:
                 return ''
             return resp.utterance
         except rospy.ServiceException, e:
-            sys.exit("Service call failed: %s " % e)
+            print "Service call failed: %s " % e
+            return ''
 
     # Turn in place to face a new table.
     def face_table_client(self, tid):

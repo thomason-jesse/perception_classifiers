@@ -1,0 +1,61 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:what okay
+Get : what okay
+say:I am thinking about the objects around me. Please pick an object that you see and describe it to me in one phrase.
+get:screw on cap
+Get : screw on cap
+Predicates : ['screw', 'cap']
+say:Did you say: ' screw on cap ' ?
+get:yes
+Match scores :{8: 0.25, 5: 0.25, 30: 0.25, 31: 0.25}
+
+
+
+Action : ask_predicate_label
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:3
+say:Would you use the word cap to describe this object?
+get:no
+Match scores : {8: 0.25, 5: 0.25, 30: 0.25, 31: 0.25}
+
+
+Action : ask_predicate_label
+point:-1
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:2
+say:Would you use the word cap to describe this object?
+get:yes
+Match scores : {8: 0.0, 5: 0.396551724137931, 30: 0.6034482758620691, 31: 0.0}
+
+
+Action : ask_positive_example
+point:-1
+say:Could you show me an object that you would describe as cap?
+get:watch
+touch:3
+Match scores : {8: 0.03711201079622134, 5: 0.32321187584345473, 30: 0.3205128205128205, 31: 0.31916329284750333}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'screw on cap'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:2
+say:Thanks for playing.
