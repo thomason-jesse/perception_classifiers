@@ -1,3 +1,13 @@
 fold,condition,uid,test_oidxs,nb_q_init,nb_q_yn,nb_q_ex,nb_g,correct,predicates_used
+0,1,2,29_1_5_31,1,0,3,1,0,tub_shirt_yellow
+0,1,2,8_14_15_30,1,0,3,1,0,bottle_red_long
+0,1,4,1_14_15_29,1,1,2,1,0,led_green
+0,1,4,8_31_30_5,1,2,1,1,0,screw_cap
+0,1,6,15_1_8_30,1,0,3,1,0,open_can_aluminum
+0,1,6,5_31_29_14,1,2,1,1,0,tall_spray_thin_can
 0,2,1,14_8_15_5,1,0,5,1,0,small_lid_white_green_cylinder
 0,2,1,1_31_29_30,1,2,3,1,0,blue_lid_cylinder_medium_shaken_white_rattles
+0,2,3,1_15_14_30,1,1,4,1,0,small_container_white_green
+0,2,3,8_29_31_5,1,0,1,1,1,metallic
+0,2,5,29_1_30_8,1,2,3,1,0,large_lid_white_jar
+0,2,5,31_15_14_5,1,2,3,1,0,small_full_pills_bottle
