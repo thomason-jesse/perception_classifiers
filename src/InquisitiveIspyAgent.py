@@ -119,6 +119,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         if not correct:
             self.io.say("Can you touch the object that you were describing?")
             pos, oidx = self.detect_touch()
+            self.io.say("I see.")
             true_idx = oidx
         else:
             true_idx = guess_idx
@@ -203,6 +204,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
                 label_value = False
             else:
                 self.io.say("I didn't catch that.")
+        self.io.say("I see.")
         
         # Add required classifier update
         if predicate in self.unknown_predicates:
@@ -299,6 +301,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
         # Detect touch
         self.debug_print('Waiting to detect touch', 1)
         pos_detected, obj_idx_detected = self.detect_touch()
+        self.io.say("I see.")
         
         # Add required classifier update
         if predicate in self.unknown_predicates:
