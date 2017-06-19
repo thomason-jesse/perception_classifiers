@@ -1,0 +1,87 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a large white jar with a lid
+Get : a large white jar with a lid
+Predicates : ['large', 'lid', 'white', 'jar']
+say:Did you say: ' a large white jar with a lid ' ?
+get:yes
+Match scores :{8: 0.25, 1: 0.25, 29: 0.25, 30: 0.25}
+
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as jar?
+get:face table one
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as jar?
+get:block
+say:I didn't catch that.
+get:watch
+touch:0
+say:I see.
+Match scores : {8: 0.25, 1: 0.25, 29: 0.25, 30: 0.25}
+
+
+Action : ask_predicate_label
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:3
+say:Would you use the word white to describe this object?
+get:no
+say:I see.
+Match scores : {8: 0.25, 1: 0.25, 29: 0.25, 30: 0.25}
+
+
+Action : ask_predicate_label
+point:-1
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:2
+say:Would you use the word jar to describe this object?
+get:no
+say:I see.
+Match scores : {8: 0.0, 1: 0.0, 29: 0.5, 30: 0.5000000000000001}
+
+
+Action : ask_positive_example
+point:-1
+say:Could you show me an object that you would describe as large?
+get:watch
+touch:1
+say:I see.
+Match scores : {8: 0.0, 1: 0.0, 29: 0.5, 30: 0.5000000000000001}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as lid?
+get:mud
+say:I didn't catch that.
+get:that
+say:I didn't catch that.
+get:none of these
+say:I see.
+Match scores : {8: 0.0, 1: 0.0, 29: 0.5, 30: 0.5000000000000001}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:2
+say:Is this the object you had in mind when you said 'a large white jar with a lid'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:-1
+say:I see.
+say:Thanks for playing.
