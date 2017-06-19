@@ -1,0 +1,83 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:bottle
+Get : bottle
+Predicates : ['bottle']
+say:Did you say: ' bottle ' ?
+get:no
+say:My hearing is not so good. Could you repeat your description?
+get:a long red bottle
+Get : a long red bottle
+Predicates : ['bottle', 'red', 'long']
+say:Did you say: ' a long red bottle ' ?
+get:yes
+Match scores :{8: 0.25, 30: 0.25, 14: 0.25, 15: 0.25}
+
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as long?
+get:turn right
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as long?
+get:can i see face table wine
+say:I didn't catch that.
+get:chefs table wine
+say:I didn't catch that.
+get:turn left
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as long?
+get:turn left
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as long?
+get:look
+touch:0
+Match scores : {8: 0.25, 30: 0.25, 14: 0.25, 15: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as bottle?
+get:look
+touch:3
+Match scores : {8: 0.25, 30: 0.25, 14: 0.25, 15: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as red?
+get:turn around
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as red?
+get:good luck
+say:I didn't catch that.
+get:look
+touch:1
+Match scores : {8: 0.25, 30: 0.25, 14: 0.25, 15: 0.25}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:0
+say:Is this the object you had in mind when you said 'a long red bottle'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:3
+say:Thanks for playing.
