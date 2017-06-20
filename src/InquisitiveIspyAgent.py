@@ -359,6 +359,9 @@ class InquisitiveIspyAgent(UnitTestAgent):
             else:
                 self.io.say("Sorry; I didn't catch that. Could you re-word your description?")
 
+        unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
+        self.unknown_predicates.extend(unknown_predicates)
+
         self.cur_dialog_desc = user_response
         self.cur_dialog_predicates = predicates
 
@@ -366,8 +369,6 @@ class InquisitiveIspyAgent(UnitTestAgent):
         response_parts = user_response.split()
         predicates = [w for w in response_parts if w not in self.stopwords]
         predicates = list(set(predicates))  # remove duplicates
-        unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
-        self.unknown_predicates.extend(unknown_predicates)
         return predicates
     
     # Given predicates and object idxs, return a map of results
