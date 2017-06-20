@@ -359,7 +359,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
             else:
                 self.io.say("Sorry; I didn't catch that. Could you re-word your description?")
 
-        unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates]
+        unknown_predicates = [predicate for predicate in predicates if predicate not in self.known_predicates
+                              and predicate not in self.unknown_predicates]
         self.unknown_predicates.extend(unknown_predicates)
 
         self.cur_dialog_desc = user_response
