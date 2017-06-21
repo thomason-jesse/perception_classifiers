@@ -1,0 +1,55 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a half full green and purple plastic bottle
+Get : a half full green and purple plastic bottle
+Predicates : ['full', 'purple', 'plastic', 'green', 'bottle', 'half']
+say:Did you say: ' a half full green and purple plastic bottle ' ?
+get:yes
+Match scores :{16: 0.25, 24: 0.25, 19: 0.25, 23: 0.25}
+
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as full?
+get:face table one
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as full?
+get:look
+touch:3
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 23: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as half?
+get:what do i say if not it doesnt exist
+say:I didn't catch that.
+get:there are none
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 23: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as purple?
+get:turn on
+say:I didn't catch that.
+get:there are none
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 23: 0.25}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'a half full green and purple plastic bottle'?
+get:yes
+point:-1
+say:Thanks for playing.

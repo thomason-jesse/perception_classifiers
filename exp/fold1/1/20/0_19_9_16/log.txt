@@ -1,0 +1,69 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:failed
+Get : failed
+Predicates : ['failed']
+say:Did you say: ' failed ' ?
+get:no
+say:My hearing is not so good. Could you repeat your description?
+get:heavy
+Get : heavy
+Predicates : ['heavy']
+say:Did you say: ' heavy ' ?
+get:yes
+Match scores :{0: 0.25, 9: 0.25, 19: 0.25, 16: 0.25}
+
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as heavy?
+get:used table runner
+say:I didn't catch that.
+get:face table 3
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as heavy?
+get:look
+touch:1
+say:I see.
+Match scores : {0: 0.25, 9: 0.25, 19: 0.25, 16: 0.25}
+
+
+Action : ask_predicate_label
+point:2
+say:Would you use the word heavy to describe this object?
+get:no
+say:I see.
+Match scores : {0: 0.0, 9: 1.0, 19: 0.0, 16: 0.0}
+
+
+Action : ask_predicate_label
+point:-1
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:1
+say:Would you use the word heavy to describe this object?
+get:no
+say:I see.
+Match scores : {0: 0.25, 9: 0.25, 19: 0.25, 16: 0.25}
+
+
+Action : make_guess
+point:-1
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:2
+say:Is this the object you had in mind when you said 'heavy'?
+get:yes
+point:-1
+say:Thanks for playing.

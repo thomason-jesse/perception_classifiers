@@ -1,0 +1,55 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:this is a yellow bottle with water filled in it
+Get : this is a yellow bottle with water filled in it
+Predicates : ['water', 'bottle', 'yellow', 'filled']
+say:Did you say: ' this is a yellow bottle with water filled in it ' ?
+get:yes
+Match scores :{0: 0.25, 4: 0.25, 21: 0.25, 23: 0.25}
+
+
+
+Action : ask_predicate_label
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:1
+say:Would you use the word bottle to describe this object?
+get:yes
+say:I see.
+Match scores : {0: 0.25, 4: 0.25, 21: 0.25, 23: 0.25}
+
+
+Action : ask_positive_example
+point:-1
+say:Could you show me an object that you would describe as yellow?
+get:watch
+touch:1
+say:I see.
+Match scores : {0: 0.25, 4: 0.25, 21: 0.25, 23: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as bottle?
+get:watch
+touch:1
+say:I see.
+Match scores : {0: 0.25, 4: 0.25, 21: 0.25, 23: 0.25}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'this is a yellow bottle with water filled in it'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:0
+say:I see.
+say:Thanks for playing.
