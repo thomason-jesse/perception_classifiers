@@ -1,0 +1,79 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:heavy white bottle with writing on it
+Get : heavy white bottle with writing on it
+Predicates : ['heavy', 'white', 'bottle', 'writing']
+say:Did you say: ' heavy white bottle with writing on it ' ?
+get:yes
+Match scores :{16: 0.25, 24: 0.25, 21: 0.25, 23: 0.25}
+
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as bottle?
+get:fable 3
+say:I didn't catch that.
+get:face table 3
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as bottle?
+get:look
+touch:0
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 21: 0.25, 23: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as white?
+get:face cable one
+say:I didn't catch that.
+get:face table one
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as white?
+get:rock
+say:I didn't catch that.
+get:what
+say:I didn't catch that.
+get:watch
+touch:0
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 21: 0.25, 23: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as heavy?
+get:table 3
+say:I didn't catch that.
+get:face table 3
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as heavy?
+get:watch
+touch:0
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 21: 0.25, 23: 0.25}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'heavy white bottle with writing on it'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:0
+say:I see.
+say:Thanks for playing.

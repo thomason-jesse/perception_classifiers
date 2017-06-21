@@ -1,0 +1,93 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a large empty yellow cylinder
+Get : a large empty yellow cylinder
+Predicates : ['large', 'cylinder', 'yellow', 'empty']
+say:Did you say: ' a large empty yellow cylinder ' ?
+get:yes
+Match scores :{16: 0.25, 24: 0.25, 19: 0.25, 21: 0.25}
+
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as empty?
+get:official
+say:I didn't catch that.
+get:turn left
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as empty?
+get:look
+touch:1
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 21: 0.25}
+
+
+Action : ask_predicate_label
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:2
+say:Would you use the word blue to describe this object?
+get:no
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 21: 0.25}
+
+
+Action : ask_predicate_label
+point:-1
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:0
+say:Would you use the word large to describe this object?
+get:yes
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 21: 0.25}
+
+
+Action : ask_predicate_label
+point:-1
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:2
+say:Would you use the word annoy to describe this object?
+get:can you repeat that
+say:Would you use the word annoy to describe this object?
+get:neville
+say:I didn't catch that.
+say:Would you use the word annoy to describe this object?
+get:no
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 21: 0.25}
+
+
+Action : ask_predicate_label
+point:3
+say:Would you use the word annoy to describe this object?
+get:no
+say:I see.
+Match scores : {16: 0.25, 24: 0.25, 19: 0.25, 21: 0.25}
+
+
+Action : make_guess
+point:-1
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'a large empty yellow cylinder'?
+get:yes
+point:-1
+say:Thanks for playing.
