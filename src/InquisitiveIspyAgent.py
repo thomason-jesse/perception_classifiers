@@ -326,6 +326,7 @@ class InquisitiveIspyAgent(UnitTestAgent):
     # Start of human_take_turn of IspyAgent. Re-coded here because
     # only part of that function is to be used here
     def get_initial_description(self):
+        self.io.last_say = None
         self.io.say("Please pick an object that you see and describe it to me in one phrase.")
 
         understood = False
@@ -467,6 +468,8 @@ class InquisitiveIspyAgent(UnitTestAgent):
         
         dialog_state = self.get_dialog_state()
         dialog_action = self.policy.get_next_action(dialog_state)
+
+        self.io.say("Let's focus on the objects on tables one and three.")
         
         object_guessed = False
         try:
