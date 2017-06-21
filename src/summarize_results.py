@@ -45,6 +45,7 @@ def main(args):
             else:
                 data["predicates_used"][data["uid"].index(uid)].extend(ps[headers.index("predicates_used")].split('_'))
 
+    unseen_uids = data["uid"][:]
     with open(args.survey_responses, 'r') as f:
         lines = f.readlines()
         headers = lines[0].strip().split(',')
@@ -54,8 +55,13 @@ def main(args):
             if uid not in data['uid']:
                 print "WARNING: uid " + str(uid) + " present in survey responses but not log summary"
                 continue
+            else:
+                unseen_uids.remove(uid)
             for d in ["understand", "prod_yn", "prod_ex", "long", "slow", "qs", "fun", "use"]:
                 data[d][data["uid"].index(uid)] = int(ps[headers.index(d)])
+    if len(unseen_uids) > 0:
+        print ("WARNING: uid(s) " + ','.join([str(uid) for uid in unseen_uids]) +
+               " present in logs but do not have survey responses")
 
     print data
 
