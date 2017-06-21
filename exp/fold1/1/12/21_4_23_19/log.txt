@@ -1,0 +1,93 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:ate all that yellow cylinder
+Get : ate all that yellow cylinder
+Predicates : ['cylinder', 'ate', 'yellow']
+say:Did you say: ' ate all that yellow cylinder ' ?
+get:no
+say:My hearing is not so good. Could you repeat your description?
+get:wide
+Get : wide
+Predicates : ['wide']
+say:Did you say: ' wide ' ?
+get:no
+say:My hearing is not so good. Could you repeat your description?
+get:a tall wide yellow cylinder
+Get : a tall wide yellow cylinder
+Predicates : ['tall', 'cylinder', 'yellow', 'wide']
+say:Did you say: ' a tall wide yellow cylinder ' ?
+get:yes
+Match scores :{19: 0.6199999999999999, 4: 0.38, 21: 0.0, 23: 0.0}
+
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as tall?
+get:the song try table
+say:I didn't catch that.
+get:send text
+say:I didn't catch that.
+get:fish table one
+say:I didn't catch that.
+get:face table one
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as tall?
+get:look
+touch:1
+say:I see.
+Match scores : {19: 0.28453947368421056, 4: 0.16940789473684212, 21: 0.23190789473684212, 23: 0.31414473684210525}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as yellow?
+get:03
+say:I didn't catch that.
+get:ace table 3
+say:I didn't catch that.
+get:base table three
+say:I didn't catch that.
+get:face table 3
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as yellow?
+get:look
+touch:0
+say:I see.
+Match scores : {19: 0.28453947368421056, 4: 0.16940789473684212, 21: 0.23190789473684212, 23: 0.31414473684210525}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as wide?
+get:the repeat man
+say:I didn't catch that.
+get:repeat
+say:I didn't catch that.
+get:look
+touch:1
+say:I see.
+Match scores : {19: 0.28453947368421056, 4: 0.16940789473684212, 21: 0.23190789473684212, 23: 0.31414473684210525}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:2
+say:Is this the object you had in mind when you said 'a tall wide yellow cylinder'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:3
+say:I see.
+say:Thanks for playing.
