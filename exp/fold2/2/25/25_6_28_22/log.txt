@@ -1,0 +1,57 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:a transparent plastic bottle with brown peanuts and sided with the red cap
+Get : a transparent plastic bottle with brown peanuts and sided with the red cap
+Predicates : ['brown', 'sided', 'cap', 'plastic', 'bottle', 'peanuts', 'transparent', 'red']
+say:Did you say: ' a transparent plastic bottle with brown peanuts and sided with the red cap ' ?
+get:yes
+Match scores :{25: 0.2239212288733853, 28: 0.2188061887386973, 22: 0.3323884439620341, 6: 0.22488413842588334}
+
+say:Let's focus on the objects on tables one and three.
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as cap?
+get:none
+say:I see.
+Match scores : {25: 0.2239212288733853, 28: 0.2188061887386973, 22: 0.3323884439620341, 6: 0.22488413842588334}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as plastic?
+get:turn left
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as plastic?
+get:lunch
+say:I didn't catch that.
+get:buck
+say:I didn't catch that.
+get:watch
+touch:2
+say:I see.
+Match scores : {25: 0.2239212288733853, 28: 0.2188061887386973, 22: 0.3323884439620341, 6: 0.22488413842588334}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as sided?
+get:none
+say:I see.
+Match scores : {25: 0.2239212288733853, 28: 0.2188061887386973, 22: 0.3323884439620341, 6: 0.22488413842588334}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'a transparent plastic bottle with brown peanuts and sided with the red cap'?
+get:yes
+point:-1
+say:Thanks for playing.
