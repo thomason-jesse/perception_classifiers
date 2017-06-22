@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 __author__ = 'jesse'
 
+import ast
+import numpy as np
 import os
 from argparse import ArgumentParser
 
@@ -36,12 +38,16 @@ def main(args):
                                 if uroot == user_dir_to_walk:
                                     for toidx_dir in udirs:
                                         logfn = os.path.join(uroot, toidx_dir, "log.txt")
+                                        toidxs = [int(toidx) for toidx in toidx_dir.split('_')]
                                         nb_q_init = 0
                                         nb_q_yn = 0
                                         nb_q_ex = 0
                                         nb_g = 0
-                                        correct = 1
                                         preds = None
+                                        match_scores = None
+                                        last_point = None
+                                        last_touch = None
+                                        correct_guess = True
                                         with open(logfn, 'r') as f:
                                             for line in f.readlines():
                                                 line = line.strip()
@@ -59,8 +65,28 @@ def main(args):
                                                         nb_g += 1
                                                 elif lp[0] == "Predicates":
                                                     preds = '_'.join([pred.strip("[]',") for pred in lp[2:]])
-                                                elif "Can you touch the object that you were describing" in line:
-                                                    correct = 0
+                                                elif lp[0] == "Match" and lp[2] == ":":
+                                                    ms_str = ' '.join(lp[3:])
+                                                    match_scores = ast.literal_eval(ms_str)
+                                                elif "point:" in lp[0] and "-1" not in lp[0]:
+                                                    last_point = int(lp[0][len("point:"):])
+                                                elif "touch:" in lp[0]:
+                                                    last_touch = int(lp[0][len("touch:"):])
+                                                elif "Can you touch the object that you were describing?" in line:
+                                                    correct_guess = False
+
+                                        max_match_score = max([match_scores[toidx] for toidx in toidxs])
+                                        ties = [toidx for toidx in toidxs
+                                                if np.isclose(max_match_score, match_scores[toidx])]
+                                        if correct_guess:
+                                            right_ans = toidxs[last_point]
+                                        else:
+                                            right_ans = toidxs[last_touch]
+                                        if right_ans in ties:
+                                            correct = 1. / len(ties)
+                                        else:
+                                            correct = 0
+
                                         user_data.append([fold_idx, cond, uid, toidx_dir,
                                                           nb_q_init, nb_q_yn, nb_q_ex, nb_g, correct,
                                                           preds])
