@@ -1,0 +1,96 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:please pick it up
+Get : please pick it up
+Predicates : ['pick']
+say:Did you say: ' please pick it up ' ?
+get:white cylinder red lid
+say:I didn't catch that.
+say:Did you say: ' please pick it up ' ?
+get:no none of these
+say:My hearing is not so good. Could you repeat your description?
+get:white cylinder riblet
+Get : white cylinder riblet
+Predicates : ['riblet', 'white', 'cylinder']
+say:Did you say: ' white cylinder riblet ' ?
+get:yes
+Match scores :{12: 0.25, 28: 0.25, 13: 0.25, 22: 0.25}
+
+say:Let's focus on the objects on tables one and three.
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as riblet?
+get:he okay
+say:I didn't catch that.
+get:turn right
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as riblet?
+get:turn all the way around
+say:I didn't catch that.
+get:turn around
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as riblet?
+get:book
+say:I didn't catch that.
+get:look
+touch:1
+say:I see.
+Match scores : {12: 0.25, 28: 0.25, 13: 0.25, 22: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as white?
+get:turn around
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as white?
+get:look
+touch:2
+say:I see.
+Match scores : {12: 0.25, 28: 0.25, 13: 0.25, 22: 0.25}
+
+
+Action : ask_predicate_label
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:2
+say:Would you use the word white to describe this object?
+get:its like in the middle of
+say:I didn't catch that.
+say:Would you use the word white to describe this object?
+get:no
+say:I see.
+Match scores : {12: 0.24625725633974946, 28: 0.24045218454017722, 13: 0.24289642529789185, 22: 0.27039413382218147}
+
+
+Action : make_guess
+point:-1
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'white cylinder riblet'?
+get:no
+point:-1
+say:Can you touch the object that you were describing?
+touch:2
+say:I see.
+say:Thanks for playing.

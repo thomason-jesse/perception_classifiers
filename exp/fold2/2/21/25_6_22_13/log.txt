@@ -1,0 +1,70 @@
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:is it appropriate to use colors
+Get : is it appropriate to use colors
+Predicates : ['colors']
+say:Did you say: ' is it appropriate to use colors ' ?
+get:no i didnt
+say:My hearing is not so good. Could you repeat your description?
+get:white bottle
+Get : white bottle
+Predicates : ['white', 'bottle']
+say:Did you say: ' white bottle ' ?
+get:yes
+Match scores :{25: 0.2506300570367423, 22: 0.2390900649953575, 6: 0.2609762567979838, 13: 0.24930362116991642}
+
+say:Let's focus on the objects on tables one and three.
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as white?
+get:turn right
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as white?
+get:book
+say:I didn't catch that.
+get:look
+touch:1
+say:I see.
+Match scores : {25: 0.2506300570367423, 22: 0.2390900649953575, 6: 0.2609762567979838, 13: 0.24930362116991642}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as bottle?
+get:book
+say:I didn't catch that.
+get:watch
+touch:1
+say:I see.
+Match scores : {25: 0.25190839694656486, 22: 0.23497137404580154, 6: 0.26240458015267176, 13: 0.25071564885496184}
+
+
+Action : ask_predicate_label
+face:1
+say:I am turning to face table 1.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:1
+say:Would you use the word white to describe this object?
+get:no
+say:I see.
+Match scores : {25: 0.25190839694656486, 22: 0.23497137404580154, 6: 0.26240458015267176, 13: 0.25071564885496184}
+
+
+Action : make_guess
+point:-1
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+point:1
+say:Is this the object you had in mind when you said 'white bottle'?
+get:yes
+point:-1
+say:Thanks for playing.
