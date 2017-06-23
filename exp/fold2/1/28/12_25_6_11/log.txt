@@ -1,0 +1,67 @@
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+point:-1
+say:I am thinking about the objects around me.
+Action : get_initial_description
+say:Please pick an object that you see and describe it to me in one phrase.
+get:its a yellow round cylinder
+Get : its a yellow round cylinder
+Predicates : ['cylinder', 'round', 'yellow']
+say:Did you say: ' its a yellow round cylinder ' ?
+get:yes
+Match scores :{25: 0.25, 11: 0.25, 12: 0.25, 6: 0.25}
+
+say:Let's focus on the objects on tables one and three.
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as cylinder?
+get:this one
+say:I didn't catch that.
+get:face level 3
+say:I didn't catch that.
+get:fable 3
+say:I didn't catch that.
+get:face fable 3
+say:I didn't catch that.
+get:first able to
+say:I didn't catch that.
+get:turn right
+face:3
+say:I am turning to face table 3.
+say:I am getting the objects on the table into focus.
+say:I am having trouble focusing on the objects. The operator will adjust them.
+say:Okay, I see them.
+say:Could you show me an object that you would describe as cylinder?
+get:watch
+touch:3
+say:I see.
+Match scores : {25: 0.25, 11: 0.25, 12: 0.25, 6: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as round?
+get:look
+touch:3
+say:I see.
+Match scores : {25: 0.25, 11: 0.25, 12: 0.25, 6: 0.25}
+
+
+Action : ask_positive_example
+say:Could you show me an object that you would describe as yellow?
+get:watch
+touch:3
+say:I see.
+Match scores : {25: 0.25, 11: 0.25, 12: 0.25, 6: 0.25}
+
+
+Action : make_guess
+face:2
+say:I am turning to face table 2.
+say:I am getting the objects on the table into focus.
+say:Okay, I see them.
+point:3
+say:Is this the object you had in mind when you said 'its a yellow round cylinder'?
+get:yes
+point:-1
+say:Thanks for playing.
