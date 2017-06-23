@@ -116,6 +116,16 @@ def main(args):
     print "cond 2 avg correct: " + str(avg_correct[1]) + ", " + str(np.mean(avg_correct[1]))
     print "p: " + str(p) + '\n'
 
+    # Hypothesis: the robot will guess the right object more often in the inquisitive condition.
+    # Null: 'correct' is different between cond 1, 2 in fold 2
+    avg_correct = [[data['correct'][idx] for idx in range(len(data['uid']))
+                    if data["fold"][idx] == 2 and data['condition'][idx] == cond] for cond in range(1, 3)]
+    t, p = ttest_ind(avg_correct[0], avg_correct[1])
+    print "the robot will guess the right object more often in the inquisitive condition (fold 2): "
+    print "cond 1 avg correct: " + str(avg_correct[0]) + ", " + str(np.mean(avg_correct[0]))
+    print "cond 2 avg correct: " + str(avg_correct[1]) + ", " + str(np.mean(avg_correct[1]))
+    print "p: " + str(p) + '\n'
+
 
 if __name__ == '__main__':
     parser = ArgumentParser()

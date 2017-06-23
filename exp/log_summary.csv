@@ -39,3 +39,15 @@ fold,condition,uid,test_oidxs,nb_q_init,nb_q_yn,nb_q_ex,nb_g,correct,predicates_
 1,2,17,24_23_21_4,1,4,1,1,0,purple_full_green_bottle
 1,2,19,23_19_21_24,1,2,3,1,0.25,purple_screen_lady
 1,2,19,9_4_16_0,1,4,1,1,0.25,yellow_pineapple
+2,1,22,11_25_26_6,1,1,2,1,0.25,can_red
+2,1,22,28_13_12_22,1,1,2,1,0,riblet_white_cylinder
+2,1,24,12_28_11_26,1,1,2,1,0,small_tube_red_metallic
+2,1,24,25_6_22_13,1,1,2,1,0.25,blue_tubular
+2,1,26,11_26_13_6,1,1,2,1,0.25,nmd_cylinder_yellow
+2,1,26,22_25_28_12,1,0,3,1,0.25,full_clear_plastic_bottle_half_small
+2,2,21,25_6_22_13,1,1,2,1,1.0,white_bottle
+2,2,21,28_26_12_11,1,1,2,1,0.25,cam_seal
+2,2,23,11_22_28_12,1,1,2,1,0.25,white_foam_rectangle
+2,2,23,6_26_25_13,1,0,3,1,0,small_aluminum_red_can
+2,2,25,12_11_26_13,1,0,3,1,0.25,blue_tall_cylinder
+2,2,25,25_6_28_22,1,0,3,1,1.0,brown_sided_cap_plastic_bottle_peanuts_transparent_red

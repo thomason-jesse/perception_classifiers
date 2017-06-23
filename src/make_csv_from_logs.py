@@ -75,6 +75,7 @@ def main(args):
                                                 elif "Can you touch the object that you were describing?" in line:
                                                     correct_guess = False
 
+                                        # TODO: measure rank of correct object, not just top-1 ('correct')
                                         max_match_score = max([match_scores[toidx] for toidx in toidxs])
                                         ties = [toidx for toidx in toidxs
                                                 if np.isclose(max_match_score, match_scores[toidx])]
