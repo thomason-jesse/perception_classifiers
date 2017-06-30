@@ -66,9 +66,42 @@ def main(args):
         print ("WARNING: uid(s) " + ','.join([str(uid) for uid in unseen_uids]) +
                " present in logs but do not have survey responses")
 
-    print data
+    # Show min/max descriptions.
+    max_preds = [idx for idx in range(len(data["uid"])) if
+                 len(data["predicates_used"][idx]) == np.max([len(data["predicates_used"][jdx])
+                                                              for jdx in range(len(data["uid"]))])]
+    print "max pred description(s): " + '\n'.join([str(data["uid"][idx]) + ": " +
+                                                   ','.join(data["predicates_used"][idx])
+                                                   for idx in max_preds])
+    min_preds = [idx for idx in range(len(data["uid"])) if
+                 len(data["predicates_used"][idx]) == np.min([len(data["predicates_used"][jdx])
+                                                              for jdx in range(len(data["uid"]))])]
+    print "min pred description(s): " + '\n'.join([str(data["uid"][idx]) + ": " +
+                                                   ','.join(data["predicates_used"][idx])
+                                                   for idx in min_preds]) + '\n'
 
     # Show predicates introduced per fold + re-used from last folds as per Peter's suggestion.
+    print "predicates per fold information:"
+    preds_from_fold = []
+    for fold in range(3):
+        preds = []
+        for idx in [idx for idx in range(len(data["uid"])) if data["fold"][idx] == fold]:
+            preds.extend(data["predicates_used"][idx])
+        preds_from_fold.append(preds)
+        print "fold " + str(fold) + " preds list: " + ','.join(preds)
+    preds_introduced_in_fold = []
+    for fold in range(3):
+        print "\tfold " + str(fold)
+        preds = preds_from_fold[fold][:]
+        print "\t\t" + str(len(preds)) + " predicates used"
+        for prev_fold in range(fold):
+            l = len(preds)
+            for pred in preds_from_fold[prev_fold]:
+                if pred in preds:
+                    preds.remove(pred)
+            print "\t\t" + str(l - len(preds)) + " from fold " + str(prev_fold)
+        print "\t\t" + str(len(preds)) + " new to this fold"
+        preds_introduced_in_fold.append(preds)
 
     # Show average for each value across each fold and condition in tables.
     print "average data values per fold/condition:"
@@ -78,10 +111,13 @@ def main(args):
         print '\t'.join(['', '1', '2'])
         for fold in range(3):
             avgs = []
+            stds = []
             for cond in range(1, 3):
-                avgs.append(np.mean([data[d][idx] for idx in range(len(data['uid']))
-                                     if data['fold'][idx] == fold and data['condition'][idx] == cond]))
-            print '\t'.join([str(fold), str(avgs[0]), str(avgs[1])])
+                ds = [data[d][idx] for idx in range(len(data['uid']))
+                      if data['fold'][idx] == fold and data['condition'][idx] == cond]
+                avgs.append(np.mean(ds))
+                stds.append(np.std(ds))
+            print '\t'.join([str(fold), str(avgs[0]) + " +/- " + str(stds[0]), str(avgs[1]) + " +/- " + str(stds[1])])
         print '\n'
 
     # Hypothesis: users won't think the robot asks too many questions in the inquisitive condition.
@@ -125,6 +161,17 @@ def main(args):
     print "cond 1 avg correct: " + str(avg_correct[0]) + ", " + str(np.mean(avg_correct[0]))
     print "cond 2 avg correct: " + str(avg_correct[1]) + ", " + str(np.mean(avg_correct[1]))
     print "p: " + str(p) + '\n'
+
+    print "automated tests:"
+
+    for d in ['correct', 'understand', 'qs', 'fun', 'use', 'long']:
+        avg_correct = [[data[d][idx] for idx in range(len(data['uid']))
+                        if data['condition'][idx] == cond] for cond in range(1, 3)]
+        t, p = ttest_ind(avg_correct[0], avg_correct[1])
+        print "all folds " + d + ": "
+        print "cond 1 avg: " + str(avg_correct[0]) + ", " + str(np.mean(avg_correct[0]))
+        print "cond 2 avg: " + str(avg_correct[1]) + ", " + str(np.mean(avg_correct[1]))
+        print "p: " + str(p) + '\n'
 
 
 if __name__ == '__main__':

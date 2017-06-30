@@ -3,6 +3,7 @@ __author__ = 'jesse'
 
 import ast
 import numpy as np
+import operator
 import os
 from argparse import ArgumentParser
 
@@ -24,6 +25,8 @@ def main(args):
     #                       labels.pickle, objects.pickle, predicates.pickle, classifiers.pickle
 
     user_data = []  # each row represents a test_oidx combo for a user
+    max_preds = None  # (num, id)
+    min_preds = None  # (num, id)
     for fold_idx in range(4):
         fold_dir = os.path.join(args.exp_dir, 'fold' + str(fold_idx))
         if os.path.isdir(fold_dir):
@@ -64,7 +67,16 @@ def main(args):
                                                     elif lp[2] == "make_guess":
                                                         nb_g += 1
                                                 elif lp[0] == "Predicates":
-                                                    preds = '_'.join([pred.strip("[]',") for pred in lp[2:]])
+                                                    preds_a = [pred.strip("[]',") for pred in lp[2:]]
+                                                    preds = '_'.join(preds_a)
+                                                    if max_preds is None or len(preds_a) > max_preds[0]:
+                                                        max_preds = [len(preds_a), uid]
+                                                    elif len(preds_a) == max_preds[0]:
+                                                        max_preds.append(uid)
+                                                    if min_preds is None or len(preds_a) < min_preds[0]:
+                                                        min_preds = [len(preds_a), uid]
+                                                    elif len(preds_a) == min_preds[0]:
+                                                        min_preds.append(uid)
                                                 elif lp[0] == "Match" and lp[2] == ":":
                                                     ms_str = ' '.join(lp[3:])
                                                     match_scores = ast.literal_eval(ms_str)
@@ -76,21 +88,38 @@ def main(args):
                                                     correct_guess = False
 
                                         # TODO: measure rank of correct object, not just top-1 ('correct')
-                                        max_match_score = max([match_scores[toidx] for toidx in toidxs])
-                                        ties = [toidx for toidx in toidxs
-                                                if np.isclose(max_match_score, match_scores[toidx])]
                                         if correct_guess:
                                             right_ans = toidxs[last_point]
                                         else:
                                             right_ans = toidxs[last_touch]
+
+                                        # Correctness calculation: whether right object guessed (or tied)
+                                        max_match_score = max([match_scores[toidx] for toidx in toidxs])
+                                        ties = [toidx for toidx in toidxs
+                                                if np.isclose(max_match_score, match_scores[toidx])]
                                         if right_ans in ties:
                                             correct = 1. / len(ties)
                                         else:
                                             correct = 0
 
+                                        # Correctness calculation: rank of object in 0-3
+                                        # sorted_scores = sorted(match_scores.items(), key=operator.itemgetter(1),
+                                        #                        reverse=True)
+                                        # rank = [idx for idx in range(len(sorted_scores))
+                                        #         if sorted_scores[idx][0] == right_ans][0]
+                                        # tied_ranks = [idx for idx in range(len(sorted_scores))
+                                        #               if np.isclose(sorted_scores[rank][1], sorted_scores[idx][1])]
+                                        # correct = np.mean(tied_ranks)
+
+                                        # Correctness calculation: probability mass on correct object.
+                                        # sum_scores = sum([match_scores[toidx] for toidx in toidxs])
+                                        # correct = match_scores[right_ans] / sum_scores
+
                                         user_data.append([fold_idx, cond, uid, toidx_dir,
                                                           nb_q_init, nb_q_yn, nb_q_ex, nb_g, correct,
                                                           preds])
+    print "min preds: " + str(min_preds)
+    print "max preds: " + str(max_preds)
 
     # Write user data to file.
     with open(args.outfile, 'w') as f:

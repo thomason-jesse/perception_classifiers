@@ -1,4 +1,6 @@
 fold,condition,uid,test_oidxs,nb_q_init,nb_q_yn,nb_q_ex,nb_g,correct,predicates_used
+0,1,10,15_8_30_31,1,1,2,1,0,tub_shaky_yellow
+0,1,10,1_14_5_29,1,1,2,1,0.25,small_green
 0,1,2,29_1_5_31,1,0,3,1,0.25,tub_shirt_yellow
 0,1,2,8_14_15_30,1,0,3,1,0.25,bottle_red_long
 0,1,4,1_14_15_29,1,1,2,1,0,led_green
@@ -7,8 +9,6 @@ fold,condition,uid,test_oidxs,nb_q_init,nb_q_yn,nb_q_ex,nb_g,correct,predicates_
 0,1,6,5_31_29_14,1,2,1,1,0.25,tall_spray_thin_can
 0,1,8,1_29_30_15,1,0,3,1,0.25,lid_container_orange_aerosol_halffull_silver
 0,1,8,8_31_14_5,1,0,3,1,0.25,cylinder_metal_hollow
-0,1,10,15_8_30_31,1,1,2,1,0,tub_shaky_yellow
-0,1,10,1_14_5_29,1,1,2,1,0.25,small_green
 0,2,1,14_8_15_5,1,0,5,1,0.25,small_lid_white_green_cylinder
 0,2,1,1_31_29_30,1,2,3,1,0.25,blue_lid_cylinder_medium_shaken_white_rattles
 0,2,3,1_15_14_30,1,1,4,1,0,small_container_white_green
@@ -45,9 +45,17 @@ fold,condition,uid,test_oidxs,nb_q_init,nb_q_yn,nb_q_ex,nb_g,correct,predicates_
 2,1,24,25_6_22_13,1,1,2,1,0.25,blue_tubular
 2,1,26,11_26_13_6,1,1,2,1,0.25,nmd_cylinder_yellow
 2,1,26,22_25_28_12,1,0,3,1,0.25,full_clear_plastic_bottle_half_small
+2,1,28,12_25_6_11,1,0,3,1,0.25,cylinder_round_yellow
+2,1,28,28_13_26_22,1,1,2,1,0,made_metal_can_red
+2,1,30,12_13_22_28,1,1,2,1,0.25,full_container_top_plastic_beans_red
+2,1,30,26_11_25_6,1,1,2,1,0.25,aluminum_red_can
 2,2,21,25_6_22_13,1,1,2,1,1.0,white_bottle
 2,2,21,28_26_12_11,1,1,2,1,0.25,cam_seal
 2,2,23,11_22_28_12,1,1,2,1,0.25,white_foam_rectangle
 2,2,23,6_26_25_13,1,0,3,1,0,small_aluminum_red_can
 2,2,25,12_11_26_13,1,0,3,1,0.25,blue_tall_cylinder
 2,2,25,25_6_28_22,1,0,3,1,1.0,brown_sided_cap_plastic_bottle_peanuts_transparent_red
+2,2,27,25_22_12_28,1,0,3,1,0.25,white_soft_rectangular
+2,2,27,6_13_26_11,1,0,3,1,0,small_red_hollow
+2,2,29,11_26_12_25,1,1,2,1,0,small_cylinder_red
+2,2,29,28_13_22_6,1,0,3,1,0.25,large_blue_cylinder
