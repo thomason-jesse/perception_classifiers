@@ -27,6 +27,7 @@ def main(args):
     user_data = []  # each row represents a test_oidx combo for a user
     max_preds = None  # (num, id)
     min_preds = None  # (num, id)
+    obj_descs = {}  # indexed by oidx, values lists of utterances describing corresponding object
     for fold_idx in range(4):
         fold_dir = os.path.join(args.exp_dir, 'fold' + str(fold_idx))
         if os.path.isdir(fold_dir):
@@ -51,6 +52,8 @@ def main(args):
                                         last_point = None
                                         last_touch = None
                                         correct_guess = True
+                                        utterance = None
+                                        last_get = None
                                         with open(logfn, 'r') as f:
                                             for line in f.readlines():
                                                 line = line.strip()
@@ -66,6 +69,8 @@ def main(args):
                                                         nb_q_ex += 1
                                                     elif lp[2] == "make_guess":
                                                         nb_g += 1
+                                                elif lp[0] == "Get":
+                                                    last_get = ' '.join(lp[2:])
                                                 elif lp[0] == "Predicates":
                                                     preds_a = [pred.strip("[]',") for pred in lp[2:]]
                                                     preds = '_'.join(preds_a)
@@ -77,6 +82,7 @@ def main(args):
                                                         min_preds = [len(preds_a), uid]
                                                     elif len(preds_a) == min_preds[0]:
                                                         min_preds.append(uid)
+                                                    utterance = last_get
                                                 elif lp[0] == "Match" and lp[2] == ":":
                                                     ms_str = ' '.join(lp[3:])
                                                     match_scores = ast.literal_eval(ms_str)
@@ -87,11 +93,15 @@ def main(args):
                                                 elif "Can you touch the object that you were describing?" in line:
                                                     correct_guess = False
 
-                                        # TODO: measure rank of correct object, not just top-1 ('correct')
                                         if correct_guess:
                                             right_ans = toidxs[last_point]
                                         else:
                                             right_ans = toidxs[last_touch]
+
+                                        if right_ans not in obj_descs:
+                                            obj_descs[right_ans] = [[utterance, toidxs]]
+                                        else:
+                                            obj_descs[right_ans].append([utterance, toidxs])
 
                                         # Correctness calculation: whether right object guessed (or tied)
                                         max_match_score = max([match_scores[toidx] for toidx in toidxs])
@@ -129,6 +139,11 @@ def main(args):
         for entry in user_data:
             f.write(','.join([str(d) for d in entry]) + '\n')
 
+    with open(args.obj_desc_outfile, 'w') as f:
+        for oidx in obj_descs:
+            for u, toidxs in obj_descs[oidx]:
+                f.write(str(oidx + 1) + ',' + ','.join([str(toidx + 1) for toidx in toidxs]) + ',' + u + '\n')
+
 
 if __name__ == '__main__':
     parser = ArgumentParser()
@@ -138,6 +153,8 @@ if __name__ == '__main__':
                               "and, for fold > 0, classifiers pickles."))
     parser.add_argument('--outfile', type=str, required=True,
                         help="CSV outfile summarizing information extracted from logs")
+    parser.add_argument('--obj_desc_outfile', type=str, required=True,
+                        help="CSV outfile of descriptions associated with objects")
     cmd_args = parser.parse_args()
     
     main(cmd_args)
