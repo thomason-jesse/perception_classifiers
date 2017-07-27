@@ -14,6 +14,7 @@ def main():
     # get command-line args
     in_dir = sys.argv[1]
     out_fn = sys.argv[2]
+    out_obj_utt_fn = sys.argv[3]
 
     # known info
     fold_user_id_ranges = [range(i*10, (i+1)*10) for i in range(0, 4)]
@@ -23,6 +24,7 @@ def main():
 
     # gather data from log files
     d_to_write = []
+    obj_utt = {}  # indexed by oidx, value list of utterances used to describe object
     for cond in ["", "con", "exp"]:
         for fold in range(0, 4):
             for user_id in fold_user_id_ranges[fold]:
@@ -41,6 +43,7 @@ def main():
                 d = []
                 for fn in log_fns:
                     d.append(extract_data_from_log(fn))
+                    update_obj_utt_from_log(fn, obj_utt)
                 d_avg = {key: sum([d[i][key] for i in range(0, len(d))])/float(len(d)) for key in d[0]}
 
                 # create and add record
@@ -62,6 +65,50 @@ def main():
     for r in d_to_write:
         f.write(','.join([str(r[headers[i]]) for i in range(0, len(headers))])+'\n')
     f.close()
+
+    with open(out_obj_utt_fn, 'w') as f:
+        for oid in obj_utt:
+            for toids, u, in obj_utt[oid]:
+                f.write(str(oid) + ',' + ','.join([str(toid) for toid in toids]) + ',' + u + '\n')
+
+
+# given a filename and dictionary, pass over log and extract object/utterance relationships
+def update_obj_utt_from_log(fn, d):
+
+    toids = None  # oidxs of objects on table
+    target_oids = []  # oidxs chosen as targets
+    target_utterances = []  # the corresponding utterances used
+    with open(fn, 'r') as f:
+        curr_desc = None
+        last_get = None
+        last_point = None
+        last_say = None
+        for line in f.readlines():
+            ps = line.strip().split(':')
+            if len(ps) != 2:
+                continue
+            cmd, v = ps
+
+            if cmd == "object_IDs":
+                toids = [int(oidx) for oidx in v.strip('[]').split(', ')]
+            elif cmd == "get":
+                last_get = v
+            elif cmd == "say":
+                if curr_desc is None and "Is this the object" in v:
+                    curr_desc = last_get
+                last_say = v
+            elif cmd == "point":
+                if v == "-1" and "Is this the object" in last_say:
+                    target_oids.append(toids[last_point])
+                    target_utterances.append(curr_desc)
+                last_point = int(v)
+
+    for idx in range(len(target_oids)):
+        oid = target_oids[idx]
+        u = target_utterances[idx]
+        if oid not in d:
+            d[oid] = []
+        d[oid].append((toids, u))
 
 
 # given a filename, makes a pass to extract data returned as a dictionary

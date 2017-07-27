@@ -1,0 +1,168 @@
+1,1,15,21,18,a white and red can
+1,17,18,1,10,a short metallic object
+1,1,17,18,21,a heavy cylinder can
+1,18,1,10,28,a closed metal container
+1,1,21,18,15,the heavy silver container
+1,17,21,1,15,a heavy metal container
+1,20,17,1,28,it's cylindrical metal and full
+2,31,4,22,2,a small aerosol container with an orange lid
+2,31,13,23,2,the short thin cylinder
+2,24,13,4,2,short orange-topped spraycan
+2,4,31,13,2,small orange and gray
+2,13,2,31,24,a half-full water bottle with a cap
+3,3,26,5,32,a wide yellow cylinder
+3,3,27,16,19,circular blue water bottle
+3,16,5,26,3,cylindrical has a black lid and uh is light
+4,2,4,31,24,empty brown and light
+4,22,4,23,2,a tall cardboard tube
+4,4,9,22,23,tall brown cylinder
+4,4,13,31,24,a brown empty paper roll
+4,2,24,4,23,a light tall hollow paper roll
+4,13,22,4,2,the tall thin brown cylinder
+4,4,2,9,31,tall brown skinny and very light
+4,9,13,31,4,tall narrow brown cylinder
+5,3,5,16,32,something yellow and light and spiky
+5,5,16,19,3,an light empty yellow spiky container
+5,3,26,5,32,a wide yellow cylinder
+5,27,26,3,5,a light red cylinder
+5,5,16,32,27,cylindrical light red object
+5,5,26,29,32,a yellow pineapple
+5,19,5,29,26,rough yellow cannister
+5,16,32,5,26,a small orange and silver cylinder
+6,7,6,12,25,a yellow metal spraycan with a plastic top
+6,8,30,6,7,the object i see has a yellow cap
+7,7,30,8,6,a small full white object
+7,12,25,14,7,something small and white
+7,11,30,8,7,a small full white bottle
+7,8,7,30,12,i'm looking at a small white bottle
+7,11,8,7,30,i am thinking of someting tiny and white
+8,30,8,14,11,a pink metal crayon
+8,14,6,12,8,something tall and pink
+8,11,8,30,25,a bright pink empty pencil-shaped metal cylinder
+8,8,14,11,7,a large pink can
+8,6,14,7,8,a tall pointed empty object
+8,12,8,14,11,a tall pink crayon
+9,4,2,9,22,a shiny hollow empty container
+9,22,24,9,4,the empty silver cylinder
+9,23,9,13,22,silver round and empty
+9,23,2,9,4,empty cylindrical and metal
+9,23,9,22,31,wide aluminum silver can
+9,9,31,24,13,an empty metal can
+9,13,9,31,22,a hollow metallic cylinder
+9,23,2,4,9,shiny gray cylinder
+10,17,10,21,1,a full red jar
+10,10,18,17,28,wide red black pictures and cylindrical
+11,7,6,11,12,a soup cup
+11,12,11,25,14,a small liquid container
+11,8,11,30,6,something heavy and silent on shaking
+11,6,11,30,12,a red and white can of soup
+11,25,12,14,11,the object i see is short and heavy
+11,30,7,25,11,something red i can drink from
+11,30,11,25,7,a heavy red and white container
+12,8,12,30,7,uh something that is empty yellow uh open container
+12,14,12,7,6,a hollow cylindrical yellow light can
+12,6,14,12,25,an empty metal can
+12,30,12,11,25,an empty yellow can
+13,13,22,24,31,white pink and soft
+13,24,13,4,31,i spy a container with a pink lid
+14,11,25,6,14,uh something that is a tall empty blue can
+14,8,25,7,14,a tall blue can of chips
+14,6,25,14,11,i'm thinking of an empty blue can
+14,8,30,14,7,something tall and blue and empty
+14,6,14,11,8,the object i am thinking of is light tall and blue
+14,12,14,6,8,a tall blue cylindrical container
+15,28,18,15,17,small cylindrical white with text and a green top
+15,20,10,15,1,it is small short and neon
+15,21,15,20,1,a small container with green cap
+15,15,21,1,18,something small and white
+15,17,21,15,20,small cylindrical and full
+15,20,21,18,15,small white heavy bottle
+15,28,10,20,15,a small white bottle
+15,1,18,17,15,this object is a short and small green and white container
+16,3,5,16,32,something yellow and light and spiky
+16,29,27,19,16,a light tall white object
+16,32,3,27,16,empty red can
+16,16,32,5,26,a small orange and silver cylinder
+16,16,5,26,3,cylindrical has a black lid and uh is light
+17,20,10,28,17,uh the cream-colored container with the red lid
+18,18,17,10,28,a teal bottle
+18,18,15,21,1,pink cylindrical light
+19,5,16,19,3,an light empty yellow spiky container
+19,3,19,26,29,heavy cylindrical object
+19,3,27,16,19,circular blue water bottle
+19,19,5,29,26,rough yellow cannister
+19,29,27,16,19,a tall white light object
+19,32,29,27,19,water bottle blue colored heavy
+20,20,15,21,1,a wide yellow cylinder
+20,20,17,28,10,yellow cylinder wide tall
+20,10,20,1,21,bright yellow white blue red cylindrical and tall
+20,1,17,21,20,something cylindrical yellow and plastic
+20,10,18,20,17,a big yellow cylinder
+20,28,17,20,10,yellow cylinder container
+20,1,20,15,28,i'm describing an object that is tall wide and yellow
+20,18,20,28,10,a tall yellow container
+20,21,28,10,20,this object is a large yellow and white container with text
+21,10,15,18,21,i'm thinking of the bright pink foam tube
+21,21,20,10,15,this objct is a tall red foam cylinder
+21,1,21,15,20,pink foamy tall and cylindrical
+21,21,15,20,28,something tall styrofoam and red
+21,18,17,10,21,it is light hollow and pink
+21,21,15,17,20,a red hollow tube
+21,1,21,18,15,red light tube
+21,15,18,21,10,it's tall and squishy and red
+22,22,23,9,2,i spy a white bottle
+22,23,2,24,22,tall black and white water bottle
+22,23,9,22,4,a full gray water bottle
+23,23,9,24,13,a transparent container with a red lid that's half-full
+23,9,2,23,22,a transparent bottle full of beans with a red cap
+23,24,23,22,13,clear rattles and container
+24,23,24,31,13,a medium-sized plastic bottle in yellow color with liquid inside
+24,24,31,13,2,bright yellow bottle
+24,23,24,4,2,a yellow pointy squishy bottle
+24,9,24,23,22,full yellow and pointy
+24,4,22,24,9,a heavy yellow tube
+24,4,9,23,24,i spy a yellow bottle
+25,8,14,6,25,i'm thinking of a green and purple heavy bottle
+25,8,7,25,14,uh something that is a blue and yellow half-full bottle
+25,12,6,30,25,a full neon green water bottle
+25,12,25,6,11,something green and purple
+25,25,30,7,6,a green water bottle uh that's heavy
+25,7,12,25,30,okay the object i am thinking of is green and cylindrical
+25,25,12,14,6,something green with a purple top
+26,29,27,19,26,something light and tall and white
+26,5,32,26,3,short cylinder that rattles
+27,32,27,29,26,a half-full round container
+27,27,26,3,5,a light red cylinder
+27,5,16,32,27,cylindrical light red object
+27,32,3,27,16,empty red can
+27,19,29,27,3,a tall white light rectangular prism
+27,32,29,27,19,water bottle blue colored heavy
+28,18,15,28,10,something spherical
+28,28,21,17,18,the object i am thinking of is a light orange ball
+28,21,28,1,15,an orange ball
+28,18,17,28,10,an orange hollow ball
+28,17,28,1,20,the light orange sphere
+28,28,15,18,20,something orange and round
+28,17,1,18,28,this object is short and small and an orange sphere
+28,28,18,10,1,it's round and orange and light
+28,28,20,10,17,a round orange sphere
+28,1,17,10,28,orange round
+28,20,17,28,10,something round and orange
+29,29,27,19,26,something light and tall and white
+29,29,27,19,16,a light tall white object
+29,19,16,29,32,a tall light white rectangle
+29,3,19,26,29,heavy cylindrical object
+29,5,26,29,32,a yellow pineapple
+29,19,29,27,3,a tall white light rectangular prism
+29,29,27,16,19,a tall white light object
+30,11,30,7,12,it's a white and blue cylindrical object
+30,8,25,30,14,a large heavy plastic container
+30,6,30,12,11,uh something that is a blue and white and wide container that rattles
+31,13,9,22,31,a red bottle full with liquid inside
+31,24,23,9,31,a heavy red cylinder
+31,13,31,23,2,a curvy red water bottle
+31,24,13,22,31,tall red bottle
+31,2,13,22,31,i spy a tall red bottle
+32,32,27,29,26,a half-full round container
+32,19,16,29,32,a tall light white rectangle
+32,5,32,26,3,short cylinder that rattles
