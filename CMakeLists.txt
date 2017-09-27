@@ -66,7 +66,8 @@ target_link_libraries(fetch_features ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
 
 
 add_dependencies(classifier_services perception_classifiers)
-add_dependencies(fetch_features services_generate_messages_cpp)
+add_dependencies(classifier_services perception_classifiers_generate_messages_cpp)
+add_dependencies(fetch_features perception_classifiers_generate_messages_cpp)
 
 #############
 ## Install ##
