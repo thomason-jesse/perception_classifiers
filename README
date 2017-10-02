@@ -1,41 +1,16 @@
+Source code for the experiment in [Opportunistic Active Learning for Grounding Natural Language 
+Descriptions](jessethomason.com/publications.php)
+
 ---
 
 Feature-level data for each object can be found in the data/ directory.
-The logs of user and robot utterances and guesses (pointing) can be found in subjects/testing
+Utterances used by subjects to describe objects (transcribed using Google Speech API) can be found in 
+exp/object_utterances.csv
+Due to their size, for logs of user conversations and SVM classifier model files contact us at
+jesse@cs.utexas.edu 
 
 ---
 
-run with
-
-$ rosrun perception_classifiers fetch_features
-$ rosrun perception_classifiers classifier_services
-
----
-
-for robot, also run for TTS
-$ rosrun sound_play soundplay_node.py
-
-then start the game by calling ispy.py
-$ rosrun perception_classifiers ispy.py [object_IDs] [num_rounds] \
-  src/perception_classifiers/src/stopwords_en.txt [user_id/None] robot
-
----
-
-Testing the dialog agent -
-
-roscore
-
-rosrun perception_classifiers python_classifier_services.py \
-    --source_dir=/u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/source_dir \
-    --classifier_dir=/u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/classifier_dir
-
-rosrun perception_classifiers test_inquisitive_agent.py \
-    --table_1_oidxs 0,1,2,3 \
-    --table_2_oidxs 4,5,6,7 \
-    --table_3_oidxs 8,9,10,11 \
-    --io_type std \
-    --logfn /u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/log/trial.txt \
-    --stopwords_fn /u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/src/stopwords_en.txt \
-    --initial_predicates_fn /u/aish/Documents/Research/Code/catkin_ws/src/perception_classifiers/source_dir/predicates.pickle \
-    --policy_type example
+The file src/InquisitiveIspyAgent.py was used to run the dialog agent used in the experiments.
+This project builds on the Building-Wide Intelligence stack used at UT Austin to run segbot robots.
 
