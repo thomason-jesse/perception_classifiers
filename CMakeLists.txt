@@ -17,18 +17,18 @@ find_package(Boost REQUIRED COMPONENTS filesystem)
 
 add_service_files(
 	FILES
-    getFreeClassifierID.srv
-		loadClassifiers.srv
-		runClassifier.srv
-		trainClassifier.srv
-		FetchFeatures.srv
-    FetchAllFeatures.srv
-    startDialog.srv
+#     getFreeClassifierID.srv
+#		loadClassifiers.srv
+#		runClassifier.srv
+#		trainClassifier.srv
+#		FetchFeatures.srv
+#    FetchAllFeatures.srv
+#    startDialog.srv
     getSay.srv
     getPoint.srv
-    PythonRunClassifier.srv
-    PythonUpdateClassifiers.srv
-    PythonCommitChanges.srv
+#    PythonRunClassifier.srv
+#    PythonUpdateClassifiers.srv
+#    PythonCommitChanges.srv
 )
 
 add_message_files(
@@ -55,19 +55,19 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS})
 
-add_executable(classifier_services src/classifier_services.cpp)
-add_executable(fetch_features src/fetch_features_service.cpp)
+#add_executable(classifier_services src/classifier_services.cpp)
+#add_executable(fetch_features src/fetch_features_service.cpp)
 
-target_link_libraries(classifier_services
-		${catkin_LIBRARIES}
-		${OpenCV_LIBRARIES})
+#target_link_libraries(classifier_services
+#		${catkin_LIBRARIES}
+#		${OpenCV_LIBRARIES})
 
-target_link_libraries(fetch_features ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
+#target_link_libraries(fetch_features ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
 
 
-add_dependencies(classifier_services perception_classifiers)
-add_dependencies(classifier_services perception_classifiers_generate_messages_cpp)
-add_dependencies(fetch_features perception_classifiers_generate_messages_cpp)
+#add_dependencies(classifier_services perception_classifiers)
+#add_dependencies(classifier_services perception_classifiers_generate_messages_cpp)
+#add_dependencies(fetch_features perception_classifiers_generate_messages_cpp)
 
 #############
 ## Install ##
